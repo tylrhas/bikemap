@@ -5,6 +5,7 @@ import {
   calculateRouteBounds,
   findLocationInArray,
   flyToBounds,
+  setChromeState,
   updateMtnBikeOpacity,
   highlightMtnBikeArea,
   initMtnBikeColors,
@@ -485,23 +486,45 @@ describe('flyToBounds', () => {
     getSouth: () => 34.8,
   } as mapboxgl.LngLatBounds;
 
-  it('should call map.fitBounds with padding and animation', () => {
+  const canvas = () => ({ clientHeight: 900, clientWidth: 1440 });
+
+  it('pads the camera off the interface rather than uniformly', () => {
     const mockMap = {
       fitBounds: vi.fn(),
+      getCanvas: vi.fn(canvas),
     } as unknown as mapboxgl.Map;
 
+    // Nothing open, so every side is the base inset — but as an object, which
+    // is what lets an open panel push one side out.
+    setChromeState({});
     flyToBounds(mockMap, mockBounds);
 
     expect(mockMap.fitBounds).toHaveBeenCalledWith(mockBounds, {
-      padding: 60,
+      padding: { bottom: 60, left: 60, right: 60, top: 60 },
       duration: 1000,
       essential: true,
     });
   });
 
+  it('clears an open sidebar so the trail is not centred behind it', () => {
+    const mockMap = {
+      fitBounds: vi.fn(),
+      getCanvas: vi.fn(canvas),
+    } as unknown as mapboxgl.Map;
+
+    setChromeState({ sidebarOpen: true });
+    flyToBounds(mockMap, mockBounds);
+
+    const padding = (mockMap.fitBounds as ReturnType<typeof vi.fn>).mock
+      .calls[0][1].padding;
+    expect(padding.left).toBeGreaterThan(padding.right);
+    setChromeState({});
+  });
+
   it('should pass bounds directly to fitBounds for any size', () => {
     const mockMap = {
       fitBounds: vi.fn(),
+      getCanvas: vi.fn(canvas),
     } as unknown as mapboxgl.Map;
 
     const largeBounds = {
@@ -514,7 +537,7 @@ describe('flyToBounds', () => {
     flyToBounds(mockMap, largeBounds);
 
     expect(mockMap.fitBounds).toHaveBeenCalledWith(largeBounds, {
-      padding: 60,
+      padding: { bottom: 60, left: 60, right: 60, top: 60 },
       duration: 1000,
       essential: true,
     });

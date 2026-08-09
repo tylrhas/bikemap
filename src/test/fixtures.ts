@@ -19,6 +19,8 @@ export function mockMap(overrides: Record<string, unknown> = {}): mapboxgl.Map {
     removeSource: vi.fn(),
     setLayoutProperty: vi.fn(),
     fitBounds: vi.fn(),
+    // flyToBounds measures the canvas to know how much padding will fit.
+    getCanvas: vi.fn(() => ({ clientHeight: 900, clientWidth: 1440 })),
     querySourceFeatures: vi.fn().mockReturnValue([]),
     ...overrides,
   } as unknown as mapboxgl.Map;

@@ -1,5 +1,6 @@
 import mapboxgl from 'mapbox-gl';
 import type { BikeRoute, MountainBikeTrail } from '@/data/geo_data';
+import { type ChromeState, computeInsets, fitInsets } from '@/utils/map-insets';
 import { mountainBikeConfig, trailMetadata } from '@/data/geo_data';
 import { regionOf } from '@/data/trail-region';
 import {
@@ -69,12 +70,32 @@ export function updateRouteOpacity(
   });
 }
 
+/**
+ * What the interface is currently covering, so the camera can aim at the part
+ * of the map you can see.
+ *
+ * Module state rather than a parameter: `flyToBounds` is called from a dozen
+ * places that have no idea whether a panel is open, and threading it through
+ * each would mean every future caller remembering to. `Map.tsx` keeps this in
+ * step from the toggle events it already listens for.
+ */
+let chromeState: ChromeState = {};
+
+export function setChromeState(next: ChromeState): void {
+  chromeState = next;
+}
+
 export function flyToBounds(
   map: mapboxgl.Map,
   bounds: mapboxgl.LngLatBounds,
 ): void {
+  const canvas = map.getCanvas();
   map.fitBounds(bounds, {
-    padding: 60,
+    padding: fitInsets(
+      computeInsets(chromeState),
+      canvas.clientWidth,
+      canvas.clientHeight,
+    ),
     duration: 1000,
     essential: true,
   });

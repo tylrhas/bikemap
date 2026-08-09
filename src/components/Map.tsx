@@ -42,6 +42,7 @@ import {
   highlightMtnBikeArea,
   initMtnBikeColors,
   initMtnBikeLayers,
+  setChromeState,
   setClosedTrails,
   ensureMtnBikeSource,
   ensureOsmTrailsSource,
@@ -65,6 +66,7 @@ import { mapConfig } from '@/config/map.config';
 import { useTrailConditions } from '@/components/TrailConditionsProvider';
 import { closedTrails } from '@/data/trail-conditions';
 import { MAP_EVENTS } from '@/events';
+import { getSetting } from '@/utils/settings';
 import { HeadingSmoother } from '@/utils/compass';
 
 // Recenter pause durations: how long to suppress auto-centering after
@@ -1511,6 +1513,63 @@ const MapboxMap = memo(function MapboxMap() {
     // this listener wiring must run exactly once; the real fix is the deferred
     // GPS/compass hook extraction.
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  /**
+   * Keep the camera's idea of the visible map in step with what is covering it.
+   *
+   * Without this a selected trail centres in the whole window, which on desktop
+   * puts it behind the sidebar. Reads the same toggle events the panels already
+   * emit rather than introducing new state.
+   */
+  useEffect(() => {
+    const media = window.matchMedia('(max-width: 767px)');
+    const state = {
+      elevationOpen: false,
+      narrow: media.matches,
+      ridesPanelOpen: false,
+      sidebarOpen: getSetting('sidebarOpen') ?? true,
+    };
+    const publish = () => setChromeState({ ...state });
+
+    const onSidebar = (e: Event) => {
+      state.sidebarOpen = (e as CustomEvent).detail?.isOpen ?? false;
+      publish();
+    };
+    const onRides = (e: Event) => {
+      state.ridesPanelOpen = (e as CustomEvent).detail?.isOpen ?? false;
+      publish();
+    };
+    // The pane has no event of its own; a selection is what brings it up.
+    const onSelect = () => {
+      state.elevationOpen = true;
+      publish();
+    };
+    const onDeselect = () => {
+      state.elevationOpen = false;
+      publish();
+    };
+    const onViewport = () => {
+      state.narrow = media.matches;
+      publish();
+    };
+
+    publish();
+    window.addEventListener(MAP_EVENTS.SIDEBAR_TOGGLE, onSidebar);
+    window.addEventListener(MAP_EVENTS.RIDES_PANEL_TOGGLE, onRides);
+    window.addEventListener(MAP_EVENTS.TRAIL_SELECT, onSelect);
+    window.addEventListener(MAP_EVENTS.TRAIL_DESELECT, onDeselect);
+    window.addEventListener(MAP_EVENTS.ROUTE_DESELECT, onDeselect);
+    media.addEventListener('change', onViewport);
+
+    return () => {
+      window.removeEventListener(MAP_EVENTS.SIDEBAR_TOGGLE, onSidebar);
+      window.removeEventListener(MAP_EVENTS.RIDES_PANEL_TOGGLE, onRides);
+      window.removeEventListener(MAP_EVENTS.TRAIL_SELECT, onSelect);
+      window.removeEventListener(MAP_EVENTS.TRAIL_DESELECT, onDeselect);
+      window.removeEventListener(MAP_EVENTS.ROUTE_DESELECT, onDeselect);
+      media.removeEventListener('change', onViewport);
+    };
   }, []);
 
   // Draw a red dashed line over any trail whose newest report says it is shut.
