@@ -24,6 +24,15 @@ import {
 } from './sidebar';
 import { getRideStyle } from './WelcomeModal';
 import { getSetting, setSetting } from '@/utils/settings';
+import { useIsNarrow } from '@/hooks/useIsNarrow';
+import {
+  clampSnap,
+  dragFraction,
+  HALF,
+  nearestSnap,
+  PEEK,
+  SNAP_FRACTIONS,
+} from '@/utils/sheet-snap';
 import { TOGGLE_BTN_CLASS, TOGGLE_ICON_CLASS } from './styles';
 import { cn } from '@/lib/utils';
 import { mapConfig } from '@/config/map.config';
@@ -46,6 +55,22 @@ const hasTrailsSection = true;
 export function MapLegendProvider({ children }: { children: React.ReactNode }) {
   // Track state in this parent component
   const [isOpen, setIsOpen] = useState(() => getSetting('sidebarOpen') ?? true);
+  const narrow = useIsNarrow();
+  /**
+   * Which stop the mobile sheet rests at. Desktop ignores it entirely and keeps
+   * the drawer, because a sheet would throw away horizontal space there.
+   */
+  const [snap, setSnap] = useState(HALF);
+  const sheetRef = useRef<HTMLDivElement>(null);
+  // `toggle` is deliberately stable; the breakpoint reaches it through a ref
+  // rather than becoming a dependency that rebuilds every listener.
+  const narrowRef = useRef(false);
+  const dragRef = useRef<{ startFraction: number; startY: number } | null>(
+    null,
+  );
+  const [dragging, setDragging] = useState(false);
+  const [dragged, setDragged] = useState<null | number>(null);
+  narrowRef.current = narrow;
   const [selectedRoute, setSelectedRoute] = useState<string | null>(null);
   const [selectedTrail, setSelectedTrail] = useState<string | null>(null);
   const [activeSection, setActiveSection] = useState<'routes' | 'trails'>(
@@ -76,6 +101,12 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
   isOpenRef.current = isOpen;
 
   const toggle = useCallback(() => {
+    // A sheet is never closed — the button moves it between resting and
+    // browsing instead, which is what "open the list" means there.
+    if (narrowRef.current) {
+      setSnap((current) => (current === PEEK ? HALF : PEEK));
+      return;
+    }
     const next = !isOpenRef.current;
     setIsOpen(next);
     setSetting('sidebarOpen', next);
@@ -86,10 +117,89 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
     );
   }, []);
 
+  /**
+   * Picking a trail drops the sheet to Peek, so the map you just aimed at is
+   * visible. This is the state a rider spends most of their time in.
+   */
+  useEffect(() => {
+    if (!narrow) {
+      return;
+    }
+    const toPeek = () => setSnap(PEEK);
+    window.addEventListener(MAP_EVENTS.TRAIL_SELECT, toPeek);
+    window.addEventListener(MAP_EVENTS.ROUTE_SELECT, toPeek);
+    return () => {
+      window.removeEventListener(MAP_EVENTS.TRAIL_SELECT, toPeek);
+      window.removeEventListener(MAP_EVENTS.ROUTE_SELECT, toPeek);
+    };
+  }, [narrow]);
+
+  /**
+   * The sheet is never "closed", so the rest of the app is told it is open
+   * whenever it is above Peek — that is what `isOpen` means to the camera and
+   * to the elevation pane.
+   */
+  useEffect(() => {
+    if (!narrow) {
+      return;
+    }
+    window.dispatchEvent(
+      new CustomEvent(MAP_EVENTS.SIDEBAR_TOGGLE, {
+        detail: { isOpen: snap !== PEEK },
+      }),
+    );
+  }, [narrow, snap]);
+
+  const onHandleDown = useCallback(
+    (event: React.PointerEvent<HTMLButtonElement>) => {
+      dragRef.current = {
+        startFraction: SNAP_FRACTIONS[snap],
+        startY: event.clientY,
+      };
+      setDragging(true);
+      event.currentTarget.setPointerCapture(event.pointerId);
+    },
+    [snap],
+  );
+
+  const onHandleMove = useCallback(
+    (event: React.PointerEvent<HTMLButtonElement>) => {
+      const start = dragRef.current;
+      const height = sheetRef.current?.offsetHeight ?? 0;
+      if (!start) {
+        return;
+      }
+      setDragged(
+        dragFraction(start.startFraction, event.clientY - start.startY, height),
+      );
+    },
+    [],
+  );
+
+  const onHandleUp = useCallback(() => {
+    if (dragged !== null) {
+      setSnap(nearestSnap(dragged));
+    }
+    dragRef.current = null;
+    setDragging(false);
+    setDragged(null);
+  }, [dragged]);
+
   // Handle clicks/taps outside the sidebar (mobile only)
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent | TouchEvent) => {
       if (window.innerWidth > 768) return;
+      if (narrowRef.current) {
+        // The sheet gets out of the way rather than being dismissed; there is
+        // nothing to dismiss it to.
+        if (
+          !toggleButtonRef.current?.contains(event.target as Node) &&
+          !sidebarRef.current?.contains(event.target as Node)
+        ) {
+          setSnap(PEEK);
+        }
+        return;
+      }
       if (!isOpen) return;
       if (toggleButtonRef.current?.contains(event.target as Node)) return;
       if (sidebarRef.current?.contains(event.target as Node)) return;
@@ -369,14 +479,54 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
         </button>
       </div>
 
-      {/* Sidebar - always in DOM but transforms off-screen when closed */}
+      {/*
+        One element, two shells. On a phone it is a bottom sheet resting at one
+        of three stops; from `md` up it stays the drawer it always was, because
+        a sheet there would throw away the horizontal space desktop has.
+      */}
       <div
-        ref={sidebarRef}
+        ref={(node) => {
+          sidebarRef.current = node;
+          sheetRef.current = node;
+        }}
         className={cn(
-          'fixed top-0 left-0 h-full w-[280px] bg-white shadow-[2px_0_5px_rgba(0,0,0,0.1)] z-drawer overflow-hidden transition-transform duration-300 ease-in-out flex flex-col max-md:w-full max-md:max-w-[320px]',
-          isOpen ? 'translate-x-0' : '-translate-x-full',
+          'fixed bg-white z-drawer overflow-hidden flex flex-col',
+          !dragging && 'transition-transform duration-300 ease-in-out',
+          narrow
+            ? 'left-0 right-0 bottom-0 h-[92%] rounded-t-2xl shadow-[0_-8px_32px_rgba(0,0,0,0.16)]'
+            : 'top-0 left-0 h-full w-[280px] shadow-[2px_0_5px_rgba(0,0,0,0.1)]',
+          !narrow && (isOpen ? 'translate-x-0' : '-translate-x-full'),
         )}
+        style={
+          narrow
+            ? {
+                transform: `translateY(${(dragged ?? SNAP_FRACTIONS[snap]) * 100}%)`,
+              }
+            : undefined
+        }
       >
+        {narrow && (
+          <button
+            type="button"
+            aria-label="Drag to resize, or use the arrow keys"
+            className="flex-none w-full grid place-items-center py-2.5 cursor-grab active:cursor-grabbing touch-none"
+            onPointerDown={onHandleDown}
+            onPointerMove={onHandleMove}
+            onPointerUp={onHandleUp}
+            onKeyDown={(event) => {
+              if (event.key === 'ArrowUp') {
+                event.preventDefault();
+                setSnap((current) => clampSnap(current + 1));
+              }
+              if (event.key === 'ArrowDown') {
+                event.preventDefault();
+                setSnap((current) => clampSnap(current - 1));
+              }
+            }}
+          >
+            <span className="block w-9 h-1 rounded-full bg-gray-300" />
+          </button>
+        )}
         {/* Casual / MTB toggle in header */}
         <div className="flex justify-center items-center py-[17px] px-4 pl-[68px] pb-3 border-b border-gray-200 bg-gray-50 pt-[calc(17px+env(safe-area-inset-top))]">
           <div className="flex bg-gray-100 rounded-full p-1 w-full border border-gray-200">

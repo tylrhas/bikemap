@@ -30,6 +30,24 @@ afterAll(() => {
   vi.restoreAllMocks();
 });
 
+/**
+ * jsdom has no `matchMedia`, and anything responsive reaches for it. Reports
+ * "not narrow", which is the desktop layout — the breakpoint-specific paths
+ * get their own tests that stub this per case.
+ */
+if (typeof window !== 'undefined' && !window.matchMedia) {
+  window.matchMedia = ((query: string) => ({
+    addEventListener: () => {},
+    addListener: () => {},
+    dispatchEvent: () => false,
+    matches: false,
+    media: query,
+    onchange: null,
+    removeEventListener: () => {},
+    removeListener: () => {},
+  })) as unknown as typeof window.matchMedia;
+}
+
 // Create a global fetch mock
 beforeAll(() => {
   global.fetch = vi.fn();
