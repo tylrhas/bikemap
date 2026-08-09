@@ -829,13 +829,21 @@ export interface MapAppearance {
   createdAt?: string | null;
 }
 /**
- * Which optional layers riders can switch on. Turning one off removes its toggle from the sidebar.
+ * Which sections and layers riders get. Turning one off removes it from the sidebar. Mountain trails are always shown.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "map-layers".
  */
 export interface MapLayer {
   id: number;
+  /**
+   * The Casual routes section: scenic loops, greenways, attractions, bike shops and rentals. Turn it off for a site that is only about singletrack.
+   */
+  casualRoutes?: boolean | null;
+  /**
+   * My rides: recording with GPS, saved history, GPX export. Rides never leave the rider’s own device — turning this off removes the feature, it does not delete anything already saved.
+   */
+  rides?: boolean | null;
   /**
    * Every bike-relevant path in OpenStreetMap, nationwide — useful next to a curated set, noise if your riders only care about yours. Riders switch it on themselves; this decides whether they are offered it.
    */
@@ -878,6 +886,8 @@ export interface MapAppearanceSelect<T extends boolean = true> {
  * via the `definition` "map-layers_select".
  */
 export interface MapLayersSelect<T extends boolean = true> {
+  casualRoutes?: T;
+  rides?: T;
   osmTrails?: T;
   updatedAt?: T;
   createdAt?: T;

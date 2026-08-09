@@ -1,12 +1,16 @@
 import type { GlobalConfig } from 'payload';
 
 /**
- * Which optional layers the map offers, editable at `/admin/globals/map-layers`.
+ * What the map offers, editable at `/admin/globals/map-layers`.
  *
  * These switches control whether a rider is **asked**, not what they choose.
- * Turning one off removes its toggle from the sidebar and stops the layer being
+ * Turning one off removes it from the sidebar and stops its layer being
  * attached at all — a fork that only wants to show its own curated trails would
  * otherwise have to delete the toggle in code.
+ *
+ * Mountain trails have no switch on purpose: they are what the app is for, and
+ * a form that lets you turn off everything leaves a rider looking at a map with
+ * nothing on it.
  *
  * Separate from Theme, which is what the map looks like. This is what it has in
  * it.
@@ -16,7 +20,7 @@ export const MapLayers: GlobalConfig = {
   label: 'Map layers',
   admin: {
     description:
-      'Which optional layers riders can switch on. Turning one off removes its toggle from the sidebar.',
+      'Which sections and layers riders get. Turning one off removes it from the sidebar. Mountain trails are always shown.',
     group: 'Settings',
   },
   access: {
@@ -24,6 +28,26 @@ export const MapLayers: GlobalConfig = {
     update: ({ req }) => req.user?.role === 'admin',
   },
   fields: [
+    {
+      name: 'casualRoutes',
+      type: 'checkbox',
+      defaultValue: true,
+      label: 'Offer casual routes',
+      admin: {
+        description:
+          'The Casual routes section: scenic loops, greenways, attractions, bike shops and rentals. Turn it off for a site that is only about singletrack.',
+      },
+    },
+    {
+      name: 'rides',
+      type: 'checkbox',
+      defaultValue: true,
+      label: 'Offer ride tracking',
+      admin: {
+        description:
+          'My rides: recording with GPS, saved history, GPX export. Rides never leave the rider’s own device — turning this off removes the feature, it does not delete anything already saved.',
+      },
+    },
     {
       name: 'osmTrails',
       type: 'checkbox',

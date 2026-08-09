@@ -1,7 +1,7 @@
 import 'server-only';
 
 /**
- * Which optional layers this deployment offers.
+ * Which sections and layers this deployment offers.
  *
  * **Never throws**, the same rule as `getCityTrails` and `getMapBrand`. No
  * database, an unreachable one, or an unset global all return the shipped
@@ -25,8 +25,12 @@ export async function getMapLayers(): Promise<MapLayerSettings> {
 
     // A global that has never been saved comes back without the field rather
     // than with its default, so an explicit `false` is the only thing that
-    // turns a layer off.
-    return { osmTrails: doc?.osmTrails !== false };
+    // turns something off.
+    return {
+      casualRoutes: doc?.casualRoutes !== false,
+      osmTrails: doc?.osmTrails !== false,
+      rides: doc?.rides !== false,
+    };
   } catch (error) {
     console.error(
       'Could not read the map layers; offering all of them.',

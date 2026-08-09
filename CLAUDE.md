@@ -573,17 +573,38 @@ Things to know before touching it:
     render — the same road the trails take. `Wordmark` falls back to
     `site.config.ts`, so the panel is never anonymous.
 - **Settings → Map layers decides what riders are *offered*, not what is on.**
-  `map-layers` carries one switch so far, `osmTrails`. Turning it off removes
-  the toggle from the sidebar **and** skips `ensureOsmTrailsSource`, so a layer
-  nothing can reveal costs no tile requests. Reaches the client the same way the
-  brand does — server page → `HomeClient` → `src/data/map-layers.ts`. Two things
-  to preserve: the defaults are **on**, so losing the database never costs the
-  map a layer; and `getMapLayers` treats anything but an explicit `false` as on,
-  because a global nobody has saved comes back without the field rather than
-  with its default. When a second layer joins, gate the whole
-  `MapLayersSection`'s children individually — today it is hidden wholesale
-  because `osmTrails` is its only row, and a bare heading over nothing reads as
-  something failing to load.
+  `map-layers` carries `casualRoutes`, `rides` and `osmTrails`. It reaches the
+  client the same way the brand does — server page → `HomeClient` →
+  `src/data/map-layers.ts`. Things to preserve:
+  - **The defaults are on, twice over**: the columns default true *and*
+    `getMapLayers` treats anything but an explicit `false` as on, because a
+    global nobody has saved comes back without the field rather than with its
+    default. Losing the database must never cost the map a section.
+  - **Mountain trails have no switch**, deliberately. They are what the app is
+    for, and a form that can turn off everything leaves a rider looking at a map
+    with nothing on it.
+  - **Off means not attached, not merely hidden.** `osmTrails` off skips
+    `ensureOsmTrailsSource`, so a layer nothing can reveal costs no tile
+    requests.
+  - **One section means no rail** (`showRail` in `MapLegend`) — and then the
+    phone's reveal button un-hides itself on desktop, because pressing the
+    current rail item was the only way back to a full-width map. The collapsed
+    column also goes to `w-0` rather than leaving a `w-14` stub of nothing. The
+    mobile pill row goes with it.
+  - **A saved `activeTab` is re-checked against what is on offer**, or a section
+    switched off yesterday leaves the panel showing nothing today.
+  - When a second row joins the Trails tab's `MapLayersSection`, gate its
+    children individually — today the section is hidden wholesale because
+    `osmTrails` is its only row, and a bare heading over nothing reads as
+    something failing to load.
+- **My rides is a panel section, not a drawer.** Recording state lives in
+  `RideRecordingProvider` **above** `MapLegendProvider`, because a ride has to
+  survive switching to the trail list; the section reads it through `useRides`.
+  The provider also draws the HUD over the map, which hides when the rides list
+  is the thing on screen — `MapLegend` reports that via `RIDES_PANEL_TOGGLE`.
+  Nothing floats over the map any more, so `computeInsets` is symmetric side to
+  side and `CHROME` holds only the elevation dock; don't reintroduce a
+  horizontal inset without something actually covering the map.
 - **The project is ESM** (`"type": "module"` — Payload 3's CLI requires it). New
   root config files must be ESM or `.cjs`.
 - **There is no root `src/app/layout.tsx`, on purpose.** Payload's `RootLayout`

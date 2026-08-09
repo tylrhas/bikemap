@@ -305,10 +305,52 @@ describe('MapLegendProvider', () => {
     expect((toggle?.detail as { visible: boolean }).visible).toBe(true);
   });
 
+  it('drops the casual section, its pill and the rail when turned off', () => {
+    // One section left means nothing to navigate between, so the rail is dead
+    // weight — and the reveal button has to come back, because pressing the
+    // current rail item was the only way to a full-width map.
+    setMapLayerSettings({
+      ...DEFAULT_MAP_LAYERS,
+      casualRoutes: false,
+      rides: false,
+    });
+    try {
+      render(
+        <MapLegendProvider>
+          <div />
+        </MapLegendProvider>,
+      );
+
+      expect(screen.queryByRole('navigation')).not.toBeInTheDocument();
+      expect(screen.queryByText('Casual')).not.toBeInTheDocument();
+      expect(screen.queryByText('Rides')).not.toBeInTheDocument();
+      expect(screen.queryByText('MTB')).not.toBeInTheDocument();
+      expect(screen.getByTestId('mountain-bike-trails')).toBeInTheDocument();
+    } finally {
+      setMapLayerSettings(DEFAULT_MAP_LAYERS);
+    }
+  });
+
+  it('keeps the rail as soon as there are two sections', () => {
+    setMapLayerSettings({ ...DEFAULT_MAP_LAYERS, casualRoutes: false });
+    try {
+      render(
+        <MapLegendProvider>
+          <div />
+        </MapLegendProvider>,
+      );
+      expect(screen.getByRole('navigation')).toBeInTheDocument();
+      expect(screen.queryByText('Casual')).not.toBeInTheDocument();
+      expect(screen.getByText('Rides')).toBeInTheDocument();
+    } finally {
+      setMapLayerSettings(DEFAULT_MAP_LAYERS);
+    }
+  });
+
   it('drops the whole Map layers section when the admin turns it off', () => {
     // It is the only layer the Trails tab offers, so a bare heading over
     // nothing would read as something failing to load.
-    setMapLayerSettings({ osmTrails: false });
+    setMapLayerSettings({ ...DEFAULT_MAP_LAYERS, osmTrails: false });
     try {
       render(
         <MapLegendProvider>

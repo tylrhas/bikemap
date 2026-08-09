@@ -1,5 +1,6 @@
 /**
- * Which optional map layers this deployment offers, and where that comes from.
+ * Which optional sections and layers this deployment offers, and where that
+ * comes from.
  *
  * Read on the server from the Map layers global and published into this module
  * during `HomeClient`'s render, the same road the trails and the brand take.
@@ -14,11 +15,19 @@
  */
 
 export interface MapLayerSettings {
+  /** Offer the Casual routes section — routes, attractions, shops, rentals. */
+  casualRoutes: boolean;
   /** Offer the nationwide OSM trails toggle in the Trails tab. */
   osmTrails: boolean;
+  /** Offer My rides: recording, history, GPX export. */
+  rides: boolean;
 }
 
-export const DEFAULT_MAP_LAYERS: MapLayerSettings = { osmTrails: true };
+export const DEFAULT_MAP_LAYERS: MapLayerSettings = {
+  casualRoutes: true,
+  osmTrails: true,
+  rides: true,
+};
 
 let settings: MapLayerSettings = DEFAULT_MAP_LAYERS;
 

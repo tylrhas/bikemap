@@ -47,27 +47,48 @@ import {
   bikeRoutes,
   mapFeatures,
 } from '@/data/geo_data';
-import { getMapLayerSettings } from '@/data/map-layers';
+import { getMapLayerSettings, type MapLayerSettings } from '@/data/map-layers';
 import { getMountainBikeTrails } from '@/data/trail-source';
 
-const hasRoutesSection =
+/** Whether this city has any casual-route content to show at all. */
+const hasRoutesData =
   bikeRoutes.length > 0 ||
   mapFeatures.length > 0 ||
   bikeResources.length > 0 ||
   Boolean(mapConfig.gbfs);
-const hasTrailsSection = true;
 
 /** The three things the panel can show. */
 type Section = 'rides' | 'routes' | 'trails';
 
-/** What the desktop rail offers. Mirrors the sections the panel can show. */
-const RAIL_ITEMS: RailItem[] = [
-  ...(hasRoutesSection
-    ? [{ icon: faBicycle, key: 'routes', label: 'Casual routes' }]
-    : []),
-  { icon: faMountain, key: 'trails', label: 'Mountain trails' },
-  { icon: faStopwatch, key: 'rides', label: 'My rides' },
-];
+/**
+ * Which sections this deployment offers.
+ *
+ * Two gates, and both have to pass: the city has to have the content, and an
+ * admin has to want it offered. Mountain trails are always on — they are what
+ * the app is for, and a rider looking at a map with nothing on it is not a
+ * configuration anyone meant to reach.
+ */
+function sectionsFor(layers: MapLayerSettings): {
+  items: RailItem[];
+  rides: boolean;
+  routes: boolean;
+} {
+  const routes = hasRoutesData && layers.casualRoutes;
+  const rides = layers.rides;
+  return {
+    items: [
+      ...(routes
+        ? [{ icon: faBicycle, key: 'routes', label: 'Casual routes' }]
+        : []),
+      { icon: faMountain, key: 'trails', label: 'Mountain trails' },
+      ...(rides
+        ? [{ icon: faStopwatch, key: 'rides', label: 'My rides' }]
+        : []),
+    ],
+    rides,
+    routes,
+  };
+}
 
 // Main provider component
 export function MapLegendProvider({ children }: { children: React.ReactNode }) {
@@ -91,20 +112,40 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
   narrowRef.current = narrow;
   const [selectedRoute, setSelectedRoute] = useState<string | null>(null);
   const [selectedTrail, setSelectedTrail] = useState<string | null>(null);
+  // Fixed for the life of the page — the admin's answer, not a preference.
+  const {
+    items: railItems,
+    rides: hasRidesSection,
+    routes: hasRoutesSection,
+  } = sectionsFor(getMapLayerSettings());
+  /**
+   * One section means nothing to navigate between, so the rail is dead weight
+   * — a column of one button labelling the only thing there is. Without it the
+   * panel needs the phone's reveal button back on desktop, since pressing the
+   * current rail item was the only way to a full-width map.
+   */
+  const showRail = railItems.length > 1;
   const [activeSection, setActiveSection] = useState<Section>(() => {
     const saved = getSetting('activeTab');
+    // A saved tab for a section since switched off would leave the panel
+    // showing nothing, so each is checked against what is on offer now.
     if (saved === 'routes' && hasRoutesSection) return saved;
-    if (saved === 'trails' && hasTrailsSection) return saved;
-    if (saved === 'rides') return 'rides';
-    if (getRideStyle() === 'mountain' && hasTrailsSection) return 'trails';
+    if (saved === 'trails') return saved;
+    if (saved === 'rides' && hasRidesSection) return saved;
+    if (getRideStyle() === 'mountain') return 'trails';
     return hasRoutesSection ? 'routes' : 'trails';
   });
-  const switchTab = (tab: Section) => {
-    if (tab === 'routes' && !hasRoutesSection) return;
-    if (tab === 'trails' && !hasTrailsSection) return;
-    setActiveSection(tab);
-    setSetting('activeTab', tab);
-  };
+  // Stable in practice: both flags come from a module store the server fills
+  // once per page, so the listeners below never re-register.
+  const switchTab = useCallback(
+    (tab: Section) => {
+      if (tab === 'routes' && !hasRoutesSection) return;
+      if (tab === 'rides' && !hasRidesSection) return;
+      setActiveSection(tab);
+      setSetting('activeTab', tab);
+    },
+    [hasRidesSection, hasRoutesSection],
+  );
   // Add state for map layers
   const [showAttractions, setShowAttractions] = useState(false);
   const [showBikeResources, setShowBikeResources] = useState(false);
@@ -277,7 +318,7 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
     window.addEventListener(MAP_EVENTS.RIDE_STYLE_CHOSEN, handler);
     return () =>
       window.removeEventListener(MAP_EVENTS.RIDE_STYLE_CHOSEN, handler);
-  }, []);
+  }, [switchTab]);
 
   // Function to handle route selection
   const handleRouteSelect = useCallback(
@@ -513,13 +554,15 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
       {children}
 
       {/*
-        Only on a phone. On desktop the panel is always open and the rail is
-        how you change what it shows, so a button to reveal it had nothing left
-        to do.
+        The phone always has it. Desktop normally does not — the rail is how you
+        change what the panel shows, and pressing the current section hides it.
+        With one section there is no rail, so this is the only way back to a
+        full-width map and it comes back.
       */}
       <div
         className={cn(
-          'fixed left-4 top-[calc(1rem+env(safe-area-inset-top))] md:hidden',
+          'fixed left-4 top-[calc(1rem+env(safe-area-inset-top))]',
+          showRail && 'md:hidden',
           isOpen ? 'z-drawer-toggle-open' : 'z-drawer-toggle',
         )}
       >
@@ -559,7 +602,15 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
                 // renders children before the panel, and reordering that would
                 // change what every consumer sees.
                 'relative order-first flex-none flex-row h-full shadow-[2px_0_16px_rgba(14,34,41,0.10)] transition-[width] duration-300 ease-in-out',
-                isOpen ? 'w-[376px]' : 'w-14',
+                // Collapsed, the rail is what is left. With no rail there is
+                // nothing to leave behind, so the column closes completely.
+                isOpen
+                  ? showRail
+                    ? 'w-[376px]'
+                    : 'w-[320px]'
+                  : showRail
+                    ? 'w-14'
+                    : 'w-0',
               ),
         )}
         style={
@@ -598,11 +649,11 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
           collapses. Pressing the section already showing hides the list, which
           is the only way back to a full-width map now the toggle button is gone.
         */}
-        {!narrow && (
+        {!narrow && showRail && (
           <NavRail
             active={activeSection}
             collapsed={!isOpen}
-            items={RAIL_ITEMS}
+            items={railItems}
             onSelect={(key) => {
               if (key === activeSection) {
                 toggle();
@@ -617,7 +668,12 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
         )}
 
         {!narrow && isOpen && (
-          <div className="absolute left-14 top-0 w-[320px] px-[18px] pt-[18px] pb-3.5 border-b border-cream/10 pointer-events-none">
+          <div
+            className={cn(
+              'absolute top-0 w-[320px] px-[18px] pt-[18px] pb-3.5 border-b border-cream/10 pointer-events-none',
+              showRail ? 'left-14' : 'left-0',
+            )}
+          >
             <Wordmark />
           </div>
         )}
@@ -631,24 +687,25 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
             !narrow && !isOpen && 'hidden',
           )}
         >
-          {/* The phone has no rail, so it keeps the pill. */}
-          <div className="md:hidden flex justify-center items-center py-[17px] px-4 pl-[68px] pb-3 border-b border-gray-200 bg-gray-50 pt-[calc(17px+env(safe-area-inset-top))]">
-            <div className="flex bg-gray-100 rounded-full p-1 w-full border border-gray-200">
-              {hasRoutesSection && (
-                <button
-                  type="button"
-                  className={cn(
-                    'flex-1 py-1.5 px-4 text-sm font-medium rounded-full transition-colors',
-                    activeSection === 'routes'
-                      ? 'bg-white text-gray-800 shadow-sm'
-                      : 'text-gray-500 hover:text-gray-700',
-                  )}
-                  onClick={() => switchTab('routes')}
-                >
-                  Casual
-                </button>
-              )}
-              {hasTrailsSection && (
+          {/* The phone has no rail, so it keeps the pill — for the same
+              reason the rail goes, one section gets no pill either. */}
+          {showRail && (
+            <div className="md:hidden flex justify-center items-center py-[17px] px-4 pl-[68px] pb-3 border-b border-gray-200 bg-gray-50 pt-[calc(17px+env(safe-area-inset-top))]">
+              <div className="flex bg-gray-100 rounded-full p-1 w-full border border-gray-200">
+                {hasRoutesSection && (
+                  <button
+                    type="button"
+                    className={cn(
+                      'flex-1 py-1.5 px-4 text-sm font-medium rounded-full transition-colors',
+                      activeSection === 'routes'
+                        ? 'bg-white text-gray-800 shadow-sm'
+                        : 'text-gray-500 hover:text-gray-700',
+                    )}
+                    onClick={() => switchTab('routes')}
+                  >
+                    Casual
+                  </button>
+                )}
                 <button
                   type="button"
                   className={cn(
@@ -661,23 +718,25 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
                 >
                   MTB
                 </button>
-              )}
-              {/* The phone has no rail, so rides need a third pill rather than
-                  the button that used to float over the map. */}
-              <button
-                type="button"
-                className={cn(
-                  'flex-1 py-1.5 px-4 text-sm font-medium rounded-full transition-colors',
-                  activeSection === 'rides'
-                    ? 'bg-white text-gray-800 shadow-sm'
-                    : 'text-gray-500 hover:text-gray-700',
+                {/* Rides need a pill of their own here rather than the button
+                    that used to float over the map. */}
+                {hasRidesSection && (
+                  <button
+                    type="button"
+                    className={cn(
+                      'flex-1 py-1.5 px-4 text-sm font-medium rounded-full transition-colors',
+                      activeSection === 'rides'
+                        ? 'bg-white text-gray-800 shadow-sm'
+                        : 'text-gray-500 hover:text-gray-700',
+                    )}
+                    onClick={() => switchTab('rides')}
+                  >
+                    Rides
+                  </button>
                 )}
-                onClick={() => switchTab('rides')}
-              >
-                Rides
-              </button>
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="overflow-y-auto flex-1 min-h-0">
             <div className="px-4 pb-4 pt-2">
@@ -748,7 +807,7 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
                 </>
               )}
 
-              {activeSection === 'rides' && <MyRides />}
+              {activeSection === 'rides' && hasRidesSection && <MyRides />}
 
               <InformationSection />
             </div>
