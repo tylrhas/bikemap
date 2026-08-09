@@ -391,6 +391,9 @@ measurements are still derived, via the same `measureParts` the OSM path uses.
 - `src/payload/read/trails.ts` — reads trails back out for the public map
 - `src/payload/globals/Theme.ts` + `read/theme.ts` — admin appearance, editable
   at `/admin/globals/theme` and injected by the admin layout
+- `src/payload/globals/MapAppearance.ts` + `read/map-appearance.ts` +
+  `src/data/brand-colors.ts` — the **public map's** palette, editable at
+  `/admin/globals/map-appearance`. See "The map's palette" below
 - `src/payload/collections/{Organizations,TrailAreas}.ts` — the options behind
   the steward and trail-complex dropdowns. **Both are admin labels only**:
   "Steward" sits over the slug `organizations` and the field `organization`,
@@ -512,6 +515,28 @@ Things to know before touching it:
 - **`getThemeCss` never throws**, same rule as `getCityTrails` — a theme row
   must never lock anyone out of the admin. Its `customCss` is injected verbatim,
   so `sanitizeCss` strips `<`/`>`; don't remove that.
+- **The map's palette is five CSS variables, and the Map appearance global only
+  overrides them.** `--app-primary` (highlight), `--app-secondary` (deep
+  surface), `--app-surface` (light surface), `--app-ink` (body text) and
+  `--app-accent` are defined in `src/app/(frontend)/globals.css` and aliased in
+  `tailwind.config.ts` as `clay` / `forest` / `cream` / `ink` / `coral`. Things
+  to keep in mind:
+  - **Store them as space-separated RGB channels, not hex**, and write the alias
+    as `rgb(var(--x) / <alpha-value>)` — that is what keeps opacity modifiers
+    like `bg-cream/[0.94]` and `ring-app-primary/30` working. `toChannels` in
+    `src/data/brand-colors.ts` does the conversion.
+  - **Blank means the default.** Every field on the global is optional and
+    `buildAppearanceCss` returns `''` when none is set, so a fork that never
+    opens the form — or has no database at all — is still fully coloured, and
+    clearing a field is how a curator resets it.
+  - **`getMapAppearanceCss` never throws**, same rule as `getThemeCss`.
+  - **Reach for a token, never the hex.** A literal `#023428` or
+    `rgba(2,52,40,…)` in a component silently opts out of the palette. Tinted
+    shadows included — write `shadow-[0_1px_3px_rgb(var(--app-secondary)/0.18)]`.
+  - **Only colours something reads are on the form.** `good`, `warn`,
+    `advanced` and `forest-lift` are in the Tailwind palette with no uses, and a
+    control that changes nothing is worse than no control. Give one a variable
+    and a field when something starts using it.
 - **The project is ESM** (`"type": "module"` — Payload 3's CLI requires it). New
   root config files must be ESM or `.cjs`.
 - **There is no root `src/app/layout.tsx`, on purpose.** Payload's `RootLayout`

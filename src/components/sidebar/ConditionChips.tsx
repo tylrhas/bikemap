@@ -39,7 +39,7 @@ function Chip({
   value: string;
 }) {
   return (
-    <div className="flex items-center gap-[7px] rounded-full bg-cream/[0.94] px-[11px] py-1.5 text-ui shadow-[0_1px_3px_rgba(2,52,40,0.14)]">
+    <div className="flex items-center gap-[7px] rounded-full bg-cream/[0.94] px-[11px] py-1.5 text-ui shadow-[0_1px_3px_rgb(var(--app-secondary)/0.14)]">
       <FontAwesomeIcon
         className="w-[13px] h-[13px]"
         icon={icon}

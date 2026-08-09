@@ -36,7 +36,7 @@ function ControlButton({
       aria-label={label}
       aria-pressed={active}
       className={cn(
-        'w-[34px] h-[34px] rounded-control grid place-items-center transition-colors shadow-[0_1px_3px_rgba(2,52,40,0.18)]',
+        'w-[34px] h-[34px] rounded-control grid place-items-center transition-colors shadow-[0_1px_3px_rgb(var(--app-secondary)/0.18)]',
         active
           ? 'bg-clay text-cream'
           : 'bg-cream/[0.92] text-forest hover:bg-cream',

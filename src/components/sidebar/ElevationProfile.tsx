@@ -676,7 +676,7 @@ export function ElevationProfile() {
         <div className="px-[22px] pt-[18px] pb-5 border-r border-forest/10 min-w-0">
           <DifficultyBadge
             className="mb-2"
-            color={dockTrail?.color ?? '#BD815A'}
+            color={dockTrail?.color ?? 'rgb(var(--app-primary))'}
             outline
             rating={dockTrail?.rating ?? ''}
           />
@@ -1118,7 +1118,7 @@ function HoverIndicator({
         cy={y}
         r="4"
         fill="rgb(var(--app-secondary))"
-        stroke="#F5EFE6"
+        stroke="rgb(var(--app-surface))"
         strokeWidth="2"
         vectorEffect="non-scaling-stroke"
       />
