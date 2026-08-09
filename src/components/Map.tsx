@@ -66,6 +66,7 @@ import { mapConfig } from '@/config/map.config';
 import { useTrailConditions } from '@/components/TrailConditionsProvider';
 import { closedTrails } from '@/data/trail-conditions';
 import { MapControls } from '@/components/MapControls';
+import { ConditionChips } from '@/components/sidebar/ConditionChips';
 import { MAP_EVENTS } from '@/events';
 import { HeadingSmoother } from '@/utils/compass';
 
@@ -1594,6 +1595,8 @@ const MapboxMap = memo(function MapboxMap() {
           {toastMessage}
         </div>
       )}
+
+      <ConditionChips />
 
       <MapControls
         onFullscreen={() => {

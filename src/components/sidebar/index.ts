@@ -12,6 +12,10 @@ export { BikeRentalList } from './BikeRentalList';
 export { InformationSection } from './InformationSection';
 export { SidebarCard } from './SidebarCard';
 export { ConditionBadge } from './ConditionBadge';
+export { ConditionChips } from './ConditionChips';
+export { DifficultyBadge } from './DifficultyBadge';
+export { TrailStats } from './TrailStats';
+export { TrailSparkline } from './TrailSparkline';
 export { TrailConditionsStrip } from './TrailConditionsStrip';
 
 // Types
