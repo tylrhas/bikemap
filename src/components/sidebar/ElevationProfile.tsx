@@ -722,10 +722,10 @@ export function ElevationProfile() {
             <span className="text-meta font-bold uppercase tracking-[0.08em] text-forest/70">
               Elevation profile
             </span>
+            {/* The reading rides with the cursor now, so this stays an
+                invitation rather than repeating it. */}
             <span className="text-meta text-ink/50">
-              {hoverIndex !== null && points
-                ? `${(points[hoverIndex][0] / 5280).toFixed(2)} mi \u00B7 ${Math.round(points[hoverIndex][1]).toLocaleString()} ft \u00B7 ${formatGrade(grades[hoverIndex])}`
-                : 'Hover to scrub the trail'}
+              Hover to scrub the trail
             </span>
           </div>
           {points && profile ? (
@@ -743,13 +743,21 @@ export function ElevationProfile() {
                 onTouchEnd={clearHover}
               />
               {hoverIndex !== null && (
-                <HoverIndicator
-                  points={points}
-                  gradeColors={gradeColors}
-                  profile={profile}
-                  chartWidth={chartWidth}
-                  hoverIndex={hoverIndex}
-                />
+                <>
+                  <HoverIndicator
+                    points={points}
+                    profile={profile}
+                    chartWidth={chartWidth}
+                    hoverIndex={hoverIndex}
+                  />
+                  <HoverTooltip
+                    chartWidth={chartWidth}
+                    grade={grades[hoverIndex]}
+                    hoverIndex={hoverIndex}
+                    points={points}
+                    profile={profile}
+                  />
+                </>
               )}
             </div>
           ) : (
@@ -899,13 +907,21 @@ export function ElevationProfile() {
               />
             )}
             {hoverIndex !== null && (
-              <HoverIndicator
-                points={points}
-                gradeColors={gradeColors}
-                profile={profile}
-                chartWidth={chartWidth}
-                hoverIndex={hoverIndex}
-              />
+              <>
+                <HoverIndicator
+                  points={points}
+                  profile={profile}
+                  chartWidth={chartWidth}
+                  hoverIndex={hoverIndex}
+                />
+                <HoverTooltip
+                  chartWidth={chartWidth}
+                  grade={grades[hoverIndex]}
+                  hoverIndex={hoverIndex}
+                  points={points}
+                  profile={profile}
+                />
+              </>
             )}
           </div>
         </div>
@@ -1070,13 +1086,11 @@ export function profilePointToXY(
 // Lightweight hover overlay — renders on every mouse move without rebuilding paths
 function HoverIndicator({
   points,
-  gradeColors,
   profile,
   chartWidth,
   hoverIndex,
 }: {
   points: [number, number, number, number][];
-  gradeColors: string[];
   profile: ElevationProfileData;
   chartWidth: number;
   hoverIndex: number;
@@ -1094,7 +1108,7 @@ function HoverIndicator({
         y1={CHART_PADDING_TOP}
         x2={x}
         y2={CHART_HEIGHT - CHART_PADDING_BOTTOM}
-        stroke="#6b7280"
+        stroke="rgb(var(--app-secondary))"
         strokeWidth="1"
         strokeDasharray="3,3"
         vectorEffect="non-scaling-stroke"
@@ -1103,12 +1117,52 @@ function HoverIndicator({
         cx={x}
         cy={y}
         r="4"
-        fill={gradeColors[hoverIndex] || '#22c55e'}
-        stroke="white"
-        strokeWidth="1.5"
+        fill="rgb(var(--app-secondary))"
+        stroke="#F5EFE6"
+        strokeWidth="2"
         vectorEffect="non-scaling-stroke"
       />
     </svg>
+  );
+}
+
+/**
+ * The reading, at the cursor.
+ *
+ * Positioned in percentages rather than pixels vertically: the chart's viewBox
+ * is a fixed 100 units tall but it renders at a viewport-relative height, so
+ * only the horizontal axis maps 1:1. Clamped away from both edges so the pill
+ * never hangs off the chart at the ends of a trail.
+ */
+function HoverTooltip({
+  chartWidth,
+  grade,
+  hoverIndex,
+  points,
+  profile,
+}: {
+  chartWidth: number;
+  grade: number | undefined;
+  hoverIndex: number;
+  points: [number, number, number, number][];
+  profile: ElevationProfileData;
+}) {
+  const { x, y } = profilePointToXY(points, hoverIndex, profile, chartWidth);
+  const atStart = x < 70;
+  const atEnd = x > chartWidth - 70;
+
+  return (
+    <div
+      className="absolute pointer-events-none z-10 whitespace-nowrap rounded-[5px] bg-forest px-[9px] py-[5px] text-meta text-cream tabular-nums"
+      style={{
+        left: `${x}px`,
+        top: `${(y / CHART_HEIGHT) * 100}%`,
+        transform: `translate(${atStart ? '0' : atEnd ? '-100%' : '-50%'}, calc(-100% - 10px))`,
+      }}
+    >
+      {`${Math.round(points[hoverIndex][1]).toLocaleString()} ft \u00B7 mi ${(points[hoverIndex][0] / 5280).toFixed(1)}`}
+      {grade !== undefined && ` \u00B7 ${formatGrade(grade)}`}
+    </div>
   );
 }
 
