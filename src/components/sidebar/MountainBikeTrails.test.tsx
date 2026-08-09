@@ -158,13 +158,16 @@ describe('MountainBikeTrails', () => {
     expect(screen.queryByText('Trail A')).not.toBeInTheDocument();
   });
 
-  it('shows no trails found for unmatched search', () => {
+  it('names the query it found nothing for, and says what to do', () => {
     render(<MountainBikeTrails {...defaultProps} />);
 
     const searchInput = screen.getByPlaceholderText('Search trails...');
     fireEvent.change(searchInput, { target: { value: 'nonexistent' } });
 
-    expect(screen.getByText('No trails found')).toBeInTheDocument();
+    // "No trails found" states the outcome but not the cause or the remedy.
+    expect(
+      screen.getByText(/No trails match .*nonexistent.*Try a shorter search/),
+    ).toBeInTheDocument();
   });
 
   it('empty search shows default grouped view', () => {

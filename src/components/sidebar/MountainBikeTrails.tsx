@@ -100,7 +100,7 @@ function TrailRow({
       )}
     >
       <div className="flex items-center justify-between gap-2 mb-1.5">
-        <span className="text-cream text-ui font-semibold truncate">
+        <span className="font-display text-cream text-body font-semibold truncate">
           {trail.displayName}
         </span>
         <ConditionBadge report={condition} />
@@ -183,7 +183,7 @@ export function MountainBikeTrails({
           <input
             ref={searchRef}
             type="text"
-            className="w-full py-2 pr-8 pl-3 border border-gray-300 rounded-lg text-sm text-app-secondary bg-white outline-none focus:border-app-primary focus:ring-2 focus:ring-app-primary/30 placeholder:text-gray-400"
+            className="w-full py-2 pr-8 pl-3 rounded-control bg-cream/[0.08] text-ui text-cream border-none outline-none placeholder:text-cream/45"
             placeholder="Search trails..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -191,7 +191,7 @@ export function MountainBikeTrails({
           {searchQuery && (
             <button
               type="button"
-              className="absolute right-1 top-1/2 -translate-y-1/2 bg-transparent border-none text-lg text-gray-400 cursor-pointer px-2 py-1 leading-none hover:text-gray-500"
+              className="absolute right-1 top-1/2 -translate-y-1/2 bg-transparent border-none text-lg text-cream/60 cursor-pointer px-2 py-1 leading-none hover:text-cream"
               onClick={() => {
                 setSearchQuery('');
                 searchRef.current?.focus();
@@ -214,8 +214,8 @@ export function MountainBikeTrails({
               />
             ))
           ) : (
-            <div className="p-3 text-center text-gray-400 text-sm">
-              No trails found
+            <div className="p-6 text-center text-cream/45 text-ui">
+              No trails match &ldquo;{searchQuery}&rdquo;. Try a shorter search.
             </div>
           )
         ) : (
@@ -225,7 +225,7 @@ export function MountainBikeTrails({
             return (
               <React.Fragment key={region}>
                 <div
-                  className="text-xs font-bold text-gray-700 cursor-pointer rounded pt-2.5 pb-1 px-1 flex items-center whitespace-nowrap hover:bg-blue-600/5 hover:text-blue-600"
+                  className="text-meta font-bold uppercase tracking-[0.08em] text-cream/70 cursor-pointer rounded pt-3 pb-1.5 px-4 flex items-center whitespace-nowrap hover:text-cream"
                   onClick={() => {
                     toggleSet(setExpandedRegions, region);
                     onAreaSelect(region);
@@ -248,7 +248,7 @@ export function MountainBikeTrails({
                     />
                   </span>
                   {region}
-                  <span className="ml-auto text-meta font-normal text-gray-400">
+                  <span className="ml-auto text-meta font-normal text-cream/40">
                     {regionTrailCount}
                   </span>
                 </div>
@@ -261,7 +261,7 @@ export function MountainBikeTrails({
                       <React.Fragment key={area}>
                         {!singleArea && (
                           <div
-                            className="text-meta font-semibold uppercase text-gray-500 tracking-wide cursor-pointer rounded py-2 pb-1 px-1 pl-4 flex items-baseline hover:bg-blue-600/5 hover:text-blue-600"
+                            className="text-meta font-semibold uppercase text-cream/50 tracking-[0.08em] cursor-pointer rounded py-2 pb-1 px-4 pl-6 flex items-baseline hover:text-cream/80"
                             onClick={() => handleAreaClick(area)}
                             onKeyDown={(e) => {
                               if (e.key === 'Enter' || e.key === ' ') {
@@ -284,7 +284,7 @@ export function MountainBikeTrails({
                               />
                             </span>
                             {area}
-                            <span className="ml-auto text-meta font-normal text-gray-400">
+                            <span className="ml-auto text-meta font-normal text-cream/40">
                               {trails.length}
                             </span>
                           </div>

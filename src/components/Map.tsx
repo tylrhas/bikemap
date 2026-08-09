@@ -65,6 +65,7 @@ import { loadRide } from '@/utils/ride-storage';
 import { mapConfig } from '@/config/map.config';
 import { useTrailConditions } from '@/components/TrailConditionsProvider';
 import { closedTrails } from '@/data/trail-conditions';
+import { MapControls } from '@/components/MapControls';
 import { MAP_EVENTS } from '@/events';
 import { HeadingSmoother } from '@/utils/compass';
 
@@ -874,8 +875,9 @@ const MapboxMap = memo(function MapboxMap() {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (window as any).__map = newMap;
 
-          // Add basic controls
-          newMap.addControl(new mapboxgl.NavigationControl());
+          // No NavigationControl: the app draws its own in MapControls, so the
+          // map's chrome matches the rest of the interface. Zoom stays on
+          // pinch, scroll and double-tap.
 
           // Wait for map to load
           await new Promise<void>((resolve) => {
@@ -1592,6 +1594,26 @@ const MapboxMap = memo(function MapboxMap() {
           {toastMessage}
         </div>
       )}
+
+      <MapControls
+        onFullscreen={() => {
+          const el = mapContainer.current?.parentElement;
+          if (!document.fullscreenElement) {
+            void el?.requestFullscreen?.();
+          } else {
+            void document.exitFullscreen();
+          }
+        }}
+        onLayers={() =>
+          window.dispatchEvent(
+            new CustomEvent(MAP_EVENTS.SIDEBAR_TOGGLE, {
+              detail: { isOpen: true, requestOpen: true },
+            }),
+          )
+        }
+        onLocate={toggleWatchLocation}
+        tracking={watchingLocation}
+      />
 
       <ElevationProfile />
 
