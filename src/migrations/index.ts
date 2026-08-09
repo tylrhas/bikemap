@@ -6,6 +6,7 @@ import * as migration_20260809_041945_map_appearance from './20260809_041945_map
 import * as migration_20260809_220403_map_palette from './20260809_220403_map_palette';
 import * as migration_20260809_223540_brand_identity from './20260809_223540_brand_identity';
 import * as migration_20260809_225622_drop_admin_theme from './20260809_225622_drop_admin_theme';
+import * as migration_20260809_230500_seed_brand_colors from './20260809_230500_seed_brand_colors';
 
 export const migrations = [
   {
@@ -46,6 +47,11 @@ export const migrations = [
   {
     up: migration_20260809_225622_drop_admin_theme.up,
     down: migration_20260809_225622_drop_admin_theme.down,
-    name: '20260809_225622_drop_admin_theme'
+    name: '20260809_225622_drop_admin_theme',
+  },
+  {
+    up: migration_20260809_230500_seed_brand_colors.up,
+    down: migration_20260809_230500_seed_brand_colors.down,
+    name: '20260809_230500_seed_brand_colors',
   },
 ];

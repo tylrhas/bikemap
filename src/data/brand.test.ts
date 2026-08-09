@@ -1,5 +1,7 @@
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import {
+  DEFAULT_BRAND_COLORS,
   brandIdentity,
   buildAppearanceCss,
   safeUrl,
@@ -161,5 +163,34 @@ describe('brandIdentity', () => {
     expect(
       brandIdentity({ logoUrl: 'javascript:alert(1)', wordmark: '   ' }),
     ).toEqual({ logoUrl: null, wordmark: null });
+  });
+});
+
+describe('DEFAULT_BRAND_COLORS', () => {
+  it('matches the channels globals.css declares', () => {
+    // The palette is written twice — hex here for the seed, channels there for
+    // the no-database case — because CSS cannot import a constant. This is what
+    // stops the two from drifting apart unnoticed.
+    const css = readFileSync('src/app/(frontend)/globals.css', 'utf8');
+    const variables: Record<keyof typeof DEFAULT_BRAND_COLORS, string> = {
+      accentColor: '--app-accent',
+      inkColor: '--app-ink',
+      primaryColor: '--app-primary',
+      secondaryColor: '--app-secondary',
+      surfaceColor: '--app-surface',
+    };
+
+    for (const [field, variable] of Object.entries(variables)) {
+      const declared = css.match(
+        new RegExp(`${variable}:\\s*([0-9]+ [0-9]+ [0-9]+)`),
+      )?.[1];
+      expect(declared, `${variable} is declared`).toBeDefined();
+      expect(
+        toChannels(
+          DEFAULT_BRAND_COLORS[field as keyof typeof DEFAULT_BRAND_COLORS],
+        ),
+        `${field} agrees with ${variable}`,
+      ).toBe(declared);
+    }
   });
 });

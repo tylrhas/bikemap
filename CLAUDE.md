@@ -530,6 +530,15 @@ Things to know before touching it:
     `buildAppearanceCss` returns `''` when none is set, so a fork that never
     opens the form — or has no database at all — is still fully branded, and
     clearing a field is how a curator resets it.
+  - **The colors are also seeded, so the form is not five empty boxes.**
+    `DEFAULT_BRAND_COLORS` in `brand.ts` mirrors the channels in `globals.css`
+    — CSS cannot import a constant, so the palette is written twice and
+    `brand.test.ts` reads the stylesheet to hold the two together. The seeding
+    migration only ever fills a blank (`COALESCE`), so it is idempotent and
+    never overwrites a curator's choice. **Fonts are not seeded**: the bundled
+    faces are loaded by `next/font` under a generated family name, so a literal
+    `"Fraunces", serif` would name a font nothing loaded and fall through to
+    Georgia.
   - **`getMapBrand` never throws**, same rule as `getCityTrails`.
   - **Reach for a token, never the hex.** A literal `#023428` or
     `rgba(2,52,40,…)` in a component silently opts out of the palette. Tinted

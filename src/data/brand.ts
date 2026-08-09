@@ -27,6 +27,32 @@ const HEX = /^#[0-9a-f]{6}$/i;
 const FONT_STACK = /^[\p{L}\p{N}\s,'"_-]+$/u;
 const FONT_STACK_MAX = 200;
 
+/**
+ * The palette the app ships with, as hex.
+ *
+ * These are the same five colors `globals.css` declares as channels — said
+ * twice, on purpose, because CSS cannot import a TypeScript constant and the
+ * stylesheet has to stand alone for a deployment with no database.
+ * `brand.test.ts` reads the stylesheet and asserts the two agree, so the
+ * duplication cannot drift silently.
+ *
+ * The migration seeds these into the Theme global so the form opens showing the
+ * palette rather than five empty boxes — you cannot nudge a color you cannot
+ * see. Seeding only fills a blank, so a curator's choice is never overwritten.
+ *
+ * **Fonts are deliberately not seeded.** The bundled faces are loaded by
+ * `next/font`, which invents the family name, so a literal `"Fraunces", serif`
+ * here would name a font nothing has loaded and quietly fall through to Georgia.
+ * Blank is what keeps them working.
+ */
+export const DEFAULT_BRAND_COLORS = {
+  accentColor: '#FCA793',
+  inkColor: '#14231D',
+  primaryColor: '#BD815A',
+  secondaryColor: '#023428',
+  surfaceColor: '#F5EFE6',
+} as const;
+
 export interface Brand {
   accentColor?: null | string;
   /** CSS stack for running text. Blank keeps the bundled body font. */
