@@ -18,6 +18,8 @@ export const BASE_INSET = 60;
 export const CHROME = {
   /** MapLegend on desktop: the 56px rail plus the 320px column. */
   sidebar: 376,
+  /** The rail alone, which stays put when the list collapses. */
+  rail: 56,
   /** RidesPanel, `w-[296px]`. */
   ridesPanel: 296,
   /** The elevation pane, measured at its tallest. */
@@ -57,9 +59,8 @@ export function computeInsets(state: ChromeState = {}): Insets {
   };
 
   if (!state.narrow) {
-    if (state.sidebarOpen) {
-      insets.left += CHROME.sidebar;
-    }
+    // The rail never goes away, so even a collapsed panel covers something.
+    insets.left += state.sidebarOpen ? CHROME.sidebar : CHROME.rail;
     if (state.ridesPanelOpen) {
       insets.right += CHROME.ridesPanel;
     }

@@ -2,8 +2,19 @@ import { describe, expect, it } from 'vitest';
 import { BASE_INSET, CHROME, computeInsets, fitInsets } from './map-insets';
 
 describe('computeInsets', () => {
-  it('is symmetric with nothing open', () => {
+  it('always clears the rail on desktop, even with the list collapsed', () => {
+    // The rail never goes away, so there is no desktop state where the left
+    // edge of the map is the left edge of the window.
     expect(computeInsets()).toEqual({
+      bottom: BASE_INSET,
+      left: BASE_INSET + CHROME.rail,
+      right: BASE_INSET,
+      top: BASE_INSET,
+    });
+  });
+
+  it('is symmetric on a phone, which has no rail', () => {
+    expect(computeInsets({ narrow: true })).toEqual({
       bottom: BASE_INSET,
       left: BASE_INSET,
       right: BASE_INSET,
@@ -28,6 +39,15 @@ describe('computeInsets', () => {
   it('lifts the camera above the elevation pane', () => {
     expect(computeInsets({ elevationOpen: true }).bottom).toBe(
       BASE_INSET + CHROME.elevation,
+    );
+  });
+
+  it('widens from rail to full panel when the list opens', () => {
+    expect(computeInsets({ sidebarOpen: false }).left).toBe(
+      BASE_INSET + CHROME.rail,
+    );
+    expect(computeInsets({ sidebarOpen: true }).left).toBe(
+      BASE_INSET + CHROME.sidebar,
     );
   });
 

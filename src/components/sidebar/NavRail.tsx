@@ -27,11 +27,15 @@ export interface RailItem {
 
 export function NavRail({
   active,
+  collapsed = false,
   items,
   onSelect,
 }: {
   active: string;
+  /** True when the list column is hidden and only the rail is showing. */
+  collapsed?: boolean;
   items: RailItem[];
+  /** Called with the section pressed; the same section again means "collapse". */
   onSelect: (key: string) => void;
 }) {
   return (
@@ -40,7 +44,8 @@ export function NavRail({
       className="flex-none w-14 h-full bg-app-secondary flex flex-col items-center gap-1 py-3 pt-[calc(0.75rem+env(safe-area-inset-top))]"
     >
       {items.map((item) => {
-        const selected = item.key === active;
+        // Collapsed, nothing is "current" — the panel it would open is shut.
+        const selected = item.key === active && !collapsed;
         return (
           <button
             aria-current={selected ? 'page' : undefined}
@@ -52,7 +57,7 @@ export function NavRail({
             )}
             key={item.key}
             onClick={() => onSelect(item.key)}
-            title={item.label}
+            title={selected ? `Hide ${item.label.toLowerCase()}` : item.label}
             type="button"
           >
             <FontAwesomeIcon className="w-4 h-4" icon={item.icon} />

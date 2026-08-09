@@ -144,19 +144,6 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
     };
   }, [narrow]);
 
-  useEffect(() => {
-    if (narrow || isOpen) {
-      return;
-    }
-    // Desktop always shows the panel now; anyone arriving with it saved as
-    // closed would otherwise get an elevation pane tucked underneath it.
-    setIsOpen(true);
-    setSetting('sidebarOpen', true);
-    window.dispatchEvent(
-      new CustomEvent(MAP_EVENTS.SIDEBAR_TOGGLE, { detail: { isOpen: true } }),
-    );
-  }, [narrow, isOpen]);
-
   /**
    * The sheet is never "closed", so the rest of the app is told it is open
    * whenever it is above Peek — that is what `isOpen` means to the camera and
@@ -521,7 +508,10 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
           !dragging && 'transition-transform duration-300 ease-in-out',
           narrow
             ? 'flex-col left-0 right-0 bottom-0 h-[92%] rounded-t-2xl shadow-[0_-8px_32px_rgba(0,0,0,0.16)]'
-            : 'flex-row top-0 left-0 h-full w-[376px] shadow-[2px_0_16px_rgba(14,34,41,0.10)]',
+            : cn(
+                'flex-row top-0 left-0 h-full shadow-[2px_0_16px_rgba(14,34,41,0.10)] transition-[width] duration-300 ease-in-out',
+                isOpen ? 'w-[376px]' : 'w-14',
+              ),
         )}
         style={
           narrow
@@ -554,16 +544,37 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
           </button>
         )}
 
-        {/* Desktop: the rail sits beside the content, not above it. */}
+        {/*
+          Desktop: the rail sits beside the content and stays put when the list
+          collapses. Pressing the section already showing hides the list, which
+          is the only way back to a full-width map now the toggle button is gone.
+        */}
         {!narrow && (
           <NavRail
             active={activeSection}
+            collapsed={!isOpen}
             items={RAIL_ITEMS}
-            onSelect={(key) => switchTab(key as 'routes' | 'trails')}
+            onSelect={(key) => {
+              if (key === activeSection) {
+                toggle();
+                return;
+              }
+              switchTab(key as 'routes' | 'trails');
+              if (!isOpenRef.current) {
+                toggle();
+              }
+            }}
           />
         )}
 
-        <div className="flex-1 min-w-0 flex flex-col overflow-hidden">
+        <div
+          className={cn(
+            'flex-1 min-w-0 flex flex-col overflow-hidden',
+            // Collapsed the column is gone, not merely narrow — a sliver of
+            // truncated trail names would be worse than none.
+            !narrow && !isOpen && 'hidden',
+          )}
+        >
           {/* The phone has no rail, so it keeps the pill. */}
           <div className="md:hidden flex justify-center items-center py-[17px] px-4 pl-[68px] pb-3 border-b border-gray-200 bg-gray-50 pt-[calc(17px+env(safe-area-inset-top))]">
             <div className="flex bg-gray-100 rounded-full p-1 w-full border border-gray-200">

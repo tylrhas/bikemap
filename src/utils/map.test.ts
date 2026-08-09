@@ -494,9 +494,8 @@ describe('flyToBounds', () => {
       getCanvas: vi.fn(canvas),
     } as unknown as mapboxgl.Map;
 
-    // Nothing open, so every side is the base inset — but as an object, which
-    // is what lets an open panel push one side out.
-    setChromeState({});
+    // A phone has no rail, so this is the one case that is symmetric.
+    setChromeState({ narrow: true });
     flyToBounds(mockMap, mockBounds);
 
     expect(mockMap.fitBounds).toHaveBeenCalledWith(mockBounds, {
@@ -534,6 +533,7 @@ describe('flyToBounds', () => {
       getSouth: () => 34.0,
     } as mapboxgl.LngLatBounds;
 
+    setChromeState({ narrow: true });
     flyToBounds(mockMap, largeBounds);
 
     expect(mockMap.fitBounds).toHaveBeenCalledWith(largeBounds, {
