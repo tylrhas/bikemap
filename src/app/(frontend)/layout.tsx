@@ -6,6 +6,7 @@ import './map.css';
 import Script from 'next/script';
 import { headers } from 'next/headers';
 import { siteConfig, siteConfigForHostname } from '@/config/site.config';
+import { getMapAppearanceCss } from '@/payload/read/map-appearance';
 
 // Self-hosted to keep production builds reproducible and offline-capable
 // (next/font/google would fetch from Google Fonts at build time).
@@ -59,10 +60,19 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const config = siteConfigForHostname(await getRequestHostname());
+  // Colours edited in the admin win over the defaults in globals.css. Empty
+  // when nothing is saved or the database is unreachable — the map keeps its
+  // brand either way.
+  const appearanceCss = await getMapAppearanceCss();
 
   return (
     <html lang="en">
       <head>
+        {/* Built from hex values the read layer validated, never from raw
+            input — a malformed colour is dropped rather than escaped. */}
+        {appearanceCss && (
+          <style dangerouslySetInnerHTML={{ __html: appearanceCss }} />
+        )}
         <link rel="icon" href="/favicon.png" type="image/png" sizes="32x32" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />

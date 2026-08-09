@@ -11,6 +11,7 @@ import { TrailRatings } from './payload/collections/TrailRatings';
 import { Trails } from './payload/collections/Trails';
 import { Users } from './payload/collections/Users';
 import { ConditionReporting } from './payload/globals/ConditionReporting';
+import { MapAppearance } from './payload/globals/MapAppearance';
 import { Theme } from './payload/globals/Theme';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -52,7 +53,7 @@ export default buildConfig({
     Organizations,
     Users,
   ],
-  globals: [ConditionReporting, Theme],
+  globals: [ConditionReporting, MapAppearance, Theme],
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),

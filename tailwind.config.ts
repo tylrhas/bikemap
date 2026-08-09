@@ -121,8 +121,12 @@ const config: Config = {
       },
       colors: {
         // App brand colors
-        'app-primary': '#c3f44d',
-        'app-secondary': '#1a434e',
+        // Channels, not hex, so opacity modifiers still resolve —
+        // `ring-app-primary/30` becomes `rgb(var(--app-primary) / 0.3)`.
+        // Defaults live in globals.css; the admin overrides them per
+        // deployment via the Map appearance global.
+        'app-primary': 'rgb(var(--app-primary) / <alpha-value>)',
+        'app-secondary': 'rgb(var(--app-secondary) / <alpha-value>)',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {

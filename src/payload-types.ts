@@ -101,10 +101,12 @@ export interface Config {
   fallbackLocale: null;
   globals: {
     'condition-reporting': ConditionReporting;
+    'map-appearance': MapAppearance;
     theme: Theme;
   };
   globalsSelect: {
     'condition-reporting': ConditionReportingSelect<false> | ConditionReportingSelect<true>;
+    'map-appearance': MapAppearanceSelect<false> | MapAppearanceSelect<true>;
     theme: ThemeSelect<false> | ThemeSelect<true>;
   };
   locale: null;
@@ -776,6 +778,25 @@ export interface ConditionReporting {
   createdAt?: string | null;
 }
 /**
+ * The colours riders see. Trail and condition colours live under Lists — these are the interface itself.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "map-appearance".
+ */
+export interface MapAppearance {
+  id: number;
+  /**
+   * Selected trails, focus rings, the main button. Used sparingly — leave blank for the default.
+   */
+  primaryColor?: string | null;
+  /**
+   * Headings and body text across the map interface. Needs to stay readable on white.
+   */
+  secondaryColor?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * How the admin looks. Changes apply on the next page load. Clear a field to fall back to the default.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -811,6 +832,17 @@ export interface Theme {
 export interface ConditionReportingSelect<T extends boolean = true> {
   enabled?: T;
   disabledMessage?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "map-appearance_select".
+ */
+export interface MapAppearanceSelect<T extends boolean = true> {
+  primaryColor?: T;
+  secondaryColor?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
