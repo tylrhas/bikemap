@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faTimes,
   faLayerGroup,
+  faBicycle,
   faMountain,
 } from '@fortawesome/free-solid-svg-icons';
 
@@ -25,6 +26,7 @@ import {
 import { getRideStyle } from './WelcomeModal';
 import { getSetting, setSetting } from '@/utils/settings';
 import { useIsNarrow } from '@/hooks/useIsNarrow';
+import { NavRail, type RailItem } from './sidebar/NavRail';
 import {
   clampSnap,
   dragFraction,
@@ -50,6 +52,14 @@ const hasRoutesSection =
   bikeResources.length > 0 ||
   Boolean(mapConfig.gbfs);
 const hasTrailsSection = true;
+
+/** What the desktop rail offers. Mirrors the sections the panel can show. */
+const RAIL_ITEMS: RailItem[] = [
+  ...(hasRoutesSection
+    ? [{ icon: faBicycle, key: 'routes', label: 'Casual routes' }]
+    : []),
+  { icon: faMountain, key: 'trails', label: 'Mountain trails' },
+];
 
 // Main provider component
 export function MapLegendProvider({ children }: { children: React.ReactNode }) {
@@ -133,6 +143,19 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
       window.removeEventListener(MAP_EVENTS.ROUTE_SELECT, toPeek);
     };
   }, [narrow]);
+
+  useEffect(() => {
+    if (narrow || isOpen) {
+      return;
+    }
+    // Desktop always shows the panel now; anyone arriving with it saved as
+    // closed would otherwise get an elevation pane tucked underneath it.
+    setIsOpen(true);
+    setSetting('sidebarOpen', true);
+    window.dispatchEvent(
+      new CustomEvent(MAP_EVENTS.SIDEBAR_TOGGLE, { detail: { isOpen: true } }),
+    );
+  }, [narrow, isOpen]);
 
   /**
    * The sheet is never "closed", so the rest of the app is told it is open
@@ -459,10 +482,14 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
     <>
       {children}
 
-      {/* Toggle button */}
+      {/*
+        Only on a phone. On desktop the panel is always open and the rail is
+        how you change what it shows, so a button to reveal it had nothing left
+        to do.
+      */}
       <div
         className={cn(
-          'fixed left-4 top-[calc(1rem+env(safe-area-inset-top))]',
+          'fixed left-4 top-[calc(1rem+env(safe-area-inset-top))] md:hidden',
           isOpen ? 'z-drawer-toggle-open' : 'z-drawer-toggle',
         )}
       >
@@ -490,12 +517,11 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
           sheetRef.current = node;
         }}
         className={cn(
-          'fixed bg-white z-drawer overflow-hidden flex flex-col',
+          'fixed bg-white z-drawer overflow-hidden flex',
           !dragging && 'transition-transform duration-300 ease-in-out',
           narrow
-            ? 'left-0 right-0 bottom-0 h-[92%] rounded-t-2xl shadow-[0_-8px_32px_rgba(0,0,0,0.16)]'
-            : 'top-0 left-0 h-full w-[280px] shadow-[2px_0_5px_rgba(0,0,0,0.1)]',
-          !narrow && (isOpen ? 'translate-x-0' : '-translate-x-full'),
+            ? 'flex-col left-0 right-0 bottom-0 h-[92%] rounded-t-2xl shadow-[0_-8px_32px_rgba(0,0,0,0.16)]'
+            : 'flex-row top-0 left-0 h-full w-[376px] shadow-[2px_0_16px_rgba(14,34,41,0.10)]',
         )}
         style={
           narrow
@@ -527,104 +553,116 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
             <span className="block w-9 h-1 rounded-full bg-gray-300" />
           </button>
         )}
-        {/* Casual / MTB toggle in header */}
-        <div className="flex justify-center items-center py-[17px] px-4 pl-[68px] pb-3 border-b border-gray-200 bg-gray-50 pt-[calc(17px+env(safe-area-inset-top))]">
-          <div className="flex bg-gray-100 rounded-full p-1 w-full border border-gray-200">
-            {hasRoutesSection && (
-              <button
-                type="button"
-                className={cn(
-                  'flex-1 py-1.5 px-4 text-sm font-medium rounded-full transition-colors',
-                  activeSection === 'routes'
-                    ? 'bg-white text-gray-800 shadow-sm'
-                    : 'text-gray-500 hover:text-gray-700',
-                )}
-                onClick={() => switchTab('routes')}
-              >
-                Casual
-              </button>
-            )}
-            {hasTrailsSection && (
-              <button
-                type="button"
-                className={cn(
-                  'flex-1 py-1.5 px-4 text-sm font-medium rounded-full transition-colors',
-                  activeSection === 'trails'
-                    ? 'bg-white text-gray-800 shadow-sm'
-                    : 'text-gray-500 hover:text-gray-700',
-                )}
-                onClick={() => switchTab('trails')}
-              >
-                MTB
-              </button>
-            )}
+
+        {/* Desktop: the rail sits beside the content, not above it. */}
+        {!narrow && (
+          <NavRail
+            active={activeSection}
+            items={RAIL_ITEMS}
+            onSelect={(key) => switchTab(key as 'routes' | 'trails')}
+          />
+        )}
+
+        <div className="flex-1 min-w-0 flex flex-col overflow-hidden">
+          {/* The phone has no rail, so it keeps the pill. */}
+          <div className="md:hidden flex justify-center items-center py-[17px] px-4 pl-[68px] pb-3 border-b border-gray-200 bg-gray-50 pt-[calc(17px+env(safe-area-inset-top))]">
+            <div className="flex bg-gray-100 rounded-full p-1 w-full border border-gray-200">
+              {hasRoutesSection && (
+                <button
+                  type="button"
+                  className={cn(
+                    'flex-1 py-1.5 px-4 text-sm font-medium rounded-full transition-colors',
+                    activeSection === 'routes'
+                      ? 'bg-white text-gray-800 shadow-sm'
+                      : 'text-gray-500 hover:text-gray-700',
+                  )}
+                  onClick={() => switchTab('routes')}
+                >
+                  Casual
+                </button>
+              )}
+              {hasTrailsSection && (
+                <button
+                  type="button"
+                  className={cn(
+                    'flex-1 py-1.5 px-4 text-sm font-medium rounded-full transition-colors',
+                    activeSection === 'trails'
+                      ? 'bg-white text-gray-800 shadow-sm'
+                      : 'text-gray-500 hover:text-gray-700',
+                  )}
+                  onClick={() => switchTab('trails')}
+                >
+                  MTB
+                </button>
+              )}
+            </div>
           </div>
-        </div>
 
-        <div className="overflow-y-auto flex-1 min-h-0">
-          <div className="px-4 pb-4 pt-2">
-            {activeSection === 'routes' && (
-              <>
-                <BikeRoutes
-                  selectedRoute={selectedRoute}
-                  onRouteSelect={handleRouteSelect}
-                />
-
-                {bikeNetworkUrl && (
-                  <BikeNetworkLayer
-                    isActive={showBikeNetwork}
-                    onToggle={toggleBikeNetworkLayer}
+          <div className="overflow-y-auto flex-1 min-h-0">
+            <div className="px-4 pb-4 pt-2">
+              {activeSection === 'routes' && (
+                <>
+                  <BikeRoutes
+                    selectedRoute={selectedRoute}
+                    onRouteSelect={handleRouteSelect}
                   />
-                )}
 
-                <MapLayers
-                  showAttractions={showAttractions}
-                  showBikeResources={showBikeResources}
-                  showBikeRentals={showBikeRentals}
-                  onToggleAttractions={toggleAttractionLayer}
-                  onToggleBikeResources={toggleBikeResourcesLayer}
-                  onToggleBikeRentals={toggleBikeRentalsLayer}
-                />
+                  {bikeNetworkUrl && (
+                    <BikeNetworkLayer
+                      isActive={showBikeNetwork}
+                      onToggle={toggleBikeNetworkLayer}
+                    />
+                  )}
 
-                <AttractionsList
-                  show={showAttractions}
-                  onCenterLocation={centerOnLocation}
-                />
-
-                <BikeResourcesList
-                  show={showBikeResources}
-                  onCenterLocation={centerOnLocation}
-                />
-
-                <BikeRentalList
-                  show={showBikeRentals}
-                  onCenterLocation={centerOnLocation}
-                />
-              </>
-            )}
-
-            {activeSection === 'trails' && (
-              <>
-                <MapLayersSection>
-                  <ToggleRow
-                    icon={faMountain}
-                    label="Nationwide trails"
-                    isActive={showOsmTrails}
-                    onToggle={toggleOsmTrailsLayer}
+                  <MapLayers
+                    showAttractions={showAttractions}
+                    showBikeResources={showBikeResources}
+                    showBikeRentals={showBikeRentals}
+                    onToggleAttractions={toggleAttractionLayer}
+                    onToggleBikeResources={toggleBikeResourcesLayer}
+                    onToggleBikeRentals={toggleBikeRentalsLayer}
                   />
-                </MapLayersSection>
 
-                {getMountainBikeTrails().length > 0 && (
-                  <MountainBikeTrails
-                    selectedTrail={selectedTrail}
-                    onTrailSelect={handleTrailSelect}
-                    onAreaSelect={handleAreaSelect}
+                  <AttractionsList
+                    show={showAttractions}
+                    onCenterLocation={centerOnLocation}
                   />
-                )}
-              </>
-            )}
 
-            <InformationSection />
+                  <BikeResourcesList
+                    show={showBikeResources}
+                    onCenterLocation={centerOnLocation}
+                  />
+
+                  <BikeRentalList
+                    show={showBikeRentals}
+                    onCenterLocation={centerOnLocation}
+                  />
+                </>
+              )}
+
+              {activeSection === 'trails' && (
+                <>
+                  <MapLayersSection>
+                    <ToggleRow
+                      icon={faMountain}
+                      label="Nationwide trails"
+                      isActive={showOsmTrails}
+                      onToggle={toggleOsmTrailsLayer}
+                    />
+                  </MapLayersSection>
+
+                  {getMountainBikeTrails().length > 0 && (
+                    <MountainBikeTrails
+                      selectedTrail={selectedTrail}
+                      onTrailSelect={handleTrailSelect}
+                      onAreaSelect={handleAreaSelect}
+                    />
+                  )}
+                </>
+              )}
+
+              <InformationSection />
+            </div>
           </div>
         </div>
       </div>

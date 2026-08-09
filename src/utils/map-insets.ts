@@ -16,8 +16,8 @@ export const BASE_INSET = 60;
 
 /** Widths of the panels that cover the map. Match the components. */
 export const CHROME = {
-  /** MapLegend, `w-[280px]`. */
-  sidebar: 280,
+  /** MapLegend on desktop: the 56px rail plus the 320px column. */
+  sidebar: 376,
   /** RidesPanel, `w-[296px]`. */
   ridesPanel: 296,
   /** The elevation pane, measured at its tallest. */
