@@ -24,7 +24,6 @@ import {
   faTimes,
 } from '@fortawesome/free-solid-svg-icons';
 import { cn } from '@/lib/utils';
-import { getSetting } from '@/utils/settings';
 import { siteConfig } from '@/config/site.config';
 import { TOGGLE_BTN_CLASS, TOGGLE_ICON_CLASS } from '@/components/styles';
 import { useTrailConditions } from '@/components/TrailConditionsProvider';
@@ -278,9 +277,6 @@ export function ElevationProfile() {
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
   const [locationIndex, setLocationIndex] = useState<number | null>(null);
   const [chartWidth, setChartWidth] = useState(800);
-  const [sidebarOpen, setSidebarOpen] = useState(
-    () => getSetting('sidebarOpen') ?? true,
-  );
   const [ridesPanelOpen, setRidesPanelOpen] = useState(false);
   const svgRef = useRef<SVGSVGElement>(null);
   // Track whether current profile is from a route, trail, or ride selection
@@ -354,9 +350,6 @@ export function ElevationProfile() {
         window.history.replaceState(null, '', window.location.pathname);
       }
     };
-    const handleSidebarToggle = (e: Event) => {
-      setSidebarOpen((e as CustomEvent).detail.isOpen);
-    };
     const handleRidesPanelToggle = (e: Event) => {
       setRidesPanelOpen((e as CustomEvent).detail.isOpen);
     };
@@ -416,7 +409,6 @@ export function ElevationProfile() {
     window.addEventListener(MAP_EVENTS.TRAIL_DESELECT, handleTrailDeselect);
     window.addEventListener(MAP_EVENTS.ROUTE_SELECT, handleRouteSelect);
     window.addEventListener(MAP_EVENTS.ROUTE_DESELECT, handleRouteDeselect);
-    window.addEventListener(MAP_EVENTS.SIDEBAR_TOGGLE, handleSidebarToggle);
     window.addEventListener(
       MAP_EVENTS.RIDES_PANEL_TOGGLE,
       handleRidesPanelToggle,
@@ -446,10 +438,6 @@ export function ElevationProfile() {
       window.removeEventListener(
         MAP_EVENTS.ROUTE_DESELECT,
         handleRouteDeselect,
-      );
-      window.removeEventListener(
-        MAP_EVENTS.SIDEBAR_TOGGLE,
-        handleSidebarToggle,
       );
       window.removeEventListener(
         MAP_EVENTS.RIDES_PANEL_TOGGLE,
@@ -643,10 +631,7 @@ export function ElevationProfile() {
     return (
       <div
         className={cn(
-          'fixed bottom-[60px] z-elevation pointer-events-auto',
-          sidebarOpen
-            ? 'left-[392px] max-md:left-4'
-            : 'left-[72px] max-md:left-4',
+          'absolute bottom-[60px] left-4 z-elevation pointer-events-auto',
         )}
       >
         <button
@@ -666,11 +651,8 @@ export function ElevationProfile() {
   return (
     <div
       className={cn(
-        'fixed bottom-4 right-4 bg-white rounded-lg shadow-[0_2px_12px_rgba(0,0,0,0.15)] px-4 pt-2.5 pb-1.5 z-elevation pointer-events-auto transition-all duration-300',
+        'absolute bottom-4 right-4 left-4 bg-white rounded-lg shadow-[0_2px_12px_rgba(0,0,0,0.15)] px-4 pt-2.5 pb-1.5 z-elevation pointer-events-auto transition-all duration-300',
         'max-md:left-2 max-md:right-2 max-md:bottom-[60px] max-md:px-2 max-md:pt-2 max-md:pb-1',
-        sidebarOpen
-          ? 'left-[392px] max-md:hidden'
-          : 'left-[72px] max-md:left-4',
         ridesPanelOpen && 'right-[296px]',
       )}
     >

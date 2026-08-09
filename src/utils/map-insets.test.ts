@@ -2,38 +2,23 @@ import { describe, expect, it } from 'vitest';
 import { BASE_INSET, CHROME, computeInsets, fitInsets } from './map-insets';
 
 describe('computeInsets', () => {
-  it('always clears the rail on desktop, even with the list collapsed', () => {
-    // The rail never goes away, so there is no desktop state where the left
-    // edge of the map is the left edge of the window.
-    expect(computeInsets()).toEqual({
-      bottom: BASE_INSET,
-      left: BASE_INSET + CHROME.rail,
-      right: BASE_INSET,
-      top: BASE_INSET,
-    });
-  });
-
-  it('is symmetric on a phone, which has no rail', () => {
-    expect(computeInsets({ narrow: true })).toEqual({
+  it('is symmetric with nothing floating over the map', () => {
+    // The trail panel is a column beside the map, so it never needs clearing —
+    // that is the whole point of the layout.
+    const symmetric = {
       bottom: BASE_INSET,
       left: BASE_INSET,
       right: BASE_INSET,
       top: BASE_INSET,
-    });
+    };
+    expect(computeInsets()).toEqual(symmetric);
+    expect(computeInsets({ narrow: true })).toEqual(symmetric);
   });
 
-  it('pushes the camera clear of an open sidebar', () => {
-    // The bug this exists for: without it a trail centres in the whole window,
-    // which is behind the sidebar.
-    const insets = computeInsets({ sidebarOpen: true });
-    expect(insets.left).toBe(BASE_INSET + CHROME.sidebar);
-    expect(insets.right).toBe(BASE_INSET);
-  });
-
-  it('accounts for both side panels at once', () => {
-    const insets = computeInsets({ ridesPanelOpen: true, sidebarOpen: true });
-    expect(insets.left).toBe(BASE_INSET + CHROME.sidebar);
+  it('clears the rides panel, which does still float over the map', () => {
+    const insets = computeInsets({ ridesPanelOpen: true });
     expect(insets.right).toBe(BASE_INSET + CHROME.ridesPanel);
+    expect(insets.left).toBe(BASE_INSET);
   });
 
   it('lifts the camera above the elevation pane', () => {
@@ -42,24 +27,10 @@ describe('computeInsets', () => {
     );
   });
 
-  it('widens from rail to full panel when the list opens', () => {
-    expect(computeInsets({ sidebarOpen: false }).left).toBe(
-      BASE_INSET + CHROME.rail,
-    );
-    expect(computeInsets({ sidebarOpen: true }).left).toBe(
-      BASE_INSET + CHROME.sidebar,
-    );
-  });
-
-  it('ignores side panels on a narrow screen', () => {
-    // There they cover the map entirely, so there is no visible region to aim
+  it('ignores the rides panel on a narrow screen', () => {
+    // There it covers the map entirely, so there is no visible region to aim
     // at — squeezing into a sliver would be worse than centring.
-    const insets = computeInsets({
-      narrow: true,
-      ridesPanelOpen: true,
-      sidebarOpen: true,
-    });
-    expect(insets.left).toBe(BASE_INSET);
+    const insets = computeInsets({ narrow: true, ridesPanelOpen: true });
     expect(insets.right).toBe(BASE_INSET);
   });
 
@@ -73,14 +44,14 @@ describe('computeInsets', () => {
 
 describe('fitInsets', () => {
   it('leaves generous insets alone when there is room', () => {
-    const insets = computeInsets({ sidebarOpen: true });
+    const insets = computeInsets({ ridesPanelOpen: true });
     expect(fitInsets(insets, 1440, 900)).toEqual(insets);
   });
 
   it('shrinks rather than letting fitBounds fail', () => {
     // Two panels on a small window ask for more padding than exists; Mapbox
     // throws on that, and an off-centre trail beats no camera move.
-    const insets = computeInsets({ ridesPanelOpen: true, sidebarOpen: true });
+    const insets = computeInsets({ elevationOpen: true, ridesPanelOpen: true });
     const fitted = fitInsets(insets, 700, 500);
     expect(fitted.left + fitted.right).toBeLessThanOrEqual(700 * 0.75);
     expect(fitted.left).toBeGreaterThan(0);
@@ -88,8 +59,8 @@ describe('fitInsets', () => {
   });
 
   it('keeps the larger side larger when it shrinks', () => {
-    const fitted = fitInsets(computeInsets({ sidebarOpen: true }), 400, 400);
-    expect(fitted.left).toBeGreaterThan(fitted.right);
+    const fitted = fitInsets(computeInsets({ ridesPanelOpen: true }), 400, 400);
+    expect(fitted.right).toBeGreaterThan(fitted.left);
   });
 
   it('survives a zero-sized canvas', () => {

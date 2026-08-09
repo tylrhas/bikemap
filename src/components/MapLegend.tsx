@@ -466,7 +466,13 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <>
+    /*
+      The layout row. On desktop the panel is a column in it and the map takes
+      the rest, so the map's viewport is the part you can see — which is what
+      lets the offsets below disappear. On a phone the sheet floats over the
+      map instead, and this is just a full-bleed container.
+    */
+    <div className="flex h-full w-full overflow-hidden">
       {children}
 
       {/*
@@ -504,12 +510,17 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
           sheetRef.current = node;
         }}
         className={cn(
-          'fixed bg-white z-drawer overflow-hidden flex',
-          !dragging && 'transition-transform duration-300 ease-in-out',
+          'bg-white z-drawer overflow-hidden flex',
           narrow
-            ? 'flex-col left-0 right-0 bottom-0 h-[92%] rounded-t-2xl shadow-[0_-8px_32px_rgba(0,0,0,0.16)]'
+            ? cn(
+                'fixed flex-col left-0 right-0 bottom-0 h-[92%] rounded-t-2xl shadow-[0_-8px_32px_rgba(0,0,0,0.16)]',
+                !dragging && 'transition-transform duration-300 ease-in-out',
+              )
             : cn(
-                'flex-row top-0 left-0 h-full shadow-[2px_0_16px_rgba(14,34,41,0.10)] transition-[width] duration-300 ease-in-out',
+                // `order-first` rather than moving it in the DOM: the provider
+                // renders children before the panel, and reordering that would
+                // change what every consumer sees.
+                'relative order-first flex-none flex-row h-full shadow-[2px_0_16px_rgba(14,34,41,0.10)] transition-[width] duration-300 ease-in-out',
                 isOpen ? 'w-[376px]' : 'w-14',
               ),
         )}
@@ -677,6 +688,6 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

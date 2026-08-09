@@ -14,24 +14,24 @@
 /** Breathing room between a fitted trail and the edge of the visible map. */
 export const BASE_INSET = 60;
 
-/** Widths of the panels that cover the map. Match the components. */
+/**
+ * Widths of the things that still cover the map. Match the components.
+ *
+ * The trail panel is not here on purpose: it is a column beside the map now,
+ * so it hides nothing and the camera has no reason to know how wide it is.
+ */
 export const CHROME = {
-  /** MapLegend on desktop: the 56px rail plus the 320px column. */
-  sidebar: 376,
-  /** The rail alone, which stays put when the list collapses. */
-  rail: 56,
-  /** RidesPanel, `w-[296px]`. */
+  /** RidesPanel, `w-[296px]`, still floats over the map. */
   ridesPanel: 296,
-  /** The elevation pane, measured at its tallest. */
+  /** The elevation dock, measured at its tallest. */
   elevation: 150,
 };
 
 export interface ChromeState {
   elevationOpen?: boolean;
-  /** True below `md`, where panels cover the map rather than sitting beside it. */
+  /** True below `md`, where the sheet floats over the map rather than beside it. */
   narrow?: boolean;
   ridesPanelOpen?: boolean;
-  sidebarOpen?: boolean;
 }
 
 export interface Insets {
@@ -58,12 +58,11 @@ export function computeInsets(state: ChromeState = {}): Insets {
     top: BASE_INSET,
   };
 
-  if (!state.narrow) {
-    // The rail never goes away, so even a collapsed panel covers something.
-    insets.left += state.sidebarOpen ? CHROME.sidebar : CHROME.rail;
-    if (state.ridesPanelOpen) {
-      insets.right += CHROME.ridesPanel;
-    }
+  // The panel is a column beside the map on desktop, so it covers nothing and
+  // needs no inset — that is the point of the layout. The rides panel still
+  // floats over the map, so it does.
+  if (!state.narrow && state.ridesPanelOpen) {
+    insets.right += CHROME.ridesPanel;
   }
 
   if (state.elevationOpen) {

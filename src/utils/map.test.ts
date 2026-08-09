@@ -505,18 +505,18 @@ describe('flyToBounds', () => {
     });
   });
 
-  it('clears an open sidebar so the trail is not centred behind it', () => {
+  it('clears the rides panel so the trail is not centred behind it', () => {
     const mockMap = {
       fitBounds: vi.fn(),
       getCanvas: vi.fn(canvas),
     } as unknown as mapboxgl.Map;
 
-    setChromeState({ sidebarOpen: true });
+    setChromeState({ ridesPanelOpen: true });
     flyToBounds(mockMap, mockBounds);
 
     const padding = (mockMap.fitBounds as ReturnType<typeof vi.fn>).mock
       .calls[0][1].padding;
-    expect(padding.left).toBeGreaterThan(padding.right);
+    expect(padding.right).toBeGreaterThan(padding.left);
     setChromeState({});
   });
 

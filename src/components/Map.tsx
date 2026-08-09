@@ -66,7 +66,6 @@ import { mapConfig } from '@/config/map.config';
 import { useTrailConditions } from '@/components/TrailConditionsProvider';
 import { closedTrails } from '@/data/trail-conditions';
 import { MAP_EVENTS } from '@/events';
-import { getSetting } from '@/utils/settings';
 import { HeadingSmoother } from '@/utils/compass';
 
 // Recenter pause durations: how long to suppress auto-centering after
@@ -1528,14 +1527,9 @@ const MapboxMap = memo(function MapboxMap() {
       elevationOpen: false,
       narrow: media.matches,
       ridesPanelOpen: false,
-      sidebarOpen: getSetting('sidebarOpen') ?? true,
     };
     const publish = () => setChromeState({ ...state });
 
-    const onSidebar = (e: Event) => {
-      state.sidebarOpen = (e as CustomEvent).detail?.isOpen ?? false;
-      publish();
-    };
     const onRides = (e: Event) => {
       state.ridesPanelOpen = (e as CustomEvent).detail?.isOpen ?? false;
       publish();
@@ -1555,7 +1549,6 @@ const MapboxMap = memo(function MapboxMap() {
     };
 
     publish();
-    window.addEventListener(MAP_EVENTS.SIDEBAR_TOGGLE, onSidebar);
     window.addEventListener(MAP_EVENTS.RIDES_PANEL_TOGGLE, onRides);
     window.addEventListener(MAP_EVENTS.TRAIL_SELECT, onSelect);
     window.addEventListener(MAP_EVENTS.TRAIL_DESELECT, onDeselect);
@@ -1563,7 +1556,6 @@ const MapboxMap = memo(function MapboxMap() {
     media.addEventListener('change', onViewport);
 
     return () => {
-      window.removeEventListener(MAP_EVENTS.SIDEBAR_TOGGLE, onSidebar);
       window.removeEventListener(MAP_EVENTS.RIDES_PANEL_TOGGLE, onRides);
       window.removeEventListener(MAP_EVENTS.TRAIL_SELECT, onSelect);
       window.removeEventListener(MAP_EVENTS.TRAIL_DESELECT, onDeselect);
@@ -1670,7 +1662,7 @@ const MapboxMap = memo(function MapboxMap() {
 export default function BikeMap() {
   return (
     <MapLegendProvider>
-      <div className="w-screen h-full relative overflow-visible">
+      <div className="flex-1 min-w-0 h-full relative overflow-hidden">
         <MapboxMap />
         <RidesPanel />
       </div>
