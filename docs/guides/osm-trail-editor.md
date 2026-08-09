@@ -416,38 +416,37 @@ within a minute without a rebuild. Trail edits are rare and the payload is a few
 hundred rows, so this serves a cached render and refreshes in the background
 rather than hitting the database per request.
 
-## Admin appearance
+## Theme
 
-Two layers, so the common case needs no code:
+**Settings → Theme** (`/admin/globals/map-appearance`) is the site's theme, and
+it themes the **public map** — the name and logo at the top of the trail panel,
+five colors, and the two type stacks. Three tabs: Identity, Colors, Type.
 
-1. **`src/app/(payload)/custom.css`** — the defaults. Sets CSS custom properties
-   only, never Payload's own selectors, because variables are a supported
-   surface and class names like `.btn__content` are internals that move between
-   releases. It's unlayered while Payload's styles live in
-   `@layer payload-default, payload`, so unlayered rules win and nothing needs
-   `!important`.
-2. **Settings → Theme** (`/admin/globals/theme`) — editable in the UI, stored in
-   the database, injected by the admin layout as variables that override the
-   stylesheet. Color swatches, corner style, font, neutral tint, plus a custom
-   CSS escape hatch.
+Every field is optional. Blank means the default in
+`src/app/(frontend)/globals.css` or `src/config/site.config.ts`, so a deployment
+that never opens the form is fully branded and clearing a field is how you reset
+it. See "The map's brand" in `CLAUDE.md` for the mechanics — channels rather than
+hex, one variable per type role, and why the logo and the webfont are URLs
+rather than uploads.
 
-Every theme field is optional: an unset field falls through to the stylesheet
-default, so clearing a field is how you reset it.
+Like the trail reader, `getMapBrand` **never throws**: no database, an
+unreachable one, or an unset global all leave the defaults standing.
 
-**The one trick worth knowing:** `--theme-elevation-*` — the greys the whole UI
-is built from — all resolve to a `--color-base-*` scale, and Payload derives
-dark mode by *inverting* that scale. So retinting the base ramp once themes both
-modes coherently, which is why "neutral tint" is a single setting rather than
-two.
+**The admin's own appearance is not editable.** It is whatever
+`src/app/(payload)/custom.css` says — CSS custom properties only, never
+Payload's own selectors, because variables are a supported surface and class
+names like `.btn__content` are internals that move between releases. It's
+unlayered while Payload's styles live in `@layer payload-default, payload`, so
+unlayered rules win and nothing needs `!important`.
 
-`customCss` is injected verbatim, so `sanitizeCss` strips `<` and `>` — a stray
-`</style>` would otherwise turn styling into markup. It's admin-only, but
-"trusted input" is exactly how injection bugs get written.
+There used to be a second global for that, which meant two things called a theme
+and a curator having to know which one riders would ever see. Editing this file
+is a deploy, which is the right cost for a change only staff look at.
 
-Like the trail reader, `getThemeCss` **never throws**: no database, an
-unreachable one, or an unset global all return an empty string and the
-stylesheet defaults stand. Nobody should be locked out of the admin by a theme
-row.
+**The one trick worth knowing if you do edit it:** `--theme-elevation-*` — the
+greys the whole UI is built from — all resolve to a `--color-base-*` scale, and
+Payload derives dark mode by *inverting* that scale. So retinting the base ramp
+once themes both modes coherently.
 
 ## How the admin is laid out
 
@@ -474,7 +473,7 @@ page. The markup mirrors `DefaultNavClient` in `@payloadcms/next`.
 |---|---|
 | **Trails** | Trails. The daily job, on its own so it is never something to scroll past. |
 | **Lists** | Trail complexes, ratings, kinds, stewards — everything that exists only to populate a dropdown on a trail. Named for what a curator does with them rather than what they are; "Vocabulary" and "Taxonomy" are terms for people who build CMSes, not people who maintain trails. |
-| **Settings** | Theme, users. |
+| **Settings** | Theme (the public map's), condition reporting, users. |
 
 **The trail form** is three unnamed tabs:
 
@@ -510,7 +509,7 @@ the five most recently edited. It is additive — Payload's collection cards sti
 render below it, so the normal way into a collection survives this failing.
 
 Two things it has to keep doing. `getTrailSummary` **never throws**, like
-`getCityTrails` and `getThemeCss`: the dashboard is the first page after signing
+`getCityTrails` and `getMapBrand`: the dashboard is the first page after signing
 in, so an exception there is an admin nobody can get into, over a decorative
 panel. And an unreachable database shows `—`, never `0` — a zero is a claim.
 

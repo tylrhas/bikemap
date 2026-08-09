@@ -102,12 +102,10 @@ export interface Config {
   globals: {
     'condition-reporting': ConditionReporting;
     'map-appearance': MapAppearance;
-    theme: Theme;
   };
   globalsSelect: {
     'condition-reporting': ConditionReportingSelect<false> | ConditionReportingSelect<true>;
     'map-appearance': MapAppearanceSelect<false> | MapAppearanceSelect<true>;
-    theme: ThemeSelect<false> | ThemeSelect<true>;
   };
   locale: null;
   widgets: {
@@ -778,7 +776,7 @@ export interface ConditionReporting {
   createdAt?: string | null;
 }
 /**
- * The name, colors and type riders see. Trail and condition colors live under Lists — these are the interface itself. Leave a field blank for the default.
+ * The name, colors and type riders see on the map. Trail and condition colors live under Lists — these are the interface itself. Leave a field blank for the default.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "map-appearance".
@@ -829,35 +827,6 @@ export interface MapAppearance {
   createdAt?: string | null;
 }
 /**
- * How the admin looks. Changes apply on the next page load. Clear a field to fall back to the default.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "theme".
- */
-export interface Theme {
-  id: number;
-  /**
-   * Focus rings and highlights. Default #c3f44d.
-   */
-  accentColor?: string | null;
-  /**
-   * Deep brand color. Default #1a434e.
-   */
-  deepColor?: string | null;
-  /**
-   * The cast of the greys everything is built from. Applies to both light and dark mode, because Payload derives dark mode by inverting the same scale.
-   */
-  neutralTint?: ('cool' | 'neutral' | 'warm') | null;
-  cornerStyle?: ('sharp' | 'soft' | 'round') | null;
-  fontFamily?: ('geist' | 'system' | 'serif') | null;
-  /**
-   * Escape hatch for anything the fields above do not cover. Injected verbatim into the admin. Admins only — treat it as code.
-   */
-  customCss?: string | null;
-  updatedAt?: string | null;
-  createdAt?: string | null;
-}
-/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "condition-reporting_select".
  */
@@ -883,21 +852,6 @@ export interface MapAppearanceSelect<T extends boolean = true> {
   fontUrl?: T;
   displayFont?: T;
   bodyFont?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  globalType?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "theme_select".
- */
-export interface ThemeSelect<T extends boolean = true> {
-  accentColor?: T;
-  deepColor?: T;
-  neutralTint?: T;
-  cornerStyle?: T;
-  fontFamily?: T;
-  customCss?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

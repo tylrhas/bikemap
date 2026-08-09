@@ -3,11 +3,16 @@ import { safeUrl, sanitizeFontStack } from '@/data/brand';
 import { slugValidator } from '@/payload/collections/vocabulary-fields';
 
 /**
- * The public map's brand, editable at `/admin/globals/map-appearance`.
+ * The site's theme, editable at `/admin/globals/map-appearance`.
  *
- * Separate from the `theme` global, which dresses the admin. A curator changing
- * how riders see the map and an admin changing how their own tools look are
- * different decisions, and one form for both makes each confusing.
+ * Labelled **Theme**, and it is the only one — the admin's own appearance is
+ * whatever `src/app/(payload)/custom.css` says and is not editable. There used
+ * to be a second global for that, which meant two things called a theme and a
+ * curator having to know which was which.
+ *
+ * The slug stays `map-appearance`: it is the table name and the column prefix,
+ * so renaming it to match the label would be a migration and a sweep for a
+ * word. Same trade as "Steward" over `organizations`.
  *
  * Only colors something actually reads are here. Trail and condition colors
  * are already curated under Lists, and a control that changes nothing is worse
@@ -71,10 +76,10 @@ function colorField(
 
 export const MapAppearance: GlobalConfig = {
   slug: 'map-appearance',
-  label: 'Map appearance',
+  label: 'Theme',
   admin: {
     description:
-      'The name, colors and type riders see. Trail and condition colors live under Lists — these are the interface itself. Leave a field blank for the default.',
+      'The name, colors and type riders see on the map. Trail and condition colors live under Lists — these are the interface itself. Leave a field blank for the default.',
     group: 'Settings',
   },
   access: {

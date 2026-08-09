@@ -389,11 +389,10 @@ measurements are still derived, via the same `measureParts` the OSM path uses.
 - `src/payload/osm/build.ts` — orchestrates the OSM path
 - `src/payload/components/TrailMapEditor.tsx` — the one admin map (pick/move/draw)
 - `src/payload/read/trails.ts` — reads trails back out for the public map
-- `src/payload/globals/Theme.ts` + `read/theme.ts` — admin appearance, editable
-  at `/admin/globals/theme` and injected by the admin layout
 - `src/payload/globals/MapAppearance.ts` + `read/map-appearance.ts` +
-  `src/data/brand.ts` — the **public map's** name, logo, colors and type,
-  editable at `/admin/globals/map-appearance`. See "The map's brand" below
+  `src/data/brand.ts` — the site's **Theme**: the public map's name, logo,
+  colors and type, editable at `/admin/globals/map-appearance`. See "The map's
+  brand" below
 - `src/payload/collections/{Organizations,TrailAreas}.ts` — the options behind
   the steward and trail-complex dropdowns. **Both are admin labels only**:
   "Steward" sits over the slug `organizations` and the field `organization`,
@@ -502,19 +501,20 @@ Things to know before touching it:
   `trail-vocabulary.ts` is the data-model term and is unrelated to the nav
   label — don't rename those to match.)
 - **`getTrailSummary` never throws**, same rule as `getCityTrails` and
-  `getThemeCss` — it feeds the dashboard, which is the first page after signing
+  `getMapBrand` — it feeds the dashboard, which is the first page after signing
   in, so an exception there locks everyone out over a decorative panel. An
   unreachable database renders `—`, never `0`. Note one count is done in JS on
   purpose: `osmReport` is a plain `json` column and `osmReport.warnings.0`
   compiles to a jsonb path Postgres rejects.
-- **Theme the admin with CSS variables, never Payload's selectors.** Defaults
-  live in `src/app/(payload)/custom.css`; the DB-backed overrides come from the
-  Theme global. Class names like `.btn__content` are internals that move between
-  releases. `--theme-elevation-*` resolves to a `--color-base-*` scale that dark
-  mode *inverts*, so retinting that ramp themes both modes at once.
-- **`getThemeCss` never throws**, same rule as `getCityTrails` — a theme row
-  must never lock anyone out of the admin. Its `customCss` is injected verbatim,
-  so `sanitizeCss` strips `<`/`>`; don't remove that.
+- **The admin's own appearance is not editable, on purpose.** It is whatever
+  `src/app/(payload)/custom.css` says. There was a second global for it once,
+  which meant two things called a theme and a curator having to know which one
+  riders would ever see; **Theme** is now the map's, and only the map's. Editing
+  the stylesheet is a deploy, the right cost for a change only staff look at.
+  When you do edit it, use CSS variables and never Payload's selectors — class
+  names like `.btn__content` are internals that move between releases, and
+  `--theme-elevation-*` resolves to a `--color-base-*` scale that dark mode
+  *inverts*, so retinting that ramp themes both modes at once.
 - **The map's brand is seven CSS variables plus a name and a logo, and the Map
   appearance global only overrides them.** `--app-primary` (highlight),
   `--app-secondary` (deep surface), `--app-surface` (light surface),
@@ -530,7 +530,7 @@ Things to know before touching it:
     `buildAppearanceCss` returns `''` when none is set, so a fork that never
     opens the form — or has no database at all — is still fully branded, and
     clearing a field is how a curator resets it.
-  - **`getMapBrand` never throws**, same rule as `getThemeCss`.
+  - **`getMapBrand` never throws**, same rule as `getCityTrails`.
   - **Reach for a token, never the hex.** A literal `#023428` or
     `rgba(2,52,40,…)` in a component silently opts out of the palette. Tinted
     shadows included — write `shadow-[0_1px_3px_rgb(var(--app-secondary)/0.18)]`.

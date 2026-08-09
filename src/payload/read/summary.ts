@@ -9,7 +9,7 @@ import 'server-only';
  * attention: a trail with no line, one whose last save couldn't reach OSM, work
  * left in draft.
  *
- * **Never throws**, the same rule as `getCityTrails` and `getThemeCss`. A
+ * **Never throws**, the same rule as `getCityTrails` and `getMapBrand`. A
  * dashboard is the first page after signing in, so an exception here is an
  * admin nobody can get into — over a decorative panel. Every count degrades to
  * null and the panel says so.

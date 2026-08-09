@@ -3,8 +3,8 @@ import 'server-only';
 /**
  * The public map's brand: colors as CSS, plus the identity the header draws.
  *
- * **Never throws**, the same rule as `getCityTrails` and `getThemeCss` — a
- * theme row must never be able to take the map down. Anything unreadable falls
+ * **Never throws**, the same rule as `getCityTrails` — a theme row
+ * must never be able to take the map down. Anything unreadable falls
  * through to the defaults in `globals.css` and `site.config.ts`.
  *
  * The shaping itself lives in `@/data/brand`, free of Payload, so it stays
