@@ -20,20 +20,12 @@ export function MapLayersSection({ children }: { children: ReactNode }) {
 interface ToggleRowProps {
   icon: IconDefinition;
   label: string;
-  /** One line saying what the layer actually is. Optional. */
-  hint?: string;
   isActive: boolean;
   onToggle: () => void;
 }
 
 // A single labeled toggle row (icon + label + switch) with keyboard support.
-export function ToggleRow({
-  icon,
-  label,
-  hint,
-  isActive,
-  onToggle,
-}: ToggleRowProps) {
+export function ToggleRow({ icon, label, isActive, onToggle }: ToggleRowProps) {
   return (
     <div
       onClick={onToggle}
@@ -60,9 +52,8 @@ export function ToggleRow({
           isActive ? 'text-clay' : 'text-cream/50',
         )}
       />
-      <div className="min-w-0 flex-1">
-        <div className="text-ui font-medium text-cream truncate">{label}</div>
-        {hint && <div className="text-meta text-cream/45 truncate">{hint}</div>}
+      <div className="min-w-0 flex-1 text-ui font-medium text-cream truncate">
+        {label}
       </div>
       <ToggleSwitch isActive={isActive} />
     </div>
