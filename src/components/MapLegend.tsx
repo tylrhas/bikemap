@@ -60,6 +60,12 @@ const hasRoutesData =
 /** The three things the panel can show. */
 type Section = 'rides' | 'routes' | 'trails';
 
+/** The phone's section pills. Clay for the current one, like the rail. */
+const PILL_CLASS =
+  'flex-1 py-1.5 px-4 text-ui font-semibold rounded-full transition-colors';
+const PILL_ON = 'bg-clay text-forest';
+const PILL_OFF = 'text-cream/60 hover:text-cream';
+
 /**
  * Which sections this deployment offers.
  *
@@ -579,8 +585,7 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
           sheetRef.current = node;
         }}
         className={cn(
-          'z-drawer overflow-hidden flex',
-          narrow ? 'bg-cream' : 'bg-forest',
+          'z-drawer overflow-hidden flex bg-forest',
           narrow
             ? cn(
                 'fixed flex-col left-0 right-0 bottom-0 h-[92%] rounded-t-2xl shadow-[0_-8px_32px_rgba(0,0,0,0.16)]',
@@ -622,7 +627,7 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
               }
             }}
           >
-            <span className="block w-9 h-1 rounded-full bg-gray-300" />
+            <span className="block w-9 h-1 rounded-full bg-cream/25" />
           </button>
         )}
 
@@ -656,16 +661,14 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
           {/* The phone has no rail, so it keeps the pill — for the same
               reason the rail goes, one section gets no pill either. */}
           {showRail && (
-            <div className="md:hidden flex justify-center items-center py-[17px] px-4 pl-[68px] pb-3 border-b border-gray-200 bg-gray-50 pt-[calc(17px+env(safe-area-inset-top))]">
-              <div className="flex bg-gray-100 rounded-full p-1 w-full border border-gray-200">
+            <div className="md:hidden flex justify-center items-center px-4 pl-[68px] pb-3 pt-1">
+              <div className="flex bg-cream/[0.08] rounded-full p-1 w-full">
                 {hasRoutesSection && (
                   <button
                     type="button"
                     className={cn(
-                      'flex-1 py-1.5 px-4 text-sm font-medium rounded-full transition-colors',
-                      activeSection === 'routes'
-                        ? 'bg-white text-gray-800 shadow-sm'
-                        : 'text-gray-500 hover:text-gray-700',
+                      PILL_CLASS,
+                      activeSection === 'routes' ? PILL_ON : PILL_OFF,
                     )}
                     onClick={() => switchTab('routes')}
                   >
@@ -675,10 +678,8 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
                 <button
                   type="button"
                   className={cn(
-                    'flex-1 py-1.5 px-4 text-sm font-medium rounded-full transition-colors',
-                    activeSection === 'trails'
-                      ? 'bg-white text-gray-800 shadow-sm'
-                      : 'text-gray-500 hover:text-gray-700',
+                    PILL_CLASS,
+                    activeSection === 'trails' ? PILL_ON : PILL_OFF,
                   )}
                   onClick={() => switchTab('trails')}
                 >
@@ -690,10 +691,8 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
                   <button
                     type="button"
                     className={cn(
-                      'flex-1 py-1.5 px-4 text-sm font-medium rounded-full transition-colors',
-                      activeSection === 'rides'
-                        ? 'bg-white text-gray-800 shadow-sm'
-                        : 'text-gray-500 hover:text-gray-700',
+                      PILL_CLASS,
+                      activeSection === 'rides' ? PILL_ON : PILL_OFF,
                     )}
                     onClick={() => switchTab('rides')}
                   >
@@ -704,8 +703,10 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
             </div>
           )}
 
+          {/* The sheet sits on the bottom edge, so the last row would otherwise
+              end up under the home indicator. */}
           <div className="overflow-y-auto flex-1 min-h-0">
-            <div className="px-4 pb-4 pt-2">
+            <div className="px-4 pt-2 pb-[calc(1rem+env(safe-area-inset-bottom))]">
               {activeSection === 'routes' && (
                 <>
                   <BikeRoutes

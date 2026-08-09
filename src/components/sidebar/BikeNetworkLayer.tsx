@@ -1,6 +1,7 @@
 import { faBicycle } from '@fortawesome/free-solid-svg-icons';
 import { BIKE_NETWORK_CLASSES } from '@/data/bike-network';
 import { ToggleRow } from './MapLayersSection';
+import { SectionHeading } from './SectionHeading';
 
 interface BikeNetworkLayerProps {
   isActive: boolean;
@@ -16,7 +17,7 @@ export function BikeNetworkLayer({
 }: BikeNetworkLayerProps) {
   return (
     <div className="mb-6">
-      <h3 className="text-sm font-medium mb-2 text-gray-600">Bike Network</h3>
+      <SectionHeading>Bike Network</SectionHeading>
       <div className="flex flex-col gap-2">
         <ToggleRow
           icon={faBicycle}
@@ -29,7 +30,7 @@ export function BikeNetworkLayer({
             {BIKE_NETWORK_CLASSES.map((c) => (
               <li
                 key={c.key}
-                className="flex items-center gap-2 text-xs text-gray-600"
+                className="flex items-center gap-2 text-ui text-cream/70"
               >
                 <span
                   className="inline-block h-1 w-5 rounded-full"

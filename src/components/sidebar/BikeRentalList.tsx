@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { faBicycle } from '@fortawesome/free-solid-svg-icons';
 import { cn } from '@/lib/utils';
+import { SectionHeading } from './SectionHeading';
 import { mapConfig } from '@/config/map.config';
 import {
   fetchBikeRentalLocations,
@@ -12,7 +13,7 @@ import {
 import { SidebarCard } from './SidebarCard';
 import type { BikeRentalListProps } from './types';
 
-const BADGE_CLASS = 'bg-gray-200 px-2 py-0.5 rounded text-gray-600';
+const BADGE_CLASS = 'bg-cream/10 px-2 py-0.5 rounded text-cream/70';
 
 // Lowercase plural for a vehicle type label, e.g. "E-bike" -> "e-bikes".
 function pluralizeType(label: string): string {
@@ -56,9 +57,9 @@ export function BikeRentalList({
 
   return (
     <div className={cn('mb-6', !show && 'hidden')}>
-      <h3 className="text-sm font-medium mb-2 text-gray-600">Bike Rentals</h3>
+      <SectionHeading>Bike Rentals</SectionHeading>
       {isLoading && (
-        <div className="p-4 text-center text-gray-500 italic">
+        <div className="p-4 text-center text-cream/50 italic">
           Loading bike rental locations...
         </div>
       )}
@@ -84,7 +85,7 @@ export function BikeRentalList({
               onClick={() => onCenterLocation(location)}
               showArrow
             >
-              <div className="flex flex-wrap gap-2 mt-2 ml-10 text-xs text-gray-500">
+              <div className="flex flex-wrap gap-2 mt-2 ml-10 text-meta text-cream/60">
                 <span className={BADGE_CLASS}>{location.rentalType}</span>
                 <span className={BADGE_CLASS}>{location.price}</span>
                 <span className={BADGE_CLASS}>{location.hours}</span>
@@ -147,7 +148,7 @@ function FreeBikeSummaryCard({
       onClick={summary.bounds ? handleClick : undefined}
       showArrow={!!summary.bounds}
     >
-      <div className="flex flex-wrap gap-2 mt-2 ml-10 text-xs text-gray-500">
+      <div className="flex flex-wrap gap-2 mt-2 ml-10 text-meta text-cream/60">
         <span className={BADGE_CLASS}>Dockless</span>
         {summary.price && summary.price !== `Use ${providerName} app` && (
           <span className={BADGE_CLASS}>{summary.price}</span>

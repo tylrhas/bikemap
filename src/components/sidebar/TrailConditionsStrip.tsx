@@ -108,7 +108,7 @@ export function TrailConditionsStrip({
   const lockedReason = reasonFor(slug);
 
   return (
-    <div className="text-meta text-gray-500 mb-1 -mt-0.5">
+    <div className="text-meta text-ink/55 mb-1 -mt-0.5">
       <div className="flex items-center gap-2">
         {current ? (
           <>
@@ -146,7 +146,7 @@ export function TrailConditionsStrip({
           /* The steward's sentence, where the button was. The badge and history
              stay: closing the form does not unsay what was already reported. */
           <span
-            className="flex items-center gap-1 shrink-0 max-w-[55%] text-gray-400"
+            className="flex items-center gap-1 shrink-0 max-w-[55%] text-ink/45"
             title={lockedReason}
           >
             <FontAwesomeIcon icon={faLock} />

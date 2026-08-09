@@ -36,11 +36,11 @@ export function BikeRoutes({ selectedRoute, onRouteSelect }: BikeRoutesProps) {
               style={{ backgroundColor: route.color }}
             />
             <span className="font-medium">{route.name}</span>
-            <span className="text-meta text-gray-500 ml-auto shrink-0">
+            <span className="text-meta text-cream/55 ml-auto shrink-0">
               {route.distance} mi
             </span>
           </div>
-          <div className="text-xs text-gray-500 mt-1 ml-7">
+          <div className="text-meta text-cream/55 mt-1 ml-7">
             {route.description}
           </div>
         </div>

@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils';
+import { SectionHeading } from './SectionHeading';
 import { mapFeatures } from '@/data/geo_data';
 import { SidebarCard } from './SidebarCard';
 import type { AttractionsListProps } from './types';
@@ -13,7 +14,7 @@ export function AttractionsList({
 
   return (
     <div className={cn('mb-6', !show && 'hidden')}>
-      <h3 className="text-sm font-medium mb-2 text-gray-600">Attractions</h3>
+      <SectionHeading>Attractions</SectionHeading>
       <div className="flex flex-col gap-2">
         {mapFeatures.map((location) => (
           <SidebarCard

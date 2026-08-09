@@ -1,5 +1,6 @@
 import { faBicycle } from '@fortawesome/free-solid-svg-icons';
 import { cn } from '@/lib/utils';
+import { SectionHeading } from './SectionHeading';
 import { bikeResources } from '@/data/geo_data';
 import { SidebarCard } from './SidebarCard';
 import type { BikeResourcesListProps } from './types';
@@ -14,7 +15,7 @@ export function BikeResourcesList({
 
   return (
     <div className={cn('mb-6', !show && 'hidden')}>
-      <h3 className="text-sm font-medium mb-2 text-gray-600">Bike Resources</h3>
+      <SectionHeading>Bike Resources</SectionHeading>
       <div className="flex flex-col gap-2">
         {bikeResources.map((location) => (
           <SidebarCard

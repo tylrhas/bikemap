@@ -9,30 +9,24 @@ type ColorTheme = 'blue' | 'green' | 'purple' | 'gray';
 
 const colorConfig = {
   blue: {
-    iconContainer: 'bg-blue-50 border-2 border-blue-500',
-    icon: 'text-blue-500',
-    cardHover: 'hover:bg-blue-600/5 hover:border-blue-600/30 hover:shadow-md',
-    arrow: 'bg-blue-50 text-blue-500',
+    iconContainer: 'bg-blue-400/15 border border-blue-300/60',
+    icon: 'text-blue-300',
+    arrow: 'bg-blue-400/15 text-blue-300',
   },
   green: {
-    iconContainer: 'bg-emerald-50 border-2 border-emerald-400',
-    icon: 'text-emerald-400',
-    cardHover:
-      'hover:bg-emerald-400/5 hover:border-emerald-400/30 hover:shadow-md',
-    arrow: 'bg-emerald-50 text-emerald-400',
+    iconContainer: 'bg-emerald-400/15 border border-emerald-300/60',
+    icon: 'text-emerald-300',
+    arrow: 'bg-emerald-400/15 text-emerald-300',
   },
   purple: {
-    iconContainer: 'bg-violet-100 border-2 border-violet-500',
-    icon: 'text-violet-500',
-    cardHover:
-      'hover:bg-violet-500/5 hover:border-violet-500/30 hover:shadow-md',
-    arrow: 'bg-violet-100 text-violet-500',
+    iconContainer: 'bg-violet-400/15 border border-violet-300/60',
+    icon: 'text-violet-300',
+    arrow: 'bg-violet-400/15 text-violet-300',
   },
   gray: {
-    iconContainer: 'bg-gray-100 border-2 border-gray-500',
-    icon: 'text-gray-500',
-    cardHover: 'hover:bg-gray-500/5 hover:border-gray-500/30 hover:shadow-md',
-    arrow: 'bg-gray-100 text-gray-500',
+    iconContainer: 'bg-cream/10 border border-cream/30',
+    icon: 'text-cream/70',
+    arrow: 'bg-cream/10 text-cream/70',
   },
 } as const;
 
@@ -60,8 +54,9 @@ export function SidebarCard({
   return (
     <div
       className={cn(
-        'px-2 pt-2 pb-1.5 rounded-md transition-all duration-200 border border-transparent shadow-sm cursor-pointer',
-        colors.cardHover,
+        // One hover for every theme: the card sits on the deep surface, so
+        // lifting it a little is legible where a tinted wash was not.
+        'px-3 py-2.5 -mx-1 rounded-control transition-colors cursor-pointer border-l-[3px] border-l-transparent hover:bg-cream/[0.06]',
       )}
       onClick={onClick}
       onKeyDown={(e) => {
@@ -85,11 +80,11 @@ export function SidebarCard({
             className={cn('w-3.5 h-3.5', colors.icon)}
           />
         </div>
-        <span className="font-medium">{title}</span>
+        <span className="text-ui font-medium text-cream truncate">{title}</span>
       </div>
       <div
         className={cn(
-          'text-xs text-gray-500 mt-1 ml-10',
+          'text-meta text-cream/55 mt-1 ml-10',
           showArrow && 'flex justify-between items-center',
         )}
       >

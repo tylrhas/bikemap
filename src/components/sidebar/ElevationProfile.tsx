@@ -88,7 +88,7 @@ export const MAX_GRADIENT_STOPS = 600;
 const CHART_SVG_CLASS =
   'w-full h-[15vh] min-h-[80px] max-h-[160px] cursor-crosshair rounded touch-none';
 const ACTION_BTN_CLASS =
-  'bg-transparent border-none cursor-pointer text-gray-400 text-2xl px-2 py-1 rounded hover:text-gray-600 hover:bg-gray-50';
+  'bg-transparent border-none cursor-pointer text-ink/45 text-2xl px-2 py-1 rounded transition-colors hover:text-ink hover:bg-forest/5';
 
 export function gradeToColor(grade: number): string {
   const g = Math.min(Math.abs(grade), GRADE_RED);
@@ -752,7 +752,7 @@ export function ElevationProfile() {
   return (
     <div
       className={cn(
-        'absolute bottom-4 right-4 left-4 bg-white rounded-lg shadow-[0_2px_12px_rgba(0,0,0,0.15)] px-4 pt-2.5 pb-1.5 z-elevation pointer-events-auto transition-all duration-300',
+        'absolute bottom-4 right-4 left-4 bg-cream rounded-card shadow-[0_4px_16px_rgb(var(--app-secondary)/0.22)] px-4 pt-2.5 pb-1.5 z-elevation pointer-events-auto transition-all duration-300',
         'max-md:left-2 max-md:right-2 max-md:bottom-[60px] max-md:px-2 max-md:pt-2 max-md:pb-1',
       )}
     >
@@ -772,12 +772,12 @@ export function ElevationProfile() {
             {trailName}
           </button>
         ) : (
-          <span className="text-ui font-semibold text-gray-700 whitespace-nowrap overflow-hidden text-ellipsis">
+          <span className="text-ui font-semibold text-forest whitespace-nowrap overflow-hidden text-ellipsis">
             {trailName}
           </span>
         )}
         {points && profile && (
-          <div className="flex gap-3 text-meta text-gray-500 ml-auto shrink-0">
+          <div className="flex gap-3 text-meta text-ink/60 ml-auto shrink-0">
             <span>{(points[points.length - 1][0] / 5280).toFixed(1)} mi</span>
             <span>
               +{Math.round(profile.gain).toLocaleString()} ft climbing
@@ -828,7 +828,7 @@ export function ElevationProfile() {
       )}
 
       {profile?.osm && (
-        <div className="flex items-center gap-2 text-meta text-gray-500 mb-1 -mt-0.5">
+        <div className="flex items-center gap-2 text-meta text-ink/55 mb-1 -mt-0.5">
           <span className="truncate capitalize">
             {[
               profile.osm.difficulty,
@@ -855,10 +855,10 @@ export function ElevationProfile() {
       {points && profile && (
         <div className="flex relative">
           <div className="flex flex-col justify-between py-0.5 shrink-0 w-[42px]">
-            <span className="text-micro text-gray-400 text-right pr-1 leading-none">
+            <span className="text-micro text-ink/45 text-right pr-1 leading-none">
               {Math.round(profile.max).toLocaleString()} ft
             </span>
-            <span className="text-micro text-gray-400 text-right pr-1 leading-none">
+            <span className="text-micro text-ink/45 text-right pr-1 leading-none">
               {Math.round(profile.min).toLocaleString()} ft
             </span>
           </div>
@@ -906,7 +906,7 @@ export function ElevationProfile() {
       )}
 
       {points && (
-        <div className="text-meta text-gray-600 text-center py-0.5 min-h-4">
+        <div className="text-meta text-ink/65 text-center py-0.5 min-h-4">
           {hoverIndex !== null ? (
             <>
               {`${(points[hoverIndex][0] / 5280).toFixed(2)} mi \u00B7 ${Math.round(points[hoverIndex][1]).toLocaleString()} ft \u00B7 `}

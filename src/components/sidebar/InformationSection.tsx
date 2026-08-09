@@ -50,7 +50,7 @@ export function InformationSection() {
   return (
     <div className="mb-6">
       <div
-        className="text-sm font-medium mb-2 text-gray-600 cursor-pointer flex items-center select-none hover:text-blue-600"
+        className="mb-2 text-meta font-bold uppercase tracking-[0.08em] text-cream/60 cursor-pointer flex items-center select-none transition-colors hover:text-cream"
         onClick={() => setIsExpanded(!isExpanded)}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
