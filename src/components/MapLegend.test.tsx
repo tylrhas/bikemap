@@ -4,6 +4,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { MapLegendProvider } from './MapLegend';
 import { MAP_EVENTS } from '@/events';
 import { dispatch } from '@/test/fixtures';
+import { DEFAULT_MAP_LAYERS, setMapLayerSettings } from '@/data/map-layers';
 
 // Mock all sidebar children to keep tests focused on MapLegendProvider state
 vi.mock('./sidebar', () => ({
@@ -302,5 +303,28 @@ describe('MapLegendProvider', () => {
     );
     expect(toggle).toBeDefined();
     expect((toggle?.detail as { visible: boolean }).visible).toBe(true);
+  });
+
+  it('drops the whole Map layers section when the admin turns it off', () => {
+    // It is the only layer the Trails tab offers, so a bare heading over
+    // nothing would read as something failing to load.
+    setMapLayerSettings({ osmTrails: false });
+    try {
+      render(
+        <MapLegendProvider>
+          <div />
+        </MapLegendProvider>,
+      );
+      dispatch(MAP_EVENTS.RIDE_STYLE_CHOSEN, { style: 'mountain' });
+
+      expect(screen.queryByText('Nationwide trails')).not.toBeInTheDocument();
+      expect(
+        screen.queryByTestId('map-layers-section'),
+      ).not.toBeInTheDocument();
+      // The rest of the tab is untouched.
+      expect(screen.getByTestId('mountain-bike-trails')).toBeInTheDocument();
+    } finally {
+      setMapLayerSettings(DEFAULT_MAP_LAYERS);
+    }
   });
 });

@@ -572,6 +572,18 @@ Things to know before touching it:
     `HomeClient`, which publishes them via `src/data/brand-source.ts` during
     render — the same road the trails take. `Wordmark` falls back to
     `site.config.ts`, so the panel is never anonymous.
+- **Settings → Map layers decides what riders are *offered*, not what is on.**
+  `map-layers` carries one switch so far, `osmTrails`. Turning it off removes
+  the toggle from the sidebar **and** skips `ensureOsmTrailsSource`, so a layer
+  nothing can reveal costs no tile requests. Reaches the client the same way the
+  brand does — server page → `HomeClient` → `src/data/map-layers.ts`. Two things
+  to preserve: the defaults are **on**, so losing the database never costs the
+  map a layer; and `getMapLayers` treats anything but an explicit `false` as on,
+  because a global nobody has saved comes back without the field rather than
+  with its default. When a second layer joins, gate the whole
+  `MapLayersSection`'s children individually — today it is hidden wholesale
+  because `osmTrails` is its only row, and a bare heading over nothing reads as
+  something failing to load.
 - **The project is ESM** (`"type": "module"` — Payload 3's CLI requires it). New
   root config files must be ESM or `.cjs`.
 - **There is no root `src/app/layout.tsx`, on purpose.** Payload's `RootLayout`

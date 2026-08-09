@@ -10,6 +10,7 @@ import { WelcomeModal } from '@/components/WelcomeModal';
 import type { BrandIdentity } from '@/data/brand';
 import { setBrandIdentity } from '@/data/brand-source';
 import { bikeRoutes } from '@/data/geo_data';
+import { type MapLayerSettings, setMapLayerSettings } from '@/data/map-layers';
 import type { MountainBikeTrail } from '@/data/mountain-bike-trails';
 import { slugForTrail } from '@/data/mountain-bike-trails';
 import {
@@ -31,11 +32,14 @@ const BikeMap = dynamic(() => import('@/components/Map'), {
 
 export default function HomeClient({
   brand,
+  layers,
   trails,
 }: {
   /** The header's name and logo, read from Payload. Nulls mean "use
    *  site.config.ts". */
   brand?: BrandIdentity;
+  /** Which optional layers to offer. Omitted means offer them all. */
+  layers?: MapLayerSettings;
   /** Trails read from Payload on the server. Empty means "use the checked-in
    *  data", which is what happens with no database configured. */
   trails: MountainBikeTrail[];
@@ -46,6 +50,9 @@ export default function HomeClient({
   setMountainBikeTrails(trails);
   if (brand) {
     setBrandIdentity(brand);
+  }
+  if (layers) {
+    setMapLayerSettings(layers);
   }
 
   // On mount, check URL for shared trail/route link and auto-select

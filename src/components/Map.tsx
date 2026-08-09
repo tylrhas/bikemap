@@ -13,6 +13,7 @@ import {
   bikeNetworkUrl,
   bikeRoutesUrl,
 } from '@/data/geo_data';
+import { getMapLayerSettings } from '@/data/map-layers';
 import { getMountainBikeTrails } from '@/data/trail-source';
 import {
   createLocationMarker,
@@ -1049,9 +1050,15 @@ const MapboxMap = memo(function MapboxMap() {
           // Its click handler is registered later, after the curated route/MTB
           // hit handlers, so curated trails win clicks in overlapping areas.
           // Replay any toggle the user flipped before the style finished loading.
-          ensureOsmTrailsSource(newMap);
-          if (osmTrailsVisibleRef.current) {
-            setOsmTrailsVisible(newMap, true);
+          //
+          // Skipped entirely when the admin hasn't enabled it: with no toggle
+          // in the sidebar there is nothing to reveal it, so attaching the
+          // source would only add a tile request nobody asked for.
+          if (getMapLayerSettings().osmTrails) {
+            ensureOsmTrailsSource(newMap);
+            if (osmTrailsVisibleRef.current) {
+              setOsmTrailsVisible(newMap, true);
+            }
           }
 
           // The classified bike-network overlay (Casual mode) is lazy-attached

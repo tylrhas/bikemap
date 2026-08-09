@@ -7,6 +7,7 @@ import * as migration_20260809_220403_map_palette from './20260809_220403_map_pa
 import * as migration_20260809_223540_brand_identity from './20260809_223540_brand_identity';
 import * as migration_20260809_225622_drop_admin_theme from './20260809_225622_drop_admin_theme';
 import * as migration_20260809_230500_seed_brand_colors from './20260809_230500_seed_brand_colors';
+import * as migration_20260809_230729_map_layers from './20260809_230729_map_layers';
 
 export const migrations = [
   {
@@ -53,5 +54,10 @@ export const migrations = [
     up: migration_20260809_230500_seed_brand_colors.up,
     down: migration_20260809_230500_seed_brand_colors.down,
     name: '20260809_230500_seed_brand_colors',
+  },
+  {
+    up: migration_20260809_230729_map_layers.up,
+    down: migration_20260809_230729_map_layers.down,
+    name: '20260809_230729_map_layers',
   },
 ];

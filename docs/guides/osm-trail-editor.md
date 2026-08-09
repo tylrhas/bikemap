@@ -473,7 +473,7 @@ page. The markup mirrors `DefaultNavClient` in `@payloadcms/next`.
 |---|---|
 | **Trails** | Trails. The daily job, on its own so it is never something to scroll past. |
 | **Lists** | Trail complexes, ratings, kinds, stewards — everything that exists only to populate a dropdown on a trail. Named for what a curator does with them rather than what they are; "Vocabulary" and "Taxonomy" are terms for people who build CMSes, not people who maintain trails. |
-| **Settings** | Theme (the public map's), condition reporting, users. |
+| **Settings** | Theme (the public map's), map layers, condition reporting, users. |
 
 **The trail form** is three unnamed tabs:
 

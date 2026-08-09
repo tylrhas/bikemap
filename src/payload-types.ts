@@ -102,10 +102,12 @@ export interface Config {
   globals: {
     'condition-reporting': ConditionReporting;
     'map-appearance': MapAppearance;
+    'map-layers': MapLayer;
   };
   globalsSelect: {
     'condition-reporting': ConditionReportingSelect<false> | ConditionReportingSelect<true>;
     'map-appearance': MapAppearanceSelect<false> | MapAppearanceSelect<true>;
+    'map-layers': MapLayersSelect<false> | MapLayersSelect<true>;
   };
   locale: null;
   widgets: {
@@ -827,6 +829,21 @@ export interface MapAppearance {
   createdAt?: string | null;
 }
 /**
+ * Which optional layers riders can switch on. Turning one off removes its toggle from the sidebar.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "map-layers".
+ */
+export interface MapLayer {
+  id: number;
+  /**
+   * Every bike-relevant path in OpenStreetMap, nationwide — useful next to a curated set, noise if your riders only care about yours. Riders switch it on themselves; this decides whether they are offered it.
+   */
+  osmTrails?: boolean | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "condition-reporting_select".
  */
@@ -852,6 +869,16 @@ export interface MapAppearanceSelect<T extends boolean = true> {
   fontUrl?: T;
   displayFont?: T;
   bodyFont?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "map-layers_select".
+ */
+export interface MapLayersSelect<T extends boolean = true> {
+  osmTrails?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

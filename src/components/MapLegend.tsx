@@ -45,6 +45,7 @@ import {
   bikeRoutes,
   mapFeatures,
 } from '@/data/geo_data';
+import { getMapLayerSettings } from '@/data/map-layers';
 import { getMountainBikeTrails } from '@/data/trail-source';
 
 const hasRoutesSection =
@@ -104,6 +105,9 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
   const [showBikeResources, setShowBikeResources] = useState(false);
   const [showBikeRentals, setShowBikeRentals] = useState(false);
   const [showOsmTrails, setShowOsmTrails] = useState(false);
+  // Whether the nationwide toggle is offered at all — an admin setting, fixed
+  // for the life of the page, so it is read rather than held in state.
+  const offerOsmTrails = getMapLayerSettings().osmTrails;
   const [showBikeNetwork, setShowBikeNetwork] = useState(false);
   const sidebarRef = useRef<HTMLDivElement>(null);
   const toggleButtonRef = useRef<HTMLButtonElement>(null);
@@ -673,14 +677,20 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
 
               {activeSection === 'trails' && (
                 <>
-                  <MapLayersSection>
-                    <ToggleRow
-                      icon={faMountain}
-                      label="Nationwide trails"
-                      isActive={showOsmTrails}
-                      onToggle={toggleOsmTrailsLayer}
-                    />
-                  </MapLayersSection>
+                  {/* The whole section, not just the row: it is the only
+                      layer the Trails tab offers, so a bare "Map layers"
+                      heading over nothing would read as something failing to
+                      load. */}
+                  {offerOsmTrails && (
+                    <MapLayersSection>
+                      <ToggleRow
+                        icon={faMountain}
+                        label="Nationwide trails"
+                        isActive={showOsmTrails}
+                        onToggle={toggleOsmTrailsLayer}
+                      />
+                    </MapLayersSection>
+                  )}
 
                   {getMountainBikeTrails().length > 0 && (
                     <MountainBikeTrails
