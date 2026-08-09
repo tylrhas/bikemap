@@ -200,11 +200,23 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
    * The sheet is never "closed", so the rest of the app is told it is open
    * whenever it is above Peek — that is what `isOpen` means to the camera and
    * to the elevation pane.
+   *
+   * The height it takes up goes out as a CSS variable at the same time, so
+   * anything sitting on the bottom edge can stack on top of it instead of
+   * behind it. A variable rather than a prop because the pane is nowhere near
+   * this component in the tree, and set on the element rather than in state
+   * because it must not re-render the map to move a card 60px.
    */
   useEffect(() => {
     if (!narrow) {
+      document.documentElement.style.removeProperty('--sheet-visible');
       return;
     }
+    const height = sheetRef.current?.offsetHeight ?? 0;
+    document.documentElement.style.setProperty(
+      '--sheet-visible',
+      `${Math.round(height * (1 - SNAP_FRACTIONS[snap]))}px`,
+    );
     window.dispatchEvent(
       new CustomEvent(MAP_EVENTS.SIDEBAR_TOGGLE, {
         detail: { isOpen: snap !== PEEK },
@@ -705,7 +717,7 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
 
           {/* The sheet sits on the bottom edge, so the last row would otherwise
               end up under the home indicator. */}
-          <div className="overflow-y-auto flex-1 min-h-0">
+          <div className="overflow-y-auto overscroll-contain flex-1 min-h-0">
             <div className="px-4 pt-2 pb-[calc(1rem+env(safe-area-inset-bottom))]">
               {activeSection === 'routes' && (
                 <>

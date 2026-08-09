@@ -292,6 +292,23 @@ export function ElevationProfile() {
   // Only to decide whether the pane has conditions worth opening for.
   const { options: conditionOptions } = useTrailConditions();
   const narrow = useIsNarrow();
+  /**
+   * True while the phone's sheet is raised above Peek.
+   *
+   * The pane sits on the bottom edge, which is where the sheet lives, so above
+   * Peek there is nowhere for it to go — it was rendering behind the sheet.
+   * Someone who has pulled the list up is browsing; the chart can wait for them
+   * to let go.
+   */
+  const [sheetRaised, setSheetRaised] = useState(false);
+
+  useEffect(() => {
+    const handler = (event: Event) => {
+      setSheetRaised(Boolean((event as CustomEvent).detail?.isOpen));
+    };
+    window.addEventListener(MAP_EVENTS.SIDEBAR_TOGGLE, handler);
+    return () => window.removeEventListener(MAP_EVENTS.SIDEBAR_TOGGLE, handler);
+  }, []);
 
   useEffect(() => {
     const handleTrailSelect = (e: Event) => {
@@ -753,7 +770,11 @@ export function ElevationProfile() {
     <div
       className={cn(
         'absolute bottom-4 right-4 left-4 bg-cream rounded-card shadow-[0_4px_16px_rgb(var(--app-secondary)/0.22)] px-4 pt-2.5 pb-1.5 z-elevation pointer-events-auto transition-all duration-300',
-        'max-md:left-2 max-md:right-2 max-md:bottom-[60px] max-md:px-2 max-md:pt-2 max-md:pb-1',
+        'max-md:left-2 max-md:right-2 max-md:px-2 max-md:pt-2 max-md:pb-1',
+        // Rides on top of the sheet rather than under it. The fallback covers
+        // the moment before the sheet has measured itself.
+        'max-md:bottom-[calc(var(--sheet-visible,60px)+10px)]',
+        narrow && sheetRaised && 'opacity-0 translate-y-4 pointer-events-none',
       )}
     >
       <div className="flex items-center gap-3 mb-1">
