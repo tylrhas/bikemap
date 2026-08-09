@@ -9,6 +9,41 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      /**
+       * The type scale. Every size in the app comes from here — before this
+       * there were eight arbitrary `text-[Npx]` values with no relationship to
+       * each other, which made "one step smaller" a guess.
+       *
+       * Sizes only, no paired line-height: the arbitrary values they replace
+       * inherited theirs, and pinning one here would shift existing layout.
+       */
+      fontSize: {
+        micro: '0.5625rem', // 9px  — chart axis labels
+        meta: '0.6875rem', // 11px — stats, badges, uppercase labels
+        ui: '0.8125rem', // 13px — secondary UI, list rows
+        body: '0.9375rem', // 15px — trail names, running text
+        title: '1.125rem', // 18px — panel and sheet headings
+        display: '1.75rem', // 28px — the welcome modal
+      },
+
+      /**
+       * The stacking order, named. The numbers are exactly what they were —
+       * this step buys a readable name, not a renumbering. The map canvas sits
+       * at `map` and anything drawn over it must be above that; see the Mapbox
+       * overlay note in CLAUDE.md.
+       */
+      zIndex: {
+        map: '500',
+        'map-ui': '501',
+        elevation: '600',
+        toast: '800',
+        'drawer-toggle': '900',
+        drawer: '950',
+        'drawer-toggle-open': '960',
+        prompt: '2000',
+        modal: '3000',
+      },
+
       keyframes: {
         'location-pulse': {
           '0%': {

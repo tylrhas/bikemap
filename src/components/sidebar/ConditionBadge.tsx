@@ -36,7 +36,7 @@ export function ConditionBadge({
     <span
       className={cn(
         'inline-flex items-center gap-1 rounded-full font-medium whitespace-nowrap shrink-0',
-        size === 'sm' ? 'text-[10px] px-1.5 py-px' : 'text-[11px] px-2 py-0.5',
+        size === 'sm' ? 'text-meta px-1.5 py-px' : 'text-meta px-2 py-0.5',
         className,
       )}
       style={{

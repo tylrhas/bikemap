@@ -74,7 +74,7 @@ export function RideDetail({ ride, onClose, onDeleted }: RideDetailProps) {
     <div className="p-3">
       <button
         type="button"
-        className="flex items-center gap-1.5 text-[13px] text-blue-500 cursor-pointer mb-2.5 py-2 px-1 -ml-1 bg-transparent border-none hover:text-blue-600"
+        className="flex items-center gap-1.5 text-ui text-blue-500 cursor-pointer mb-2.5 py-2 px-1 -ml-1 bg-transparent border-none hover:text-blue-600"
         onClick={onClose}
       >
         <FontAwesomeIcon icon={faChevronLeft} />
@@ -157,7 +157,7 @@ function IconButton({
     <button
       type="button"
       onClick={onClick}
-      className="bg-transparent border-none cursor-pointer text-gray-500 p-1 text-[13px] leading-none rounded hover:text-gray-700 hover:bg-gray-100"
+      className="bg-transparent border-none cursor-pointer text-gray-500 p-1 text-ui leading-none rounded hover:text-gray-700 hover:bg-gray-100"
     >
       <FontAwesomeIcon icon={icon} />
     </button>
@@ -168,7 +168,7 @@ function Stat({ value, label }: { value: string; label: string }) {
   return (
     <div className="flex flex-col items-center text-center">
       <span className="text-sm font-semibold text-gray-700">{value}</span>
-      <span className="text-[11px] text-gray-500 mt-px">{label}</span>
+      <span className="text-meta text-gray-500 mt-px">{label}</span>
     </div>
   );
 }

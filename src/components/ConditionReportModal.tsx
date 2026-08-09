@@ -149,7 +149,7 @@ export function ConditionReportModal() {
   const selected = options.find((option) => option.value === condition);
 
   return (
-    <div className="fixed inset-0 z-[3000] flex items-center justify-center bg-black/60 backdrop-blur-[4px] px-5 py-10 animate-welcome-fade-in">
+    <div className="fixed inset-0 z-modal flex items-center justify-center bg-black/60 backdrop-blur-[4px] px-5 py-10 animate-welcome-fade-in">
       {/* Click-away as a real button behind the card, rather than a handler on
           the backdrop. Hidden from assistive tech — the × is the close control,
           and announcing two would be worse. */}
@@ -174,9 +174,7 @@ export function ConditionReportModal() {
             >
               How was it?
             </h2>
-            <p className="text-[13px] text-gray-500 truncate">
-              {target.trailName}
-            </p>
+            <p className="text-ui text-gray-500 truncate">{target.trailName}</p>
           </div>
           <button
             aria-label="Close"
@@ -204,7 +202,7 @@ export function ConditionReportModal() {
           />
 
           <label
-            className="block text-[13px] font-semibold text-app-secondary mb-1"
+            className="block text-ui font-semibold text-app-secondary mb-1"
             htmlFor="condition-report-condition"
           >
             Condition
@@ -228,13 +226,13 @@ export function ConditionReportModal() {
           </select>
           {/* The curator's own words for what this means locally. */}
           {selected?.description && (
-            <p className="text-[11px] text-gray-500 mt-1">
+            <p className="text-meta text-gray-500 mt-1">
               {selected.description}
             </p>
           )}
 
           <label
-            className="block text-[13px] font-semibold text-app-secondary mt-4 mb-1"
+            className="block text-ui font-semibold text-app-secondary mt-4 mb-1"
             htmlFor="condition-report-date"
           >
             When did you ride it?
@@ -249,14 +247,14 @@ export function ConditionReportModal() {
           />
 
           {error && (
-            <p className="text-[12px] text-red-600 mt-3" role="alert">
+            <p className="text-ui text-red-600 mt-3" role="alert">
               {error}
             </p>
           )}
 
           <button
             className={cn(
-              'w-full mt-5 py-2.5 rounded-xl border-none text-app-secondary font-semibold text-[15px] transition-opacity',
+              'w-full mt-5 py-2.5 rounded-xl border-none text-app-secondary font-semibold text-body transition-opacity',
               submitting
                 ? 'bg-gray-200 cursor-wait opacity-70'
                 : 'bg-app-primary cursor-pointer hover:opacity-90',
@@ -266,7 +264,7 @@ export function ConditionReportModal() {
           >
             {submitting ? 'Sending…' : 'Send report'}
           </button>
-          <p className="text-[11px] text-gray-400 text-center mt-2">
+          <p className="text-meta text-gray-400 text-center mt-2">
             No account needed. Reports show on the map straight away.
           </p>
         </form>

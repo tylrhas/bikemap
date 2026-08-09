@@ -173,7 +173,7 @@ export function RidesPanel() {
       <div
         className={cn(
           'fixed right-4 top-[calc(1.25rem+env(safe-area-inset-top))]',
-          isOpen ? 'z-[960]' : 'z-[900]',
+          isOpen ? 'z-drawer-toggle-open' : 'z-drawer-toggle',
           isRecording && !isOpen && 'animate-recording-pulse rounded-full',
         )}
       >
@@ -196,7 +196,7 @@ export function RidesPanel() {
 
       {/* Floating recording HUD — visible when recording with panel closed */}
       {isRecording && !isOpen && (
-        <div className="fixed top-[calc(22px+env(safe-area-inset-top))] left-1/2 -translate-x-1/2 z-[800] bg-white rounded-xl shadow-lg h-10 px-3 flex items-center gap-2.5 text-sm max-md:top-[calc(76px+env(safe-area-inset-top))] max-md:left-2 max-md:right-2 max-md:translate-x-0">
+        <div className="fixed top-[calc(22px+env(safe-area-inset-top))] left-1/2 -translate-x-1/2 z-toast bg-white rounded-xl shadow-lg h-10 px-3 flex items-center gap-2.5 text-sm max-md:top-[calc(76px+env(safe-area-inset-top))] max-md:left-2 max-md:right-2 max-md:translate-x-0">
           <PulseDot />
           <span className="font-bold tabular-nums text-gray-700">
             {formatElapsed(elapsedTime)}
@@ -232,7 +232,7 @@ export function RidesPanel() {
       <div
         ref={panelRef}
         className={cn(
-          'fixed top-0 right-0 h-full w-[280px] bg-white shadow-[-2px_0_5px_rgba(0,0,0,0.1)] z-[950] overflow-hidden transition-transform duration-300 ease-in-out flex flex-col',
+          'fixed top-0 right-0 h-full w-[280px] bg-white shadow-[-2px_0_5px_rgba(0,0,0,0.1)] z-drawer overflow-hidden transition-transform duration-300 ease-in-out flex flex-col',
           'max-md:w-full max-md:max-w-[320px]',
           isOpen ? 'translate-x-0' : 'translate-x-full pointer-events-none',
         )}
@@ -247,7 +247,7 @@ export function RidesPanel() {
           {toastMessage && (
             <div
               className={cn(
-                'absolute top-2 left-4 right-4 px-3 py-2 bg-gray-700 text-white rounded-md text-[13px] text-center animate-toast-slide-in z-10 pointer-events-none',
+                'absolute top-2 left-4 right-4 px-3 py-2 bg-gray-700 text-white rounded-md text-ui text-center animate-toast-slide-in z-10 pointer-events-none',
                 toastFadingOut &&
                   'opacity-0 transition-opacity duration-300 ease-in',
               )}
@@ -326,14 +326,14 @@ export function RidesPanel() {
                   Finish
                 </button>
               </div>
-              <p className="text-[11px] text-gray-400 text-center mt-1 leading-tight">
+              <p className="text-meta text-gray-400 text-center mt-1 leading-tight">
                 Keep your phone on to track GPS. The screen will stay on.
               </p>
             </div>
           ) : (
             <button
               type="button"
-              className="w-full flex items-center gap-2 py-5 px-3.5 border border-gray-200 rounded-lg bg-white cursor-pointer text-[15px] font-medium text-gray-700 transition-colors hover:bg-gray-50"
+              className="w-full flex items-center gap-2 py-5 px-3.5 border border-gray-200 rounded-lg bg-white cursor-pointer text-body font-medium text-gray-700 transition-colors hover:bg-gray-50"
               onClick={handleRecordClick}
             >
               <div className="w-3 h-3 rounded-full bg-red-500 shrink-0" />
@@ -352,7 +352,7 @@ function RecordingStat({ value, label }: { value: string; label: string }) {
       <span className="text-base font-bold tabular-nums text-gray-700">
         {value}
       </span>
-      <span className="text-[11px] text-gray-500 mt-px">{label}</span>
+      <span className="text-meta text-gray-500 mt-px">{label}</span>
     </div>
   );
 }

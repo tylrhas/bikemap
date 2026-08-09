@@ -98,7 +98,7 @@ export function WelcomeModal() {
   return (
     <div
       className={cn(
-        'fixed inset-0 z-[3000] flex items-center justify-center bg-black/60 backdrop-blur-[4px] px-5 py-10',
+        'fixed inset-0 z-modal flex items-center justify-center bg-black/60 backdrop-blur-[4px] px-5 py-10',
         exiting ? 'animate-welcome-fade-out' : 'animate-welcome-fade-in',
       )}
     >
@@ -111,13 +111,13 @@ export function WelcomeModal() {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-5">
-          <span className="inline-flex items-center justify-center w-[60px] h-[60px] rounded-full bg-app-primary text-app-secondary text-[28px] mb-3">
+          <span className="inline-flex items-center justify-center w-[60px] h-[60px] rounded-full bg-app-primary text-app-secondary text-display mb-3">
             <FontAwesomeIcon icon={faBicycle} />
           </span>
-          <h1 className="text-[28px] font-bold text-app-secondary mb-1 tracking-tight">
+          <h1 className="text-display font-bold text-app-secondary mb-1 tracking-tight">
             {siteConfig.name}
           </h1>
-          <p className="text-[15px] text-gray-500 font-normal">
+          <p className="text-body text-gray-500 font-normal">
             {siteConfig.tagline}
           </p>
         </div>
@@ -145,7 +145,7 @@ export function WelcomeModal() {
           ))}
         </div>
 
-        <p className="text-[15px] font-semibold text-app-secondary mb-3">
+        <p className="text-body font-semibold text-app-secondary mb-3">
           How do you want to ride?
         </p>
 
@@ -168,7 +168,7 @@ export function WelcomeModal() {
               <strong className="text-lg font-bold text-app-secondary">
                 {c.label}
               </strong>
-              <span className="text-[13px] text-gray-500 leading-snug">
+              <span className="text-ui text-gray-500 leading-snug">
                 {c.desc}
               </span>
             </button>

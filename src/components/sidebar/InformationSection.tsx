@@ -62,10 +62,10 @@ export function InformationSection() {
         tabIndex={0}
         aria-expanded={isExpanded}
       >
-        <span className="text-[10px] mr-1.5 inline-block w-3.5 shrink-0">
+        <span className="text-meta mr-1.5 inline-block w-3.5 shrink-0">
           <FontAwesomeIcon
             icon={isExpanded ? faChevronDown : faChevronRight}
-            className="text-[10px]"
+            className="text-meta"
           />
         </span>
         About

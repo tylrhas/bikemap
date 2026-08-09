@@ -643,7 +643,7 @@ export function ElevationProfile() {
     return (
       <div
         className={cn(
-          'fixed bottom-[60px] z-[600] pointer-events-auto',
+          'fixed bottom-[60px] z-elevation pointer-events-auto',
           sidebarOpen ? 'left-[296px] max-md:left-4' : 'left-4',
         )}
       >
@@ -664,7 +664,7 @@ export function ElevationProfile() {
   return (
     <div
       className={cn(
-        'fixed bottom-4 right-4 bg-white rounded-lg shadow-[0_2px_12px_rgba(0,0,0,0.15)] px-4 pt-2.5 pb-1.5 z-[600] pointer-events-auto transition-all duration-300',
+        'fixed bottom-4 right-4 bg-white rounded-lg shadow-[0_2px_12px_rgba(0,0,0,0.15)] px-4 pt-2.5 pb-1.5 z-elevation pointer-events-auto transition-all duration-300',
         'max-md:left-2 max-md:right-2 max-md:bottom-[60px] max-md:px-2 max-md:pt-2 max-md:pb-1',
         sidebarOpen ? 'left-[296px] max-md:hidden' : 'left-4',
         ridesPanelOpen && 'right-[296px]',
@@ -681,17 +681,17 @@ export function ElevationProfile() {
                 }),
               );
             }}
-            className="text-[13px] font-semibold text-blue-600 whitespace-nowrap overflow-hidden text-ellipsis bg-transparent border-none cursor-pointer p-0 hover:text-blue-700 hover:underline"
+            className="text-ui font-semibold text-blue-600 whitespace-nowrap overflow-hidden text-ellipsis bg-transparent border-none cursor-pointer p-0 hover:text-blue-700 hover:underline"
           >
             {trailName}
           </button>
         ) : (
-          <span className="text-[13px] font-semibold text-gray-700 whitespace-nowrap overflow-hidden text-ellipsis">
+          <span className="text-ui font-semibold text-gray-700 whitespace-nowrap overflow-hidden text-ellipsis">
             {trailName}
           </span>
         )}
         {points && profile && (
-          <div className="flex gap-3 text-[11px] text-gray-500 ml-auto shrink-0">
+          <div className="flex gap-3 text-meta text-gray-500 ml-auto shrink-0">
             <span>{(points[points.length - 1][0] / 5280).toFixed(1)} mi</span>
             <span>
               +{Math.round(profile.gain).toLocaleString()} ft climbing
@@ -742,7 +742,7 @@ export function ElevationProfile() {
       )}
 
       {profile?.osm && (
-        <div className="flex items-center gap-2 text-[10px] text-gray-500 mb-1 -mt-0.5">
+        <div className="flex items-center gap-2 text-meta text-gray-500 mb-1 -mt-0.5">
           <span className="truncate capitalize">
             {[
               profile.osm.difficulty,
@@ -769,10 +769,10 @@ export function ElevationProfile() {
       {points && profile && (
         <div className="flex relative">
           <div className="flex flex-col justify-between py-0.5 shrink-0 w-[42px]">
-            <span className="text-[9px] text-gray-400 text-right pr-1 leading-none">
+            <span className="text-micro text-gray-400 text-right pr-1 leading-none">
               {Math.round(profile.max).toLocaleString()} ft
             </span>
-            <span className="text-[9px] text-gray-400 text-right pr-1 leading-none">
+            <span className="text-micro text-gray-400 text-right pr-1 leading-none">
               {Math.round(profile.min).toLocaleString()} ft
             </span>
           </div>
@@ -812,7 +812,7 @@ export function ElevationProfile() {
       )}
 
       {points && (
-        <div className="text-[11px] text-gray-600 text-center py-0.5 min-h-4">
+        <div className="text-meta text-gray-600 text-center py-0.5 min-h-4">
           {hoverIndex !== null ? (
             <>
               {`${(points[hoverIndex][0] / 5280).toFixed(2)} mi \u00B7 ${Math.round(points[hoverIndex][1]).toLocaleString()} ft \u00B7 `}

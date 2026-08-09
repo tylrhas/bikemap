@@ -126,13 +126,13 @@ function TrailRow({
           className={shapeFor(trail.rating)}
           style={{ backgroundColor: trail.color }}
         />
-        <span className="font-medium text-[13px] min-w-0 truncate">
+        <span className="font-medium text-ui min-w-0 truncate">
           {trail.displayName}
         </span>
         {/* Beside the name — the stats already own the right-hand side. */}
         <ConditionBadge report={condition} />
         {trail.distance || trail.elevationGain ? (
-          <span className="text-[11px] text-gray-500 ml-auto shrink-0">
+          <span className="text-meta text-gray-500 ml-auto shrink-0">
             {trail.distance ? `${trail.distance} mi` : ''}
             {trail.distance && trail.elevationGain ? ' \u00B7 ' : ''}
             {trail.elevationGain ? `\u2191${trail.elevationGain} ft` : ''}
@@ -265,14 +265,14 @@ export function MountainBikeTrails({
                   tabIndex={0}
                   aria-expanded={isRegionExpanded}
                 >
-                  <span className="text-[9px] mr-1.5 inline-block w-3 shrink-0">
+                  <span className="text-micro mr-1.5 inline-block w-3 shrink-0">
                     <FontAwesomeIcon
                       icon={isRegionExpanded ? faChevronDown : faChevronRight}
-                      className="text-[10px]"
+                      className="text-meta"
                     />
                   </span>
                   {region}
-                  <span className="ml-auto text-[10px] font-normal text-gray-400">
+                  <span className="ml-auto text-meta font-normal text-gray-400">
                     {regionTrailCount}
                   </span>
                 </div>
@@ -285,7 +285,7 @@ export function MountainBikeTrails({
                       <React.Fragment key={area}>
                         {!singleArea && (
                           <div
-                            className="text-[11px] font-semibold uppercase text-gray-500 tracking-wide cursor-pointer rounded py-2 pb-1 px-1 pl-4 flex items-baseline hover:bg-blue-600/5 hover:text-blue-600"
+                            className="text-meta font-semibold uppercase text-gray-500 tracking-wide cursor-pointer rounded py-2 pb-1 px-1 pl-4 flex items-baseline hover:bg-blue-600/5 hover:text-blue-600"
                             onClick={() => handleAreaClick(area)}
                             onKeyDown={(e) => {
                               if (e.key === 'Enter' || e.key === ' ') {
@@ -297,18 +297,18 @@ export function MountainBikeTrails({
                             tabIndex={0}
                             aria-expanded={isAreaExpanded}
                           >
-                            <span className="text-[8px] mr-1 inline-block w-2.5">
+                            <span className="text-micro mr-1 inline-block w-2.5">
                               <FontAwesomeIcon
                                 icon={
                                   isAreaExpanded
                                     ? faChevronDown
                                     : faChevronRight
                                 }
-                                className="text-[10px]"
+                                className="text-meta"
                               />
                             </span>
                             {area}
-                            <span className="ml-auto text-[10px] font-normal text-gray-400">
+                            <span className="ml-auto text-meta font-normal text-gray-400">
                               {trails.length}
                             </span>
                           </div>

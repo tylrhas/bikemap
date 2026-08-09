@@ -28,7 +28,7 @@ import { cn } from '@/lib/utils';
 import { ConditionBadge } from './ConditionBadge';
 
 const LINK_CLASS =
-  'bg-transparent border-none p-0 cursor-pointer text-[10px] text-blue-600 hover:underline shrink-0';
+  'bg-transparent border-none p-0 cursor-pointer text-meta text-blue-600 hover:underline shrink-0';
 
 export function TrailConditionsStrip({
   slug,
@@ -108,7 +108,7 @@ export function TrailConditionsStrip({
   const lockedReason = reasonFor(slug);
 
   return (
-    <div className="text-[10px] text-gray-500 mb-1 -mt-0.5">
+    <div className="text-meta text-gray-500 mb-1 -mt-0.5">
       <div className="flex items-center gap-2">
         {current ? (
           <>

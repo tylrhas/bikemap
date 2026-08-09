@@ -166,7 +166,7 @@ function StorageIndicator() {
   const pct = Math.min(100, (usedKB / totalKB) * 100);
 
   return (
-    <div className="pt-3 pb-1 text-[11px] text-gray-500">
+    <div className="pt-3 pb-1 text-meta text-gray-500">
       <div className="h-1 rounded-sm bg-gray-200 mb-1">
         <div
           className={`h-full rounded-sm transition-[width] duration-300 ${pct > 80 ? 'bg-red-500' : 'bg-blue-500'}`}
