@@ -64,28 +64,11 @@ function toggleSet(
   });
 }
 
-/**
- * The swatch shape per rating — the green circle / blue square / black diamond
- * convention riders already read.
- *
- * Ratings are curated in the admin now, so a trail can arrive carrying one this
- * map has never heard of. `shapeFor` falls back rather than indexing straight
- * in: a miss used to yield `undefined`, which left the swatch with no classes
- * at all and collapsed it to nothing — the trail's colour simply vanished from
- * the list. The custom rating still shows, in its own colour, as a circle.
+/*
+ * The rating swatch is gone: the row names the difficulty in words now, the
+ * way the design does. That is also less colour-dependent than the shape and
+ * colour pair it replaces — the sparkline still carries the rating's colour.
  */
-const TRAIL_SHAPE: Record<string, string> = {
-  easy: 'shrink-0 w-3 h-3 rounded-full',
-  intermediate: 'shrink-0 w-3 h-3 rounded-sm',
-  advanced: 'shrink-0 w-2.5 h-2.5 rotate-45 rounded-[1px]',
-  expert: 'shrink-0 w-2.5 h-2.5 rotate-45 rounded-[1px]',
-  unrated: 'shrink-0 w-3 h-3 rounded-full',
-};
-
-function shapeFor(rating: string | undefined): string {
-  return TRAIL_SHAPE[rating || 'unrated'] ?? TRAIL_SHAPE.unrated;
-}
-
 function TrailRow({
   trail,
   selectedTrail,
@@ -99,54 +82,40 @@ function TrailRow({
   const { latest } = useTrailConditions();
   const condition = latest[slugForTrail(trail)];
 
+  const active = selectedTrail === trail.trailName;
+
   return (
-    <div
+    <button
+      type="button"
       onClick={() => onTrailSelect(trail.trailName)}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          onTrailSelect(trail.trailName);
-        }
-      }}
-      role="button"
-      tabIndex={0}
-      data-selected={selectedTrail === trail.trailName || undefined}
-      data-faded={
-        (selectedTrail && selectedTrail !== trail.trailName) || undefined
-      }
+      data-selected={active || undefined}
+      data-faded={(selectedTrail && !active) || undefined}
       className={cn(
-        'p-2 rounded cursor-pointer transition-all duration-200 border border-transparent',
-        selectedTrail === trail.trailName
-          ? 'bg-blue-600/10 border-blue-600'
-          : 'hover:bg-blue-600/5 hover:border-blue-500',
-        selectedTrail && selectedTrail !== trail.trailName && 'opacity-70',
+        // The clay left rail is how the design marks the active trail; every
+        // row carries a transparent one so nothing shifts when it lands.
+        'w-full text-left block border-l-[3px] px-4 py-3 transition-colors',
+        active
+          ? 'border-l-clay bg-clay/[0.18]'
+          : 'border-l-transparent hover:bg-cream/[0.07]',
       )}
     >
-      {/*
-        Two rows rather than one: the name gets its own line so it stops
-        competing with the numbers, and the numbers drop to a line where they
-        can align. The swatch and the sparkline span both.
-      */}
-      <div className="flex items-center gap-2.5">
-        <div
-          className={shapeFor(trail.rating)}
-          style={{ backgroundColor: trail.color }}
-        />
-        <div className="min-w-0 flex-1">
-          <div className="font-medium text-body truncate">
-            {trail.displayName}
-          </div>
-          <div className="flex items-center gap-2 text-meta text-gray-500 tabular-nums">
-            {trail.distance ? <span>{trail.distance} mi</span> : null}
-            {trail.elevationGain ? (
-              <span>{`\u2191${trail.elevationGain.toLocaleString()} ft`}</span>
-            ) : null}
-            <ConditionBadge report={condition} />
-          </div>
-        </div>
+      <div className="flex items-center justify-between gap-2 mb-1.5">
+        <span className="text-cream text-ui font-semibold truncate">
+          {trail.displayName}
+        </span>
+        <ConditionBadge report={condition} />
+      </div>
+      <div className="flex items-center gap-2.5 text-cream/55 text-meta tabular-nums">
+        {trail.distance ? <span>{trail.distance} mi</span> : null}
+        {trail.elevationGain ? (
+          <span>{`+${trail.elevationGain.toLocaleString()} ft`}</span>
+        ) : null}
+        {trail.rating ? (
+          <span className="capitalize">{trail.rating}</span>
+        ) : null}
         <TrailSparkline color={trail.color} values={trail.spark} />
       </div>
-    </div>
+    </button>
   );
 }
 
