@@ -21,12 +21,16 @@ import {
   faDownload,
   faShareAlt,
   faChartArea,
+  faLocationArrow,
   faTimes,
 } from '@fortawesome/free-solid-svg-icons';
 import { cn } from '@/lib/utils';
 import { siteConfig } from '@/config/site.config';
 import { TOGGLE_BTN_CLASS, TOGGLE_ICON_CLASS } from '@/components/styles';
 import { useTrailConditions } from '@/components/TrailConditionsProvider';
+import { useIsNarrow } from '@/hooks/useIsNarrow';
+import { DifficultyBadge } from './DifficultyBadge';
+import { TrailStats } from './TrailStats';
 import { TrailConditionsStrip } from './TrailConditionsStrip';
 
 const CHART_HEIGHT = 100;
@@ -289,6 +293,7 @@ export function ElevationProfile() {
 
   // Only to decide whether the pane has conditions worth opening for.
   const { options: conditionOptions } = useTrailConditions();
+  const narrow = useIsNarrow();
 
   useEffect(() => {
     const handleTrailSelect = (e: Event) => {
@@ -626,6 +631,16 @@ export function ElevationProfile() {
   // the guard above.
   const points = hasProfile && profile ? profile.profile : null;
 
+  /**
+   * The dock is the desktop treatment for a curated trail. A recorded ride or
+   * an OSM way keeps the floating card: neither has a grade, a complex or the
+   * CTAs, and for those the chart is the entire point of the panel.
+   */
+  const dockTrail = conditionSlug
+    ? getMountainBikeTrails().find((t) => slugForTrail(t) === conditionSlug)
+    : undefined;
+  const isDock = !narrow && !!dockTrail;
+
   // Mountain icon toggle button (visible when collapsed)
   if (collapsed) {
     return (
@@ -644,6 +659,105 @@ export function ElevationProfile() {
         >
           <FontAwesomeIcon icon={faChartArea} className={TOGGLE_ICON_CLASS} />
         </button>
+      </div>
+    );
+  }
+
+  if (isDock) {
+    return (
+      <div
+        className={cn(
+          'absolute bottom-0 left-0 right-0 z-elevation pointer-events-auto',
+          'bg-cream border-t-[3px] border-clay',
+          'grid grid-cols-[minmax(260px,340px)_1fr] items-stretch',
+          ridesPanelOpen && 'right-[296px]',
+        )}
+      >
+        <div className="px-[22px] pt-[18px] pb-5 border-r border-forest/10 min-w-0">
+          <DifficultyBadge
+            className="mb-2"
+            color={dockTrail?.color ?? '#BD815A'}
+            outline
+            rating={dockTrail?.rating ?? ''}
+          />
+          <div className="font-display text-[27px] leading-[1.05] text-forest mb-2.5 truncate">
+            {trailName}
+          </div>
+          <TrailStats
+            className="mb-4"
+            distance={dockTrail?.distance}
+            elevationGain={dockTrail?.elevationGain}
+          />
+          <div className="flex gap-2">
+            <button
+              className="flex-1 flex items-center justify-center gap-1.5 bg-forest text-cream rounded-control px-3.5 py-[11px] text-ui font-semibold transition-opacity hover:opacity-90"
+              onClick={() =>
+                window.dispatchEvent(new Event(MAP_EVENTS.RIDE_START_REQUEST))
+              }
+              type="button"
+            >
+              <FontAwesomeIcon className="w-3.5 h-3.5" icon={faLocationArrow} />
+              Start ride
+            </button>
+            {conditionSlug && (
+              <button
+                className="rounded-control border border-forest/25 px-3.5 py-[11px] text-ui font-medium text-forest whitespace-nowrap transition-colors hover:bg-forest/5"
+                onClick={() =>
+                  window.dispatchEvent(
+                    new CustomEvent(MAP_EVENTS.CONDITION_REPORT_OPEN, {
+                      detail: { slug: conditionSlug, trailName },
+                    }),
+                  )
+                }
+                type="button"
+              >
+                Report
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className="px-5 pt-3.5 pb-3 min-w-0">
+          <div className="flex items-baseline justify-between mb-1">
+            <span className="text-meta font-bold uppercase tracking-[0.08em] text-forest/70">
+              Elevation profile
+            </span>
+            <span className="text-meta text-ink/50">
+              {hoverIndex !== null && points
+                ? `${(points[hoverIndex][0] / 5280).toFixed(2)} mi \u00B7 ${Math.round(points[hoverIndex][1]).toLocaleString()} ft \u00B7 ${formatGrade(grades[hoverIndex])}`
+                : 'Hover to scrub the trail'}
+            </span>
+          </div>
+          {points && profile ? (
+            <div className="relative">
+              <ElevationSvg
+                points={points}
+                gradeColors={gradeColors}
+                profile={profile}
+                chartWidth={chartWidth}
+                svgRef={svgRef}
+                onMouseMove={handleMouseMove}
+                onMouseLeave={clearHover}
+                onTouchStart={handleTouch}
+                onTouchMove={handleTouch}
+                onTouchEnd={clearHover}
+              />
+              {hoverIndex !== null && (
+                <HoverIndicator
+                  points={points}
+                  gradeColors={gradeColors}
+                  profile={profile}
+                  chartWidth={chartWidth}
+                  hoverIndex={hoverIndex}
+                />
+              )}
+            </div>
+          ) : (
+            <div className="h-[124px] grid place-items-center text-ui text-ink/40">
+              No elevation recorded for this trail yet.
+            </div>
+          )}
+        </div>
       </div>
     );
   }

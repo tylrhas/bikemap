@@ -167,6 +167,19 @@ export function RidesPanel() {
     }
   }, [isRecording, stopRecording, startRecording, showToast]);
 
+  // The dock's "Start ride" asks rather than reaching in — recording state
+  // lives here, and starting one already in progress would lose the first.
+  useEffect(() => {
+    const handler = () => {
+      if (!isRecording) {
+        startRecording();
+      }
+    };
+    window.addEventListener(MAP_EVENTS.RIDE_START_REQUEST, handler);
+    return () =>
+      window.removeEventListener(MAP_EVENTS.RIDE_START_REQUEST, handler);
+  }, [isRecording, startRecording]);
+
   return (
     <>
       {/* Toggle button */}
