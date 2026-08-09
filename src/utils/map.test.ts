@@ -505,18 +505,21 @@ describe('flyToBounds', () => {
     });
   });
 
-  it('clears the rides panel so the trail is not centred behind it', () => {
+  it('lifts above the elevation pane so the trail is not behind it', () => {
     const mockMap = {
       fitBounds: vi.fn(),
       getCanvas: vi.fn(canvas),
     } as unknown as mapboxgl.Map;
 
-    setChromeState({ ridesPanelOpen: true });
+    setChromeState({ elevationOpen: true });
     flyToBounds(mockMap, mockBounds);
 
     const padding = (mockMap.fitBounds as ReturnType<typeof vi.fn>).mock
       .calls[0][1].padding;
-    expect(padding.right).toBeGreaterThan(padding.left);
+    // Nothing widens the sides now that My rides is a panel section rather
+    // than a drawer over the map.
+    expect(padding.bottom).toBeGreaterThan(padding.top);
+    expect(padding.right).toBe(padding.left);
     setChromeState({});
   });
 

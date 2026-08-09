@@ -87,15 +87,15 @@ export function RideHistory({
 
   if (summaries.length === 0) {
     return (
-      <div className="py-8 px-4 text-center text-gray-400">
+      <div className="py-8 px-2 text-center text-cream/50">
         <FontAwesomeIcon
           icon={faBicycle}
-          className="text-3xl mb-3 text-gray-300"
+          className="text-3xl mb-3 text-cream/25"
         />
-        <p className="text-sm font-medium text-gray-500 mb-1">
+        <p className="text-body font-medium text-cream/80 mb-1">
           {isRecording ? 'Recording your ride' : 'Track your rides'}
         </p>
-        <p className="text-xs leading-relaxed">
+        <p className="text-ui leading-relaxed">
           {isRecording
             ? 'Logging your ride with GPS.'
             : 'Tap Record to start logging your ride with GPS.'}{' '}
@@ -120,20 +120,21 @@ export function RideHistory({
           role="button"
           tabIndex={0}
           className={cn(
-            'p-2 rounded cursor-pointer transition-all duration-200 border border-transparent',
+            // The same clay rail the active trail carries, so "this ride is
+            // selected" and "this trail is selected" read as one idea.
+            'px-3 py-2.5 -mx-1 rounded-control cursor-pointer transition-colors border-l-[3px]',
             selectedRideId === s.id
-              ? 'bg-blue-600/10 border-blue-600'
-              : 'hover:bg-blue-600/5 hover:border-blue-500',
+              ? 'border-l-clay bg-cream/[0.09]'
+              : 'border-l-transparent hover:bg-cream/[0.06]',
           )}
         >
           <div className="flex items-center gap-3">
-            <div
-              className="w-4 h-4 rounded"
-              style={{ backgroundColor: '#ff6b35' }}
-            />
-            <span className="font-medium">{s.name}</span>
+            <div className="w-3 h-3 rounded-sm shrink-0 bg-coral" />
+            <span className="text-ui font-medium text-cream truncate">
+              {s.name}
+            </span>
           </div>
-          <div className="text-xs text-gray-500 mt-1 ml-7">
+          <div className="text-meta text-cream/55 mt-1 ml-[22px] tabular-nums">
             {formatDate(s.startTime)} &middot;{' '}
             {formatDistance(s.stats.distance)} &middot;{' '}
             {formatDurationShort(s.stats.elapsedTime)}
@@ -166,10 +167,10 @@ function StorageIndicator() {
   const pct = Math.min(100, (usedKB / totalKB) * 100);
 
   return (
-    <div className="pt-3 pb-1 text-meta text-gray-500">
-      <div className="h-1 rounded-sm bg-gray-200 mb-1">
+    <div className="pt-3 pb-1 text-meta text-cream/50">
+      <div className="h-1 rounded-sm bg-cream/15 mb-1">
         <div
-          className={`h-full rounded-sm transition-[width] duration-300 ${pct > 80 ? 'bg-red-500' : 'bg-blue-500'}`}
+          className={`h-full rounded-sm transition-[width] duration-300 ${pct > 80 ? 'bg-red-500' : 'bg-clay'}`}
           style={{ width: `${pct}%` }}
         />
       </div>

@@ -74,7 +74,7 @@ export function RideDetail({ ride, onClose, onDeleted }: RideDetailProps) {
     <div className="p-3">
       <button
         type="button"
-        className="flex items-center gap-1.5 text-ui text-blue-500 cursor-pointer mb-2.5 py-2 px-1 -ml-1 bg-transparent border-none hover:text-blue-600"
+        className="flex items-center gap-1.5 text-ui text-clay cursor-pointer mb-2.5 py-2 px-1 -ml-1 bg-transparent border-none hover:text-clay/80"
         onClick={onClose}
       >
         <FontAwesomeIcon icon={faChevronLeft} />
@@ -93,12 +93,12 @@ export function RideDetail({ ride, onClose, onDeleted }: RideDetailProps) {
                 if (e.key === 'Escape') setEditing(false);
               }}
               autoFocus
-              className="flex-1 text-sm font-semibold px-1.5 py-0.5 border border-gray-200 rounded outline-none min-w-0 focus:border-blue-500"
+              className="flex-1 text-ui font-semibold px-1.5 py-1 rounded-control bg-cream/10 text-cream border border-cream/20 outline-none min-w-0 focus:border-clay"
             />
             <IconButton onClick={handleRename} icon={faCheck} />
           </div>
         ) : (
-          <div className="flex items-center gap-1.5 font-semibold text-sm flex-1 min-w-0">
+          <div className="flex items-center gap-1.5 font-semibold text-body text-cream flex-1 min-w-0">
             <span className="overflow-hidden text-ellipsis whitespace-nowrap">
               {currentName}
             </span>
@@ -107,7 +107,7 @@ export function RideDetail({ ride, onClose, onDeleted }: RideDetailProps) {
         )}
       </div>
 
-      <div className="text-xs text-gray-500 mb-3">
+      <div className="text-meta text-cream/55 mb-3">
         {date} at {time}
       </div>
 
@@ -123,7 +123,7 @@ export function RideDetail({ ride, onClose, onDeleted }: RideDetailProps) {
       <div className="flex gap-2">
         <button
           type="button"
-          className="flex-1 py-1.5 px-2.5 border border-gray-200 rounded-md bg-white cursor-pointer text-xs font-medium flex items-center justify-center gap-1 transition-colors hover:bg-blue-50 hover:border-blue-500 hover:text-blue-600"
+          className="flex-1 py-2 px-2.5 rounded-control bg-cream/10 text-cream cursor-pointer text-meta font-semibold flex items-center justify-center gap-1.5 transition-colors border-none hover:bg-cream/20"
           onClick={handleExportGpx}
         >
           <FontAwesomeIcon icon={faDownload} /> Export GPX
@@ -131,10 +131,10 @@ export function RideDetail({ ride, onClose, onDeleted }: RideDetailProps) {
         <button
           type="button"
           className={cn(
-            'flex-1 py-1.5 px-2.5 border border-gray-200 rounded-md bg-white cursor-pointer text-xs font-medium flex items-center justify-center gap-1 transition-colors',
+            'flex-1 py-2 px-2.5 rounded-control cursor-pointer text-meta font-semibold flex items-center justify-center gap-1.5 transition-colors border-none',
             confirmDelete
-              ? 'bg-red-500 text-white border-red-500'
-              : 'hover:bg-red-100 hover:border-red-500 hover:text-red-500',
+              ? 'bg-red-500 text-white'
+              : 'bg-cream/10 text-cream hover:bg-red-500/80 hover:text-white',
           )}
           onClick={handleDelete}
         >
@@ -157,7 +157,7 @@ function IconButton({
     <button
       type="button"
       onClick={onClick}
-      className="bg-transparent border-none cursor-pointer text-gray-500 p-1 text-ui leading-none rounded hover:text-gray-700 hover:bg-gray-100"
+      className="bg-transparent border-none cursor-pointer text-cream/50 p-1 text-ui leading-none rounded hover:text-cream hover:bg-cream/10"
     >
       <FontAwesomeIcon icon={icon} />
     </button>
@@ -167,8 +167,10 @@ function IconButton({
 function Stat({ value, label }: { value: string; label: string }) {
   return (
     <div className="flex flex-col items-center text-center">
-      <span className="text-sm font-semibold text-gray-700">{value}</span>
-      <span className="text-meta text-gray-500 mt-px">{label}</span>
+      <span className="text-ui font-semibold text-cream tabular-nums">
+        {value}
+      </span>
+      <span className="text-meta text-cream/50 mt-px">{label}</span>
     </div>
   );
 }

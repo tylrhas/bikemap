@@ -8,7 +8,7 @@ export type RideStyle = 'casual' | 'mountain';
 interface Settings {
   rideStyle?: RideStyle;
   sidebarOpen?: boolean;
-  activeTab?: 'routes' | 'trails';
+  activeTab?: 'rides' | 'routes' | 'trails';
 }
 
 function readCookie(): Settings {

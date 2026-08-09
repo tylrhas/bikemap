@@ -15,14 +15,13 @@
 export const BASE_INSET = 60;
 
 /**
- * Widths of the things that still cover the map. Match the components.
+ * Sizes of the things that still cover the map. Match the components.
  *
- * The trail panel is not here on purpose: it is a column beside the map now,
- * so it hides nothing and the camera has no reason to know how wide it is.
+ * Only the elevation dock is left. The trail panel is a column beside the map,
+ * and My rides is a section of it — neither hides anything, so the camera has
+ * no reason to know how wide they are.
  */
 export const CHROME = {
-  /** RidesPanel, `w-[296px]`, still floats over the map. */
-  ridesPanel: 296,
   /** The elevation dock, measured at its tallest. */
   elevation: 150,
 };
@@ -31,7 +30,6 @@ export interface ChromeState {
   elevationOpen?: boolean;
   /** True below `md`, where the sheet floats over the map rather than beside it. */
   narrow?: boolean;
-  ridesPanelOpen?: boolean;
 }
 
 export interface Insets {
@@ -58,13 +56,9 @@ export function computeInsets(state: ChromeState = {}): Insets {
     top: BASE_INSET,
   };
 
-  // The panel is a column beside the map on desktop, so it covers nothing and
-  // needs no inset — that is the point of the layout. The rides panel still
-  // floats over the map, so it does.
-  if (!state.narrow && state.ridesPanelOpen) {
-    insets.right += CHROME.ridesPanel;
-  }
-
+  // Nothing widens the sides any more: the panel is a column beside the map,
+  // which is the point of the layout. `narrow` still matters below, where an
+  // open sheet covers the map completely.
   if (state.elevationOpen) {
     insets.bottom += CHROME.elevation;
   }

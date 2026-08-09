@@ -281,7 +281,6 @@ export function ElevationProfile() {
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
   const [locationIndex, setLocationIndex] = useState<number | null>(null);
   const [chartWidth, setChartWidth] = useState(800);
-  const [ridesPanelOpen, setRidesPanelOpen] = useState(false);
   const svgRef = useRef<SVGSVGElement>(null);
   // Track whether current profile is from a route, trail, or ride selection
   const sourceRef = useRef<'trail' | 'route' | 'ride' | null>(null);
@@ -355,9 +354,6 @@ export function ElevationProfile() {
         window.history.replaceState(null, '', window.location.pathname);
       }
     };
-    const handleRidesPanelToggle = (e: Event) => {
-      setRidesPanelOpen((e as CustomEvent).detail.isOpen);
-    };
     let latestRideId: string | null = null;
     const handleRideSelect = async (e: Event) => {
       const { rideId } = (e as CustomEvent).detail;
@@ -414,10 +410,6 @@ export function ElevationProfile() {
     window.addEventListener(MAP_EVENTS.TRAIL_DESELECT, handleTrailDeselect);
     window.addEventListener(MAP_EVENTS.ROUTE_SELECT, handleRouteSelect);
     window.addEventListener(MAP_EVENTS.ROUTE_DESELECT, handleRouteDeselect);
-    window.addEventListener(
-      MAP_EVENTS.RIDES_PANEL_TOGGLE,
-      handleRidesPanelToggle,
-    );
     window.addEventListener(MAP_EVENTS.RIDE_SELECT, handleRideSelect);
     window.addEventListener(MAP_EVENTS.RIDE_DESELECT, handleRideDeselect);
     window.addEventListener(
@@ -443,10 +435,6 @@ export function ElevationProfile() {
       window.removeEventListener(
         MAP_EVENTS.ROUTE_DESELECT,
         handleRouteDeselect,
-      );
-      window.removeEventListener(
-        MAP_EVENTS.RIDES_PANEL_TOGGLE,
-        handleRidesPanelToggle,
       );
       window.removeEventListener(MAP_EVENTS.RIDE_SELECT, handleRideSelect);
       window.removeEventListener(MAP_EVENTS.RIDE_DESELECT, handleRideDeselect);
@@ -670,7 +658,6 @@ export function ElevationProfile() {
           'absolute bottom-0 left-0 right-0 z-elevation pointer-events-auto',
           'bg-cream border-t-[3px] border-clay',
           'grid grid-cols-[minmax(260px,340px)_1fr] items-stretch',
-          ridesPanelOpen && 'right-[296px]',
         )}
       >
         <div className="px-[22px] pt-[18px] pb-5 border-r border-forest/10 min-w-0">
@@ -775,7 +762,6 @@ export function ElevationProfile() {
       className={cn(
         'absolute bottom-4 right-4 left-4 bg-white rounded-lg shadow-[0_2px_12px_rgba(0,0,0,0.15)] px-4 pt-2.5 pb-1.5 z-elevation pointer-events-auto transition-all duration-300',
         'max-md:left-2 max-md:right-2 max-md:bottom-[60px] max-md:px-2 max-md:pt-2 max-md:pb-1',
-        ridesPanelOpen && 'right-[296px]',
       )}
     >
       <div className="flex items-center gap-3 mb-1">

@@ -8,6 +8,7 @@ import {
   faLayerGroup,
   faBicycle,
   faMountain,
+  faStopwatch,
 } from '@fortawesome/free-solid-svg-icons';
 
 import {
@@ -26,6 +27,7 @@ import {
 import { getRideStyle } from './WelcomeModal';
 import { getSetting, setSetting } from '@/utils/settings';
 import { useIsNarrow } from '@/hooks/useIsNarrow';
+import { MyRides } from './sidebar/MyRides';
 import { NavRail, type RailItem } from './sidebar/NavRail';
 import { Wordmark } from './sidebar/Wordmark';
 import {
@@ -55,12 +57,16 @@ const hasRoutesSection =
   Boolean(mapConfig.gbfs);
 const hasTrailsSection = true;
 
+/** The three things the panel can show. */
+type Section = 'rides' | 'routes' | 'trails';
+
 /** What the desktop rail offers. Mirrors the sections the panel can show. */
 const RAIL_ITEMS: RailItem[] = [
   ...(hasRoutesSection
     ? [{ icon: faBicycle, key: 'routes', label: 'Casual routes' }]
     : []),
   { icon: faMountain, key: 'trails', label: 'Mountain trails' },
+  { icon: faStopwatch, key: 'rides', label: 'My rides' },
 ];
 
 // Main provider component
@@ -85,16 +91,15 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
   narrowRef.current = narrow;
   const [selectedRoute, setSelectedRoute] = useState<string | null>(null);
   const [selectedTrail, setSelectedTrail] = useState<string | null>(null);
-  const [activeSection, setActiveSection] = useState<'routes' | 'trails'>(
-    () => {
-      const saved = getSetting('activeTab');
-      if (saved === 'routes' && hasRoutesSection) return saved;
-      if (saved === 'trails' && hasTrailsSection) return saved;
-      if (getRideStyle() === 'mountain' && hasTrailsSection) return 'trails';
-      return hasRoutesSection ? 'routes' : 'trails';
-    },
-  );
-  const switchTab = (tab: 'routes' | 'trails') => {
+  const [activeSection, setActiveSection] = useState<Section>(() => {
+    const saved = getSetting('activeTab');
+    if (saved === 'routes' && hasRoutesSection) return saved;
+    if (saved === 'trails' && hasTrailsSection) return saved;
+    if (saved === 'rides') return 'rides';
+    if (getRideStyle() === 'mountain' && hasTrailsSection) return 'trails';
+    return hasRoutesSection ? 'routes' : 'trails';
+  });
+  const switchTab = (tab: Section) => {
     if (tab === 'routes' && !hasRoutesSection) return;
     if (tab === 'trails' && !hasTrailsSection) return;
     setActiveSection(tab);
@@ -457,17 +462,44 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  // Close when rides panel opens
+  /**
+   * Tell whoever is recording whether the rides list is on screen.
+   *
+   * The HUD over the map exists to say the clock is running while you are
+   * looking at something else; showing it above the same numbers in the panel
+   * would just be twice.
+   *
+   * On a phone the sheet at Peek is showing a strip of nothing, so that counts
+   * as not visible.
+   */
   useEffect(() => {
-    const handler = (e: Event) => {
-      const { isOpen: panelOpen } = (e as CustomEvent).detail;
-      if (panelOpen && isOpenRef.current) {
-        setIsOpen(false);
+    const visible =
+      activeSection === 'rides' && (narrow ? snap !== PEEK : isOpen);
+    window.dispatchEvent(
+      new CustomEvent(MAP_EVENTS.RIDES_PANEL_TOGGLE, {
+        detail: { isOpen: visible },
+      }),
+    );
+  }, [activeSection, isOpen, narrow, snap]);
+
+  /**
+   * Selecting a ride from somewhere else (the elevation dock's "see this ride")
+   * brings the list up. The request comes as a flag on RIDE_SELECT rather than
+   * an event of its own, because the section state lives here.
+   */
+  useEffect(() => {
+    const handler = (event: Event) => {
+      if ((event as CustomEvent).detail?.openPanel) {
+        setActiveSection('rides');
+        setSetting('activeTab', 'rides');
+        if (!narrowRef.current && !isOpenRef.current) {
+          setIsOpen(true);
+          setSetting('sidebarOpen', true);
+        }
       }
     };
-    window.addEventListener(MAP_EVENTS.RIDES_PANEL_TOGGLE, handler);
-    return () =>
-      window.removeEventListener(MAP_EVENTS.RIDES_PANEL_TOGGLE, handler);
+    window.addEventListener(MAP_EVENTS.RIDE_SELECT, handler);
+    return () => window.removeEventListener(MAP_EVENTS.RIDE_SELECT, handler);
   }, []);
 
   return (
@@ -576,7 +608,7 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
                 toggle();
                 return;
               }
-              switchTab(key as 'routes' | 'trails');
+              switchTab(key as Section);
               if (!isOpenRef.current) {
                 toggle();
               }
@@ -630,6 +662,20 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
                   MTB
                 </button>
               )}
+              {/* The phone has no rail, so rides need a third pill rather than
+                  the button that used to float over the map. */}
+              <button
+                type="button"
+                className={cn(
+                  'flex-1 py-1.5 px-4 text-sm font-medium rounded-full transition-colors',
+                  activeSection === 'rides'
+                    ? 'bg-white text-gray-800 shadow-sm'
+                    : 'text-gray-500 hover:text-gray-700',
+                )}
+                onClick={() => switchTab('rides')}
+              >
+                Rides
+              </button>
             </div>
           </div>
 
@@ -701,6 +747,8 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
                   )}
                 </>
               )}
+
+              {activeSection === 'rides' && <MyRides />}
 
               <InformationSection />
             </div>

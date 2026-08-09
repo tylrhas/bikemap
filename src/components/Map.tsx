@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, memo, useCallback } from 'react';
 import mapboxgl from 'mapbox-gl';
 import { MapLegendProvider } from '@/components/MapLegend';
-import { RidesPanel } from '@/components/RidesPanel';
+import { RideRecordingProvider } from '@/components/RideRecordingProvider';
 import {
   bikeRoutes,
   mapFeatures,
@@ -1536,14 +1536,9 @@ const MapboxMap = memo(function MapboxMap() {
     const state = {
       elevationOpen: false,
       narrow: media.matches,
-      ridesPanelOpen: false,
     };
     const publish = () => setChromeState({ ...state });
 
-    const onRides = (e: Event) => {
-      state.ridesPanelOpen = (e as CustomEvent).detail?.isOpen ?? false;
-      publish();
-    };
     // The pane has no event of its own; a selection is what brings it up.
     const onSelect = () => {
       state.elevationOpen = true;
@@ -1559,14 +1554,12 @@ const MapboxMap = memo(function MapboxMap() {
     };
 
     publish();
-    window.addEventListener(MAP_EVENTS.RIDES_PANEL_TOGGLE, onRides);
     window.addEventListener(MAP_EVENTS.TRAIL_SELECT, onSelect);
     window.addEventListener(MAP_EVENTS.TRAIL_DESELECT, onDeselect);
     window.addEventListener(MAP_EVENTS.ROUTE_DESELECT, onDeselect);
     media.addEventListener('change', onViewport);
 
     return () => {
-      window.removeEventListener(MAP_EVENTS.RIDES_PANEL_TOGGLE, onRides);
       window.removeEventListener(MAP_EVENTS.TRAIL_SELECT, onSelect);
       window.removeEventListener(MAP_EVENTS.TRAIL_DESELECT, onDeselect);
       window.removeEventListener(MAP_EVENTS.ROUTE_DESELECT, onDeselect);
@@ -1693,11 +1686,14 @@ const MapboxMap = memo(function MapboxMap() {
 // Main Map component - manages layout and UI chrome
 export default function BikeMap() {
   return (
-    <MapLegendProvider>
-      <div className="flex-1 min-w-0 h-full relative overflow-hidden">
-        <MapboxMap />
-        <RidesPanel />
-      </div>
-    </MapLegendProvider>
+    // Recording sits outside the panel because it has to outlive whichever
+    // section is showing — see RideRecordingProvider.
+    <RideRecordingProvider>
+      <MapLegendProvider>
+        <div className="flex-1 min-w-0 h-full relative overflow-hidden">
+          <MapboxMap />
+        </div>
+      </MapLegendProvider>
+    </RideRecordingProvider>
   );
 }
