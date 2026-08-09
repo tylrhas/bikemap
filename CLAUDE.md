@@ -586,17 +586,21 @@ Things to know before touching it:
   - **Off means not attached, not merely hidden.** `osmTrails` off skips
     `ensureOsmTrailsSource`, so a layer nothing can reveal costs no tile
     requests.
-  - **One section means no rail** (`showRail` in `MapLegend`) — and then the
-    phone's reveal button un-hides itself on desktop, because pressing the
-    current rail item was the only way back to a full-width map. The collapsed
-    column also goes to `w-0` rather than leaving a `w-14` stub of nothing. The
-    mobile pill row goes with it.
+  - **One section means no rail** (`showRail` in `MapLegend`), and the mobile
+    pill row goes with it — a control offering one choice.
   - **A saved `activeTab` is re-checked against what is on offer**, or a section
     switched off yesterday leaves the panel showing nothing today.
   - When a second row joins the Trails tab's `MapLayersSection`, gate its
     children individually — today the section is hidden wholesale because
     `osmTrails` is its only row, and a bare heading over nothing reads as
     something failing to load.
+- **The desktop panel does not close.** It is a column of the layout rather
+  than something over the map, so hiding it buys back space nothing was
+  covering. `isOpen` is derived — `narrow ? snap !== PEEK : true` — not stored,
+  so there is no cookie and no state to get out of step. The rail only switches
+  sections; the reveal button is `md:hidden`; and nothing should reintroduce a
+  desktop control for it, which is why `MapControls` lost its "Map layers"
+  button and `sidebarOpen` left `Settings`.
 - **My rides is a panel section, not a drawer.** Recording state lives in
   `RideRecordingProvider` **above** `MapLegendProvider`, because a ride has to
   survive switching to the trail list; the section reads it through `useRides`.

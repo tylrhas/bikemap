@@ -92,8 +92,6 @@ function sectionsFor(layers: MapLayerSettings): {
 
 // Main provider component
 export function MapLegendProvider({ children }: { children: React.ReactNode }) {
-  // Track state in this parent component
-  const [isOpen, setIsOpen] = useState(() => getSetting('sidebarOpen') ?? true);
   const narrow = useIsNarrow();
   /**
    * Which stop the mobile sheet rests at. Desktop ignores it entirely and keeps
@@ -158,24 +156,21 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
   const sidebarRef = useRef<HTMLDivElement>(null);
   const toggleButtonRef = useRef<HTMLButtonElement>(null);
 
+  /**
+   * Whether the list is showing.
+   *
+   * Desktop is always open — the panel is a column of the layout, not something
+   * over the map, so hiding it buys back space nothing was covering. On a phone
+   * it is the sheet's position: anything above Peek counts as open.
+   */
+  const isOpen = narrow ? snap !== PEEK : true;
   const isOpenRef = useRef(isOpen);
   isOpenRef.current = isOpen;
 
   const toggle = useCallback(() => {
-    // A sheet is never closed — the button moves it between resting and
-    // browsing instead, which is what "open the list" means there.
-    if (narrowRef.current) {
-      setSnap((current) => (current === PEEK ? HALF : PEEK));
-      return;
-    }
-    const next = !isOpenRef.current;
-    setIsOpen(next);
-    setSetting('sidebarOpen', next);
-    window.dispatchEvent(
-      new CustomEvent(MAP_EVENTS.SIDEBAR_TOGGLE, {
-        detail: { isOpen: next },
-      }),
-    );
+    // Phone only. A sheet is never closed — the button moves it between resting
+    // and browsing, which is what "open the list" means there.
+    setSnap((current) => (current === PEEK ? HALF : PEEK));
   }, []);
 
   /**
@@ -261,11 +256,8 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
         }
         return;
       }
-      if (!isOpen) return;
-      if (toggleButtonRef.current?.contains(event.target as Node)) return;
-      if (sidebarRef.current?.contains(event.target as Node)) return;
-
-      toggle();
+      // Desktop falls through: the panel is a column, and clicking the map is
+      // not a request to give up a third of the layout.
     };
 
     // Use capture phase so we see the event before it reaches sidebar children
@@ -514,8 +506,7 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
    * as not visible.
    */
   useEffect(() => {
-    const visible =
-      activeSection === 'rides' && (narrow ? snap !== PEEK : isOpen);
+    const visible = activeSection === 'rides' && isOpen;
     window.dispatchEvent(
       new CustomEvent(MAP_EVENTS.RIDES_PANEL_TOGGLE, {
         detail: { isOpen: visible },
@@ -533,9 +524,8 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
       if ((event as CustomEvent).detail?.openPanel) {
         setActiveSection('rides');
         setSetting('activeTab', 'rides');
-        if (!narrowRef.current && !isOpenRef.current) {
-          setIsOpen(true);
-          setSetting('sidebarOpen', true);
+        if (narrowRef.current) {
+          setSnap(HALF);
         }
       }
     };
@@ -554,15 +544,14 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
       {children}
 
       {/*
-        The phone always has it. Desktop normally does not — the rail is how you
-        change what the panel shows, and pressing the current section hides it.
-        With one section there is no rail, so this is the only way back to a
-        full-width map and it comes back.
+        Phone only. Desktop has nothing for it to do: the panel is a column of
+        the layout rather than something over the map, so there is no space to
+        win back by hiding it — and a button that sat over the list it was
+        supposed to reveal was worse than no button.
       */}
       <div
         className={cn(
-          'fixed left-4 top-[calc(1rem+env(safe-area-inset-top))]',
-          showRail && 'md:hidden',
+          'fixed left-4 top-[calc(1rem+env(safe-area-inset-top))] md:hidden',
           isOpen ? 'z-drawer-toggle-open' : 'z-drawer-toggle',
         )}
       >
@@ -601,16 +590,9 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
                 // `order-first` rather than moving it in the DOM: the provider
                 // renders children before the panel, and reordering that would
                 // change what every consumer sees.
-                'relative order-first flex-none flex-row h-full shadow-[2px_0_16px_rgba(14,34,41,0.10)] transition-[width] duration-300 ease-in-out',
-                // Collapsed, the rail is what is left. With no rail there is
-                // nothing to leave behind, so the column closes completely.
-                isOpen
-                  ? showRail
-                    ? 'w-[376px]'
-                    : 'w-[320px]'
-                  : showRail
-                    ? 'w-14'
-                    : 'w-0',
+                'relative order-first flex-none flex-row h-full shadow-[2px_0_16px_rgba(14,34,41,0.10)]',
+                // 320px of list, plus the rail when there is one.
+                showRail ? 'w-[376px]' : 'w-[320px]',
               ),
         )}
         style={
@@ -644,30 +626,17 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
           </button>
         )}
 
-        {/*
-          Desktop: the rail sits beside the content and stays put when the list
-          collapses. Pressing the section already showing hides the list, which
-          is the only way back to a full-width map now the toggle button is gone.
-        */}
+        {/* Desktop: the rail sits beside the content and only switches
+            sections. There is nothing to collapse. */}
         {!narrow && showRail && (
           <NavRail
             active={activeSection}
-            collapsed={!isOpen}
             items={railItems}
-            onSelect={(key) => {
-              if (key === activeSection) {
-                toggle();
-                return;
-              }
-              switchTab(key as Section);
-              if (!isOpenRef.current) {
-                toggle();
-              }
-            }}
+            onSelect={(key) => switchTab(key as Section)}
           />
         )}
 
-        {!narrow && isOpen && (
+        {!narrow && (
           <div
             className={cn(
               'absolute top-0 w-[320px] px-[18px] pt-[18px] pb-3.5 border-b border-cream/10 pointer-events-none',
@@ -682,9 +651,6 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
           className={cn(
             'flex-1 min-w-0 flex flex-col overflow-hidden',
             !narrow && 'pt-[58px]',
-            // Collapsed the column is gone, not merely narrow — a sliver of
-            // truncated trail names would be worse than none.
-            !narrow && !isOpen && 'hidden',
           )}
         >
           {/* The phone has no rail, so it keeps the pill — for the same

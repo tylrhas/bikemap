@@ -14,9 +14,6 @@ export const MAP_EVENTS = {
   ELEVATION_HOVER: 'elevation-hover',
   LOCATION_UPDATE: 'location-update',
   RIDE_STYLE_CHOSEN: 'ride-style-chosen',
-  // Asks whoever owns recording to begin one. The dock's "Start ride" has no
-  // business reaching into RidesPanel's state, so it asks instead.
-  RIDE_START_REQUEST: 'ride-start-request',
   RIDE_RECORDING_START: 'ride-recording-start',
   RIDE_RECORDING_STOP: 'ride-recording-stop',
   RIDE_RECORDING_UPDATE: 'ride-recording-update',

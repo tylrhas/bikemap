@@ -4,10 +4,15 @@
  * The desktop navigation rail.
  *
  * Replaces the pill toggle that used to sit inside the panel header. Two
- * reasons it moved out: the panel is now always open on desktop, so a control
- * for switching what it shows belongs beside it rather than inside it; and it
- * gives the interface a fixed anchor, which is the thing a floating drawer over
- * a full-bleed map never had.
+ * reasons it moved out: the panel is always open on desktop, so a control for
+ * switching what it shows belongs beside it rather than inside it; and it gives
+ * the interface a fixed anchor, which is the thing a floating drawer over a
+ * full-bleed map never had.
+ *
+ * It only switches. The panel used to collapse when you pressed the section
+ * already showing, which meant the rail's one visible state had a second,
+ * invisible meaning — and it is a column of the layout, so hiding it buys back
+ * space nothing was covering.
  *
  * Deep teal on purpose. The brand had been living entirely on the splash screen
  * while the app itself was white — this is the one surface big enough to carry
@@ -27,15 +32,11 @@ export interface RailItem {
 
 export function NavRail({
   active,
-  collapsed = false,
   items,
   onSelect,
 }: {
   active: string;
-  /** True when the list column is hidden and only the rail is showing. */
-  collapsed?: boolean;
   items: RailItem[];
-  /** Called with the section pressed; the same section again means "collapse". */
   onSelect: (key: string) => void;
 }) {
   return (
@@ -44,8 +45,7 @@ export function NavRail({
       className="flex-none w-14 h-full bg-app-secondary flex flex-col items-center gap-1 py-3 pt-[calc(0.75rem+env(safe-area-inset-top))]"
     >
       {items.map((item) => {
-        // Collapsed, nothing is "current" — the panel it would open is shut.
-        const selected = item.key === active && !collapsed;
+        const selected = item.key === active;
         return (
           <button
             aria-current={selected ? 'page' : undefined}
@@ -57,7 +57,7 @@ export function NavRail({
             )}
             key={item.key}
             onClick={() => onSelect(item.key)}
-            title={selected ? `Hide ${item.label.toLowerCase()}` : item.label}
+            title={item.label}
             type="button"
           >
             <FontAwesomeIcon className="w-4 h-4" icon={item.icon} />

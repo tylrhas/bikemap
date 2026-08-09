@@ -18,16 +18,16 @@ describe('settings cookie', () => {
     expect(getSetting('rideStyle')).toBe('mountain');
   });
 
-  it('stores and retrieves sidebarOpen', () => {
-    setSetting('sidebarOpen', false);
-    expect(getSetting('sidebarOpen')).toBe(false);
+  it('stores and retrieves activeTab', () => {
+    setSetting('activeTab', 'trails');
+    expect(getSetting('activeTab')).toBe('trails');
   });
 
   it('preserves other settings when updating one', () => {
     setSetting('rideStyle', 'casual');
-    setSetting('sidebarOpen', false);
+    setSetting('activeTab', 'rides');
     expect(getSetting('rideStyle')).toBe('casual');
-    expect(getSetting('sidebarOpen')).toBe(false);
+    expect(getSetting('activeTab')).toBe('rides');
   });
 
   it('overwrites a setting', () => {

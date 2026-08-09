@@ -21,7 +21,6 @@ import {
   faDownload,
   faShareAlt,
   faChartArea,
-  faLocationArrow,
   faTimes,
 } from '@fortawesome/free-solid-svg-icons';
 import { cn } from '@/lib/utils';
@@ -675,20 +674,13 @@ export function ElevationProfile() {
             distance={dockTrail?.distance}
             elevationGain={dockTrail?.elevationGain}
           />
+          {/* No "Start ride" here. The dock is desktop only, where My rides is
+              one press away in the rail — and a second way in only mattered
+              back when rides were behind a drawer on the far side of the map. */}
           <div className="flex gap-2">
-            <button
-              className="flex-1 flex items-center justify-center gap-1.5 bg-forest text-cream rounded-control px-3.5 py-[11px] text-ui font-semibold transition-opacity hover:opacity-90"
-              onClick={() =>
-                window.dispatchEvent(new Event(MAP_EVENTS.RIDE_START_REQUEST))
-              }
-              type="button"
-            >
-              <FontAwesomeIcon className="w-3.5 h-3.5" icon={faLocationArrow} />
-              Start ride
-            </button>
             {conditionSlug && (
               <button
-                className="rounded-control border border-forest/25 px-3.5 py-[11px] text-ui font-medium text-forest whitespace-nowrap transition-colors hover:bg-forest/5"
+                className="flex-1 rounded-control border border-forest/25 px-3.5 py-[11px] text-ui font-medium text-forest whitespace-nowrap transition-colors hover:bg-forest/5"
                 onClick={() =>
                   window.dispatchEvent(
                     new CustomEvent(MAP_EVENTS.CONDITION_REPORT_OPEN, {

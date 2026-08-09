@@ -1607,13 +1607,6 @@ const MapboxMap = memo(function MapboxMap() {
             void document.exitFullscreen();
           }
         }}
-        onLayers={() =>
-          window.dispatchEvent(
-            new CustomEvent(MAP_EVENTS.SIDEBAR_TOGGLE, {
-              detail: { isOpen: true, requestOpen: true },
-            }),
-          )
-        }
         onLocate={toggleWatchLocation}
         tracking={watchingLocation}
       />

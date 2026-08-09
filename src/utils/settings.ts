@@ -7,7 +7,6 @@ export type RideStyle = 'casual' | 'mountain';
 
 interface Settings {
   rideStyle?: RideStyle;
-  sidebarOpen?: boolean;
   activeTab?: 'rides' | 'routes' | 'trails';
 }
 

@@ -135,19 +135,6 @@ export function RideRecordingProvider({ children }: { children: ReactNode }) {
     );
   }, [startRecording, stopRecording]);
 
-  // The dock's "Start ride" asks rather than reaching in — recording state
-  // lives here, and starting one already in progress would lose the first.
-  useEffect(() => {
-    const handler = () => {
-      if (!isRecordingRef.current) {
-        startRecording();
-      }
-    };
-    window.addEventListener(MAP_EVENTS.RIDE_START_REQUEST, handler);
-    return () =>
-      window.removeEventListener(MAP_EVENTS.RIDE_START_REQUEST, handler);
-  }, [startRecording]);
-
   const selectRide = useCallback((rideId: string) => {
     setSelectedRideId(rideId);
     window.dispatchEvent(

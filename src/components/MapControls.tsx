@@ -13,7 +13,6 @@
  */
 import {
   faExpand,
-  faLayerGroup,
   faLocationCrosshairs,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -52,22 +51,19 @@ function ControlButton({
 
 export function MapControls({
   onFullscreen,
-  onLayers,
   onLocate,
   tracking = false,
 }: {
   onFullscreen: () => void;
-  onLayers: () => void;
   onLocate: () => void;
   tracking?: boolean;
 }) {
   return (
     <div className="absolute top-4 right-4 z-map-ui flex flex-col gap-2 pointer-events-auto">
-      <ControlButton
-        icon={faLayerGroup}
-        label="Map layers"
-        onClick={onLayers}
-      />
+      {/* No "Map layers" button. It asked the sidebar to open, which nothing
+          listened for even before the sidebar stopped closing — so it moved the
+          camera by a pixel and did nothing else. The layers live in the panel,
+          which is always there. */}
       <ControlButton
         active={tracking}
         icon={faLocationCrosshairs}
