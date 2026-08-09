@@ -1,7 +1,7 @@
 import 'server-only';
 
 /**
- * The public map's brand: colours as CSS, plus the identity the header draws.
+ * The public map's brand: colors as CSS, plus the identity the header draws.
  *
  * **Never throws**, the same rule as `getCityTrails` and `getThemeCss` — a
  * theme row must never be able to take the map down. Anything unreadable falls

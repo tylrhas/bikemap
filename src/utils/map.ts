@@ -424,9 +424,9 @@ function closedId(layerId: string): string {
 }
 
 /**
- * The red of a closure. One colour rather than the condition's own, because
+ * The red of a closure. One color rather than the condition's own, because
  * this layer means one thing — the dash is what carries it, so it still reads
- * without relying on colour at all.
+ * without relying on color at all.
  */
 const CLOSED_COLOR = '#dc2626';
 
@@ -440,7 +440,7 @@ const MATCH_NOTHING: mapboxgl.FilterSpecification = [
 /**
  * Draws the closed trails as a red dashed line over their normal one.
  *
- * An overlay rather than a recolour so the trail keeps its rating colour — the
+ * An overlay rather than a recolor so the trail keeps its rating color — the
  * green/blue/black scheme is what the legend and the sidebar swatches mean, and
  * turning a trail red would leave the two disagreeing.
  *

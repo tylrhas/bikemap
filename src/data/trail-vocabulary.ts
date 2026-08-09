@@ -4,7 +4,7 @@
  * Both used to be hardcoded `select` options on the Trails collection, which
  * meant adding a difficulty band or a new sort of trail was a code change, a
  * migration, and a deploy. They are collections now — `trail-ratings` and
- * `trail-kinds` — so a curator can add, rename, recolour, and reorder them.
+ * `trail-kinds` — so a curator can add, rename, recolor, and reorder them.
  *
  * What stays in code is the *default* vocabulary and the small set of things a
  * database row genuinely can't carry:
@@ -17,7 +17,7 @@
  *   maps it back, which also keeps the icon set to ones already bundled.
  * - **The fallbacks.** `getCityTrails` must never throw, so every derived value
  *   needs an answer even when the vocabulary rows are missing or a curator has
- *   left a colour blank.
+ *   left a color blank.
  *
  * Client-safe: no Node-only imports, so the sidebar can use it too.
  */
@@ -31,7 +31,7 @@ import { RATING_COLORS, UNRATED_COLOR } from './trail-metadata';
 /**
  * The rating meaning "nobody has graded this", which the app has always
  * represented as an empty string. Kept as a real row rather than a blank
- * relationship so it can carry a colour like any other.
+ * relationship so it can carry a color like any other.
  */
 export const UNRATED_VALUE = 'unrated';
 
@@ -57,7 +57,7 @@ export interface RatingSeed {
 export type KindIcon = 'mountain' | 'route';
 
 export interface KindSeed {
-  /** Overrides the rating's colour when set — how greenways get their green. */
+  /** Overrides the rating's color when set — how greenways get their green. */
   color?: string;
   icon: KindIcon;
   name: string;
@@ -67,7 +67,7 @@ export interface KindSeed {
 /**
  * The five difficulty bands, in the order a rider would rank them.
  *
- * Colours come from `RATING_COLORS` rather than being repeated, so the checked-
+ * Colors come from `RATING_COLORS` rather than being repeated, so the checked-
  * in palette and the seeded one cannot drift apart.
  */
 export const DEFAULT_RATINGS: RatingSeed[] = [

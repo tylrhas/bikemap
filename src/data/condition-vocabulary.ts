@@ -15,7 +15,7 @@
 export const CONDITION_FRESH_DAYS = 14;
 
 export interface ConditionSeed {
-  /** The colour the badge pill is tinted with. */
+  /** The color the badge pill is tinted with. */
   color: string;
   description?: string;
   /** Draws the trail closed on the map, and stops the badge expiring. */
@@ -83,5 +83,5 @@ export const DEFAULT_CONDITIONS: ConditionSeed[] = [
   },
 ];
 
-/** The colour a condition falls back to if a curator has blanked its own. */
+/** The color a condition falls back to if a curator has blanked its own. */
 export const DEFAULT_CONDITION_COLOR = '#6b7280';

@@ -3,10 +3,10 @@
 /**
  * A trail's grade, as a word.
  *
- * The colour comes off the trail — which comes off its rating row — rather than
+ * The color comes off the trail — which comes off its rating row — rather than
  * a lookup table keyed by "Beginner | Intermediate | Advanced". The design
  * assumes those three; this app lets a curator add a grade without a deploy, so
- * a table would leave anything new uncoloured. Reading the trail's own colour
+ * a table would leave anything new uncolored. Reading the trail's own color
  * means a new grade arrives already dressed.
  *
  * Two variants, per the design: filled in a list, outlined on a light surface.

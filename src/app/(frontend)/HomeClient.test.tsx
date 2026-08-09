@@ -190,7 +190,7 @@ describe('HomeClient — brand', () => {
   afterEach(cleanup);
 
   it('publishes the server brand so the header can read it', () => {
-    // The colours and type arrive as CSS from the layout; the name and logo
+    // The colors and type arrive as CSS from the layout; the name and logo
     // are content, and this is the only path they take to the client.
     render(
       <HomeClient

@@ -228,7 +228,7 @@ describe('computeGrades', () => {
 });
 
 describe('formatGrade', () => {
-  it('signs the number, because up and down share a colour', () => {
+  it('signs the number, because up and down share a color', () => {
     expect(formatGrade(8.42)).toBe('+8.4%');
     expect(formatGrade(-8.42)).toBe('−8.4%');
   });

@@ -22,7 +22,7 @@ function validateHex(value: unknown): string | true {
   }
   return HEX.test(String(value))
     ? true
-    : 'Use a 6-digit hex colour, e.g. #c3f44d.';
+    : 'Use a 6-digit hex color, e.g. #c3f44d.';
 }
 
 export const Theme: GlobalConfig = {
@@ -42,7 +42,7 @@ export const Theme: GlobalConfig = {
   fields: [
     {
       type: 'collapsible',
-      label: 'Colour',
+      label: 'Color',
       fields: [
         {
           type: 'row',
@@ -66,7 +66,7 @@ export const Theme: GlobalConfig = {
                 components: {
                   Field: '@/payload/components/ColorField#ColorField',
                 },
-                description: 'Deep brand colour. Default #1a434e.',
+                description: 'Deep brand color. Default #1a434e.',
                 width: '50%',
               },
               validate: validateHex,

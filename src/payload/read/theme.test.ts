@@ -14,7 +14,7 @@ describe('buildThemeCss', () => {
     expect(buildThemeCss({})).toBe('');
   });
 
-  it('sets the accent colour and the focus ring together', () => {
+  it('sets the accent color and the focus ring together', () => {
     const css = buildThemeCss({ accentColor: '#c3f44d' });
 
     expect(css).toContain('--brand-accent:#c3f44d');
@@ -23,7 +23,7 @@ describe('buildThemeCss', () => {
     expect(css).toContain('--accessibility-outline:2px solid #c3f44d');
   });
 
-  it('ignores a malformed colour rather than emitting broken CSS', () => {
+  it('ignores a malformed color rather than emitting broken CSS', () => {
     // The field validates, but a value could arrive from a direct API write.
     expect(buildThemeCss({ accentColor: 'red; }' })).toBe('');
     expect(buildThemeCss({ accentColor: '#fff' })).toBe('');

@@ -9,7 +9,7 @@ import { slugValidator } from '@/payload/collections/vocabulary-fields';
  * how riders see the map and an admin changing how their own tools look are
  * different decisions, and one form for both makes each confusing.
  *
- * Only colours something actually reads are here. Trail and condition colours
+ * Only colors something actually reads are here. Trail and condition colors
  * are already curated under Lists, and a control that changes nothing is worse
  * than no control — so the palette's unused members are deliberately absent.
  *
@@ -74,7 +74,7 @@ export const MapAppearance: GlobalConfig = {
   label: 'Map appearance',
   admin: {
     description:
-      'The name, colours and type riders see. Trail and condition colours live under Lists — these are the interface itself. Leave a field blank for the default.',
+      'The name, colors and type riders see. Trail and condition colors live under Lists — these are the interface itself. Leave a field blank for the default.',
     group: 'Settings',
   },
   access: {
@@ -95,9 +95,9 @@ export const MapAppearance: GlobalConfig = {
         },
         {
           description:
-            'Five colours the whole interface is built from. Leave one blank for the default.',
+            'Five colors the whole interface is built from. Leave one blank for the default.',
           fields: colorFields(),
-          label: 'Colours',
+          label: 'Colors',
         },
         {
           description:
@@ -146,7 +146,7 @@ function colorFields(): NonNullable<GlobalConfig['fields']> {
         colorField(
           'secondaryColor',
           'Deep surface',
-          'The trail panel, primary buttons and headings. The darkest colour on the map.',
+          'The trail panel, primary buttons and headings. The darkest color on the map.',
         ),
         colorField(
           'surfaceColor',

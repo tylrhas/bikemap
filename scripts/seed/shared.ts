@@ -116,7 +116,7 @@ export async function loadVocabulary(payload: Payload): Promise<Vocabulary> {
  * An existing row's id, or undefined.
  *
  * A row that is already there is left completely alone: a curator may have
- * recoloured or renamed it, and reseeding *trails* has no business undoing
+ * recolored or renamed it, and reseeding *trails* has no business undoing
  * that.
  */
 async function findByValue(
@@ -152,7 +152,7 @@ export function ratingIdFor(
 /**
  * faRoute marks the greenways in the source data, against faMountain for
  * singletrack. Storing the distinction rather than the icon lets the app derive
- * both icon and colour from it.
+ * both icon and color from it.
  */
 export function kindIdFor(
   trail: MountainBikeTrail,

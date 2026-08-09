@@ -306,7 +306,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   // so without these rows the admin cannot create a trail at all — an empty
   // vocabulary is not an empty list, it is a broken form.
   //
-  // Values, colours and order mirror `src/data/trail-vocabulary.ts`; keep them
+  // Values, colors and order mirror `src/data/trail-vocabulary.ts`; keep them
   // in step. ON CONFLICT so re-running against a database that already has them
   // is harmless.
   await db.execute(sql`

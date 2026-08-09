@@ -7,8 +7,8 @@ import { slugValidator, valueField } from './vocabulary-fields';
  * This was a hardcoded `select` on Trails, so adding a band (a "double black",
  * or a local grading scheme) meant editing TypeScript, writing a migration for
  * the Postgres enum, and deploying. As a collection it is curated in the admin,
- * and the **colour comes with it** — the palette used to live in code for the
- * same reason, and recolouring "advanced" is now an edit rather than a release.
+ * and the **color comes with it** — the palette used to live in code for the
+ * same reason, and recoloring "advanced" is now an edit rather than a release.
  *
  * Trails reference this through a `relationship`, so renaming a rating updates
  * every trail at once and Payload blocks deleting one still in use.
@@ -26,7 +26,7 @@ export const TrailRatings: CollectionConfig = {
     useAsTitle: 'name',
     defaultColumns: ['name', 'value', 'color', 'sortOrder'],
     description:
-      'How trails are graded, and the colour each grade draws in. Anything added here becomes selectable on a trail.',
+      'How trails are graded, and the color each grade draws in. Anything added here becomes selectable on a trail.',
     group: 'Lists',
     listSearchableFields: ['name', 'value'],
   },
@@ -66,7 +66,7 @@ export const TrailRatings: CollectionConfig = {
           defaultValue: '#6b7280',
           admin: {
             components: { Field: '@/payload/components/ColorField#ColorField' },
-            description: 'The colour trails with this rating draw in.',
+            description: 'The color trails with this rating draw in.',
             width: '50%',
           },
           validate: slugValidator.color,

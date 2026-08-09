@@ -161,7 +161,7 @@ export interface Trail {
    */
   rating: number | TrailRating;
   /**
-   * Drives the line colour and sidebar icon, both of which come from the kind and rating rows rather than being stored per trail. Manage the list under Lists → Trail kinds.
+   * Drives the line color and sidebar icon, both of which come from the kind and rating rows rather than being stored per trail. Manage the list under Lists → Trail kinds.
    */
   kind: number | TrailKind;
   /**
@@ -315,7 +315,7 @@ export interface Organization {
   createdAt: string;
 }
 /**
- * How trails are graded, and the colour each grade draws in. Anything added here becomes selectable on a trail.
+ * How trails are graded, and the color each grade draws in. Anything added here becomes selectable on a trail.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "trail-ratings".
@@ -331,7 +331,7 @@ export interface TrailRating {
    */
   value: string;
   /**
-   * The colour trails with this rating draw in.
+   * The color trails with this rating draw in.
    */
   color: string;
   /**
@@ -366,7 +366,7 @@ export interface TrailKind {
    */
   icon: 'mountain' | 'route';
   /**
-   * Optional. Overrides the rating colour — leave blank to let difficulty decide.
+   * Optional. Overrides the rating color — leave blank to let difficulty decide.
    */
   color?: string | null;
   /**
@@ -423,7 +423,7 @@ export interface TrailConditionType {
    */
   value: string;
   /**
-   * The badge colour.
+   * The badge color.
    */
   color: string;
   /**
@@ -778,7 +778,7 @@ export interface ConditionReporting {
   createdAt?: string | null;
 }
 /**
- * The name, colours and type riders see. Trail and condition colours live under Lists — these are the interface itself. Leave a field blank for the default.
+ * The name, colors and type riders see. Trail and condition colors live under Lists — these are the interface itself. Leave a field blank for the default.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "map-appearance".
@@ -794,7 +794,7 @@ export interface MapAppearance {
    */
   logoUrl?: string | null;
   /**
-   * The trail panel, primary buttons and headings. The darkest colour on the map.
+   * The trail panel, primary buttons and headings. The darkest color on the map.
    */
   secondaryColor?: string | null;
   /**
@@ -841,7 +841,7 @@ export interface Theme {
    */
   accentColor?: string | null;
   /**
-   * Deep brand colour. Default #1a434e.
+   * Deep brand color. Default #1a434e.
    */
   deepColor?: string | null;
   /**

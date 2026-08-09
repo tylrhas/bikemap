@@ -1,10 +1,10 @@
 'use client';
 
 /**
- * A colour field: native swatch picker beside the hex value.
+ * A color field: native swatch picker beside the hex value.
  *
- * Payload has no colour field type, and a bare text input asking for a hex code
- * is a poor way to choose a brand colour — you can't see it. `<input
+ * Payload has no color field type, and a bare text input asking for a hex code
+ * is a poor way to choose a brand color — you can't see it. `<input
  * type="color">` is built into every browser, needs no dependency, and is
  * keyboard accessible.
  *
@@ -44,7 +44,7 @@ export function ColorField({ field, path }: TextFieldClientProps) {
     >
       <div style={{ alignItems: 'center', display: 'flex', gap: '0.5rem' }}>
         <input
-          aria-label={`${label} colour picker`}
+          aria-label={`${label} color picker`}
           onChange={(event) => setValue(event.target.value)}
           style={{
             background: 'none',
@@ -67,7 +67,7 @@ export function ColorField({ field, path }: TextFieldClientProps) {
           style={{
             ...inputStyle(true),
             // Was `elevation-${showError ? '150' : '150'}` — both branches the
-            // same, so an invalid colour never looked invalid.
+            // same, so an invalid color never looked invalid.
             ...(showError
               ? { border: '1px solid var(--theme-error-500, #c00)' }
               : {}),

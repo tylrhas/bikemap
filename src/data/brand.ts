@@ -5,12 +5,12 @@
  * database — the same split `read/appearance.ts` uses. The fetching half lives
  * in `payload/read/map-appearance.ts`, which is server-only.
  *
- * Everything here is defensive on purpose. Colours become a `:root` block, font
+ * Everything here is defensive on purpose. Colors become a `:root` block, font
  * names land in a `font-family`, and URLs land in an `href`/`src`; all three are
  * places where a bad value from a text field would otherwise become markup. The
  * rule is the same in each case: recognise the shape we expect, or drop it.
  *
- * Channels rather than hex is the load-bearing detail for colour: Tailwind needs
+ * Channels rather than hex is the load-bearing detail for color: Tailwind needs
  * `rgb(var(--app-primary) / <alpha-value>)` for opacity modifiers to work, and
  * `ring-app-primary/30` is in use.
  */
@@ -51,7 +51,7 @@ export interface BrandIdentity {
   wordmark: null | string;
 }
 
-/** Field to CSS variable. Only colours something actually reads appear here. */
+/** Field to CSS variable. Only colors something actually reads appear here. */
 const COLOR_VARIABLES: [keyof Brand, string][] = [
   ['primaryColor', '--app-primary'],
   ['secondaryColor', '--app-secondary'],

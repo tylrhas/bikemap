@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { slugValidator } from './vocabulary-fields';
 
 // `value` is what the app matches on rather than anything a rider sees, so a
-// stray capital or space in it means a trail that silently loses its colour and
+// stray capital or space in it means a trail that silently loses its color and
 // its swatch shape. This is the only thing standing between a curator and that.
 
 describe('slugValidator.value', () => {

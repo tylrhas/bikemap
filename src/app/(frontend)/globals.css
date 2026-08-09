@@ -1,8 +1,8 @@
 /*
- * Brand colours as RGB channels. Tailwind's `app-primary` / `app-secondary` —
+ * Brand colors as RGB channels. Tailwind's `app-primary` / `app-secondary` —
  * and their COTA names, `clay` and `forest` — read these, and the Map
  * appearance global overrides them per deployment. So these are the fallback,
- * and the app is fully coloured without a database.
+ * and the app is fully colored without a database.
  */
 :root {
   --app-primary: 189 129 90; /* clay   #BD815A — highlight */

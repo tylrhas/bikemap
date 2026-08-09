@@ -12,7 +12,7 @@ import {
 
 // These defaults are seeded by a migration into a live database, so getting one
 // wrong isn't a failed build — it's a row that has to be corrected by hand
-// afterwards. They also have to keep matching the colours the checked-in data
+// afterwards. They also have to keep matching the colors the checked-in data
 // already uses, or migrating would visibly repaint the map.
 
 describe('the default vocabularies', () => {
@@ -41,7 +41,7 @@ describe('the default vocabularies', () => {
     }
   });
 
-  it('use slug-shaped values and 6-digit hex colours', () => {
+  it('use slug-shaped values and 6-digit hex colors', () => {
     // Both are validated in the admin; the seeds bypass that validation by
     // going in as SQL, so they are checked here instead.
     for (const rating of DEFAULT_RATINGS) {

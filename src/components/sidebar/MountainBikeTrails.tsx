@@ -66,8 +66,8 @@ function toggleSet(
 
 /*
  * The rating swatch is gone: the row names the difficulty in words now, the
- * way the design does. That is also less colour-dependent than the shape and
- * colour pair it replaces — the sparkline still carries the rating's colour.
+ * way the design does. That is also less color-dependent than the shape and
+ * color pair it replaces — the sparkline still carries the rating's color.
  */
 function TrailRow({
   trail,

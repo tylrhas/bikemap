@@ -63,7 +63,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE INDEX "payload_locked_documents_rels_trail_condition_types_id_idx" ON "payload_locked_documents_rels" USING btree ("trail_condition_types_id");`)
 
   // Mirrors `src/data/condition-vocabulary.ts`; keep them in step. ON CONFLICT
-  // so a rerun is harmless and a curator's recolouring survives.
+  // so a rerun is harmless and a curator's recoloring survives.
   await db.execute(sql`
   INSERT INTO "trail_condition_types" ("name", "value", "color", "sort_order", "active", "description") VALUES
     ('Prime / tacky',    'tacky',  '#059669', 10, true, 'Damp, grippy dirt. As good as it gets.'),

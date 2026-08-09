@@ -1,9 +1,9 @@
 /**
  * How a trail's rating and kind decide what it looks like.
  *
- * Colour and icon are derived on read rather than stored per trail, which is
- * what makes recolouring a grade in the admin repaint every trail carrying it —
- * a stored colour would need a migration over every row instead.
+ * Color and icon are derived on read rather than stored per trail, which is
+ * what makes recoloring a grade in the admin repaint every trail carrying it —
+ * a stored color would need a migration over every row instead.
  *
  * Kept apart from `trails.ts` because that module is `server-only` and this is
  * the part with the actual rules in it. Structural parameter types rather than
@@ -38,7 +38,7 @@ export interface TrailAppearance {
  *
  * `getCityTrails` must never throw, and a trail whose rating row was deleted —
  * the relationship is `ON DELETE set null` — would otherwise reach the map with
- * no colour at all and vanish into the basemap. A grey line that is visibly
+ * no color at all and vanish into the basemap. A grey line that is visibly
  * ungraded is a far better failure than an invisible one.
  */
 export function appearanceFor(

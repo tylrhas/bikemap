@@ -428,7 +428,7 @@ Two layers, so the common case needs no code:
    `!important`.
 2. **Settings → Theme** (`/admin/globals/theme`) — editable in the UI, stored in
    the database, injected by the admin layout as variables that override the
-   stylesheet. Colour swatches, corner style, font, neutral tint, plus a custom
+   stylesheet. Color swatches, corner style, font, neutral tint, plus a custom
    CSS escape hatch.
 
 Every theme field is optional: an unset field falls through to the stylesheet
@@ -529,8 +529,8 @@ deploy:
 |---|---|
 | **Trail complexes** | What trails group under — "Phil's Trail Complex", "Swampy Lakes" |
 | **Stewards** | Whoever looks after a trail — volunteer clubs (COTA, SORBA) and the land managers whose ground it crosses |
-| **Trail ratings** | How trails are graded, and the colour each grade draws in |
-| **Trail kinds** | What sort of thing a trail is, and its colour override and icon |
+| **Trail ratings** | How trails are graded, and the color each grade draws in |
+| **Trail kinds** | What sort of thing a trail is, and its color override and icon |
 
 The sidebar hierarchy is **region → trail complex → trail**, so a complex is the
 middle level and `region` is a field on it.
@@ -566,21 +566,21 @@ Python scripts that write them, for no user-visible gain.
 
 Difficulty and trail type were hardcoded `select`s, which meant adding a grade
 was a code change, a Postgres enum migration, and a deploy. They are collections
-now, and the **colour moved with them** — the palette lived in code for the same
-reason, so recolouring "advanced" was also a release.
+now, and the **color moved with them** — the palette lived in code for the same
+reason, so recoloring "advanced" was also a release.
 
-Nothing stores a colour per trail. `appearanceFor`
-(`src/payload/read/appearance.ts`) derives colour, icon, and the rating key from
-the two related rows on read, so recolouring a grade in the admin repaints every
+Nothing stores a color per trail. `appearanceFor`
+(`src/payload/read/appearance.ts`) derives color, icon, and the rating key from
+the two related rows on read, so recoloring a grade in the admin repaints every
 trail carrying it:
 
 | What | Comes from |
 |---|---|
-| Colour | the **kind's** colour if it sets one, else the **rating's** |
+| Color | the **kind's** color if it sets one, else the **rating's** |
 | Icon | the kind's `icon` key, mapped back by `iconForKind` |
 | `trail.rating` | the rating's `value`, with `'unrated'` flattened to `''` |
 
-The kind's colour is an *override*, and that is how greenways come out green
+The kind's color is an *override*, and that is how greenways come out green
 whatever their difficulty. Singletrack leaves it blank.
 
 **`value` is the stable key, `name` is a label.** The app matches on `value` —
@@ -601,10 +601,10 @@ The relationship is **required**, so an empty vocabulary is a database you can't
 create a trail in. `src/data/trail-vocabulary.ts` holds the defaults; the
 migration seeds them, and `loadVocabulary` in the seed scripts re-creates any
 that are missing while leaving existing rows alone (a curator may have
-recoloured one, and reseeding *trails* has no business undoing that).
+recolored one, and reseeding *trails* has no business undoing that).
 
 The generated migration drops the enum columns outright, which would blank every
-trail's rating and kind — and since colour comes from them, produce an
+trail's rating and kind — and since color comes from them, produce an
 unreadable map. The committed one creates the tables, seeds them, points every
 trail *and every stored version* at the matching row, and only then drops. The
 `trail-areas` migration has the same shape of trap and did not handle it.

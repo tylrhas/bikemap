@@ -85,7 +85,7 @@ function sparkFor(value: Trail['elevationProfile']): number[] | undefined {
 
 function toMountainBikeTrail(trail: Trail): MountainBikeTrail {
   const area = areaOf(trail);
-  // Colour, icon and the rating key all come off the two vocabulary rows —
+  // Color, icon and the rating key all come off the two vocabulary rows —
   // see `appearance.ts` for which one wins where.
   const appearance = appearanceFor(ratingOf(trail), kindOf(trail));
   return {

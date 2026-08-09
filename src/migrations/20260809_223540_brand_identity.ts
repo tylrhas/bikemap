@@ -7,7 +7,7 @@ import { MigrateUpArgs, MigrateDownArgs, sql } from '@payloadcms/db-postgres'
  * collection and no storage adapter, and adding one means a bucket every forker
  * has to provision (ADR-0001, C3).
  *
- * Nullable and unseeded, like the colours: blank means the default in
+ * Nullable and unseeded, like the colors: blank means the default in
  * globals.css or site.config.ts, so nothing needs backfilling.
  */
 export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {

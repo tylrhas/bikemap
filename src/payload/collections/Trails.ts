@@ -218,7 +218,7 @@ export const Trails: CollectionConfig = {
                   admin: {
                     width: '50%',
                     description:
-                      'Drives the line colour and sidebar icon, both of which come from the kind and rating rows rather than being stored per trail. Manage the list under Lists → Trail kinds.',
+                      'Drives the line color and sidebar icon, both of which come from the kind and rating rows rather than being stored per trail. Manage the list under Lists → Trail kinds.',
                   },
                 },
               ],

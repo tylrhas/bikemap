@@ -39,10 +39,10 @@ Both go through `ConditionBadge`, which is also where the staleness rule lives.
 A trail whose **newest report** carries a condition flagged "Mark the trail as
 closed on the map" is drawn as a **red dashed line over its normal one**.
 
-An overlay rather than a recolour: the green/blue/black rating colours are what
+An overlay rather than a recolor: the green/blue/black rating colors are what
 the legend and the sidebar swatches mean, and turning a closed trail red would
 leave the two disagreeing. The dash is what carries the meaning, so it still
-reads without relying on colour at all.
+reads without relying on color at all.
 
 **Which conditions close a trail is data, not code.** `marksClosed` is a
 checkbox on the condition type — seeded on "Closed", and a curator can tick it on
@@ -84,13 +84,13 @@ months ago — dry" instead, which is information rather than a claim.
 | Condition reports | `trail-conditions` | Conditions | the reports themselves |
 
 `trail-condition-types` is the same curated-vocabulary pattern as trail ratings
-and kinds — name, stable `value`, colour, sort order — because conditions are
+and kinds — name, stable `value`, color, sort order — because conditions are
 *local*. "Dusty / loose" is the interesting distinction in Bend in August and
 meaningless in a Tennessee spring; "Snow / ice" is the reverse.
 
 Two things follow from it being data:
 
-- **Colour comes off the row**, never off the report. Recolouring a condition in
+- **Color comes off the row**, never off the report. Recoloring a condition in
   the admin repaints every badge that ever used it.
 - **`value` is the stable key.** `name` is a label a curator may reword at any
   time. Never match on it.

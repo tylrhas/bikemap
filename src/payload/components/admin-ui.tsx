@@ -5,9 +5,9 @@
  *
  * Payload styles its own fields through a stylesheet we don't get to reach into
  * from a custom component, so each one here hand-rolled its own inputs and
- * notices. That was four separate spellings of the same coloured banner and two
+ * notices. That was four separate spellings of the same colored banner and two
  * of the same text input — which drift, and did: one banner used
- * `--theme-elevation-150` for its border where the others used a tone colour,
+ * `--theme-elevation-150` for its border where the others used a tone color,
  * and the two inputs disagreed about focus.
  *
  * Everything is expressed in Payload's CSS variables, so all of it follows the
@@ -37,7 +37,7 @@ const TONES: Record<Tone, { background: string; line: string }> = {
 };
 
 /**
- * A short coloured notice — a validation error, a build warning, a caveat.
+ * A short colored notice — a validation error, a build warning, a caveat.
  *
  * The left rule rather than a full border because these stack directly above
  * the thing they are about, and a boxed notice reads as a separate section.
@@ -113,7 +113,7 @@ export function FieldShell({
 /**
  * A text input that matches Payload's.
  *
- * `mono` is for values that are keys rather than prose — a slug, a hex colour —
+ * `mono` is for values that are keys rather than prose — a slug, a hex color —
  * where character-by-character reading is the point.
  */
 export function inputStyle(mono = false): CSSProperties {

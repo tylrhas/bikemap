@@ -6,14 +6,14 @@ import { appearanceFor } from './appearance';
 // Ratings and kinds are curated in the admin, so these rows are whatever a
 // curator left behind — including half-filled and deleted. Every case has to
 // produce something drawable, because `getCityTrails` must never throw and an
-// uncoloured trail is an invisible one.
+// uncolored trail is an invisible one.
 
 const easy = { color: RATING_COLORS.easy, value: 'easy' };
 const singletrack = { color: null, icon: 'mountain' };
 const greenway = { color: GREENWAY_COLOR, icon: 'route' };
 
 describe('appearanceFor', () => {
-  it('takes its colour from the rating', () => {
+  it('takes its color from the rating', () => {
     expect(appearanceFor(easy, singletrack).color).toBe(RATING_COLORS.easy);
   });
 
@@ -22,7 +22,7 @@ describe('appearanceFor', () => {
     expect(appearanceFor(easy, greenway).color).toBe(GREENWAY_COLOR);
   });
 
-  it('falls back to the rating when the kind has no colour of its own', () => {
+  it('falls back to the rating when the kind has no color of its own', () => {
     // The normal case: only greenway-like kinds set one.
     expect(appearanceFor(easy, { color: '', icon: 'mountain' }).color).toBe(
       RATING_COLORS.easy,
@@ -42,7 +42,7 @@ describe('appearanceFor', () => {
   });
 
   it("flattens 'unrated' to the empty string the app uses", () => {
-    // The vocabulary keeps an explicit row so it can carry a colour; the app
+    // The vocabulary keeps an explicit row so it can carry a color; the app
     // type has always spelled the same thing ''.
     const appearance = appearanceFor(
       { color: UNRATED_COLOR, value: 'unrated' },
@@ -54,7 +54,7 @@ describe('appearanceFor', () => {
 
   it('passes a custom rating straight through', () => {
     // The point of the collection: a grade nobody wrote into the code still
-    // reaches the map, in its own colour.
+    // reaches the map, in its own color.
     const appearance = appearanceFor(
       { color: '#ff00ff', value: 'double-black' },
       singletrack,
@@ -65,7 +65,7 @@ describe('appearanceFor', () => {
 
   it('still draws when the rating row was deleted', () => {
     // The relationship is ON DELETE set null, so this is reachable from the
-    // admin — and a trail with no colour disappears into the basemap.
+    // admin — and a trail with no color disappears into the basemap.
     for (const missing of [null, undefined]) {
       const appearance = appearanceFor(missing, singletrack);
       expect(appearance.color).toBe(UNRATED_COLOR);

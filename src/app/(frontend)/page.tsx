@@ -22,7 +22,7 @@ import HomeClient from './HomeClient';
 export const revalidate = 60;
 
 export default async function Home(): Promise<ReactElement> {
-  // The layout already injects the brand's colours and type as CSS. What it
+  // The layout already injects the brand's colors and type as CSS. What it
   // can't inject is the header's name and logo, which are content — so they
   // come down as props, on the same never-throws read.
   const [{ trails }, { logoUrl, wordmark }] = await Promise.all([

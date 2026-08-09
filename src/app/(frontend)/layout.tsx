@@ -78,7 +78,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const config = siteConfigForHostname(await getRequestHostname());
-  // Colours and type edited in the admin win over the defaults in globals.css.
+  // Colors and type edited in the admin win over the defaults in globals.css.
   // Empty when nothing is saved or the database is unreachable — the map keeps
   // its brand either way.
   const brand = await getMapBrand();
@@ -91,7 +91,7 @@ export default async function RootLayout({
             leaving this blank is the faster path and the default. */}
         {brand.fontUrl && <link href={brand.fontUrl} rel="stylesheet" />}
         {/* Built from values the read layer validated, never from raw input —
-            a malformed colour or font name is dropped rather than escaped. */}
+            a malformed color or font name is dropped rather than escaped. */}
         {brand.css && <style dangerouslySetInnerHTML={{ __html: brand.css }} />}
         <link rel="icon" href="/favicon.png" type="image/png" sizes="32x32" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />

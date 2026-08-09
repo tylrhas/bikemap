@@ -11,7 +11,7 @@
  *
  * Deep teal on purpose. The brand had been living entirely on the splash screen
  * while the app itself was white — this is the one surface big enough to carry
- * it without competing with the trail colours.
+ * it without competing with the trail colors.
  *
  * Desktop only; the phone has the sheet.
  */

@@ -48,8 +48,8 @@ function toOption(row: TrailConditionType): ConditionOption {
 }
 
 /**
- * Colour and name come off the vocabulary row rather than the report, so
- * recolouring a condition repaints every badge that used it.
+ * Color and name come off the vocabulary row rather than the report, so
+ * recoloring a condition repaints every badge that used it.
  */
 function toReport(report: TrailCondition): ConditionReport | null {
   const type = typeOf(report);

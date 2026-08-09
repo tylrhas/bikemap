@@ -4,9 +4,9 @@ import type { Field, PayloadRequest } from 'payload';
  * The bits `trail-ratings` and `trail-kinds` share.
  *
  * Both are small controlled vocabularies with the same shape — a human name, a
- * stable machine value, a colour — and the machine value is the part that has
+ * stable machine value, a color — and the machine value is the part that has
  * to be got right in both. It is what the app matches on, so a stray capital or
- * a space in it means a trail that silently loses its colour.
+ * a space in it means a trail that silently loses its color.
  */
 
 const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -15,7 +15,7 @@ const HEX = /^#[0-9a-f]{6}$/i;
 export const slugValidator = {
   color(value: unknown): string | true {
     if (typeof value !== 'string' || !HEX.test(value)) {
-      return 'Must be a 6-digit hex colour, e.g. #2563eb.';
+      return 'Must be a 6-digit hex color, e.g. #2563eb.';
     }
     return true;
   },

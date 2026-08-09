@@ -392,7 +392,7 @@ measurements are still derived, via the same `measureParts` the OSM path uses.
 - `src/payload/globals/Theme.ts` + `read/theme.ts` — admin appearance, editable
   at `/admin/globals/theme` and injected by the admin layout
 - `src/payload/globals/MapAppearance.ts` + `read/map-appearance.ts` +
-  `src/data/brand.ts` — the **public map's** name, logo, colours and type,
+  `src/data/brand.ts` — the **public map's** name, logo, colors and type,
   editable at `/admin/globals/map-appearance`. See "The map's brand" below
 - `src/payload/collections/{Organizations,TrailAreas}.ts` — the options behind
   the steward and trail-complex dropdowns. **Both are admin labels only**:
@@ -471,10 +471,10 @@ Things to know before touching it:
 - **Rating and kind are data, not enums.** Both are `relationship` fields onto
   the `trail-ratings` / `trail-kinds` collections, so a curator can add a grade
   or a trail type without a deploy. Consequences worth knowing:
-  - **Colour and icon come off those rows**, derived on read by `appearanceFor`
-    (`src/payload/read/appearance.ts`) — the kind's colour wins when set (how
-    greenways stay green at any difficulty), the rating's otherwise. Recolouring
-    a grade in the admin repaints every trail with it; nothing stores a colour.
+  - **Color and icon come off those rows**, derived on read by `appearanceFor`
+    (`src/payload/read/appearance.ts`) — the kind's color wins when set (how
+    greenways stay green at any difficulty), the rating's otherwise. Recoloring
+    a grade in the admin repaints every trail with it; nothing stores a color.
   - **`trail.rating` is still the app's plain string**, the row's `value`, with
     `'unrated'` flattened to `''` as it always was. `value` is the stable key —
     `name` is a label a curator may reword at any time, so never match on it.
@@ -522,7 +522,7 @@ Things to know before touching it:
   `--app-font-body` are defined in `src/app/(frontend)/globals.css` and aliased
   in `tailwind.config.ts` as `clay` / `forest` / `cream` / `ink` / `coral` /
   `font-display` / `font-sans`. Things to keep in mind:
-  - **Store colours as space-separated RGB channels, not hex**, and write the
+  - **Store colors as space-separated RGB channels, not hex**, and write the
     alias as `rgb(var(--x) / <alpha-value>)` — that is what keeps opacity
     modifiers like `bg-cream/[0.94]` and `ring-app-primary/30` working.
     `toChannels` in `src/data/brand.ts` does the conversion.
@@ -534,7 +534,7 @@ Things to know before touching it:
   - **Reach for a token, never the hex.** A literal `#023428` or
     `rgba(2,52,40,…)` in a component silently opts out of the palette. Tinted
     shadows included — write `shadow-[0_1px_3px_rgb(var(--app-secondary)/0.18)]`.
-  - **Only colours something reads are on the form.** `good`, `warn`,
+  - **Only colors something reads are on the form.** `good`, `warn`,
     `advanced` and `forest-lift` are in the Tailwind palette with no uses, and a
     control that changes nothing is worse than no control. Give one a variable
     and a field when something starts using it.
@@ -556,7 +556,7 @@ Things to know before touching it:
     avoids — so leaving it blank stays the default and the fast path.
   - **`sanitizeFontStack` is the defence, not escaping.** The value lands
     straight in a stylesheet, so it must match a narrow shape (letters, digits,
-    quotes, commas, hyphens) or be dropped. Same for colours. Don't loosen it to
+    quotes, commas, hyphens) or be dropped. Same for colors. Don't loosen it to
     admit a font name with parentheses.
   - **The name and logo travel as props, not CSS.** They are content and the
     header is a client component, so the server page passes them to

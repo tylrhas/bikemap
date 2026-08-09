@@ -77,7 +77,7 @@ function curatedSlug(trailName: string): string | null {
   return trail ? slugForTrail(trail) : null;
 }
 /**
- * Colour stops per chart.
+ * Color stops per chart.
  *
  * The other place grade detail is lost: a 2,000-point trail capped at 200 stops
  * averages away roughly every short pitch. Raising it keeps them, at the cost
@@ -121,7 +121,7 @@ export const GRADE_SMOOTHING_WINDOW = 1;
 /**
  * A grade for the hover readout — signed, one decimal.
  *
- * The sign is the point: 8% up and 8% down are the same colour on the chart
+ * The sign is the point: 8% up and 8% down are the same color on the chart
  * (`gradeToColor` takes the absolute value) and very different to ride.
  */
 export function formatGrade(grade: number | undefined): string {
@@ -932,7 +932,7 @@ export function ElevationProfile() {
           {hoverIndex !== null ? (
             <>
               {`${(points[hoverIndex][0] / 5280).toFixed(2)} mi \u00B7 ${Math.round(points[hoverIndex][1]).toLocaleString()} ft \u00B7 `}
-              {/* Coloured to match the chart under the cursor, so the number
+              {/* Colored to match the chart under the cursor, so the number
                   and the band it came from are visibly the same reading. */}
               <span style={{ color: gradeColors[hoverIndex] }}>
                 {formatGrade(grades[hoverIndex])}

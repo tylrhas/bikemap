@@ -1,7 +1,7 @@
 /**
  * The wordmark and logo the header draws, and where they come from.
  *
- * The colours and fonts reach the page as CSS, injected by the layout — but a
+ * The colors and fonts reach the page as CSS, injected by the layout — but a
  * name and an image URL are content, not style, and the header is a client
  * component several levels down. So they travel the same road the trails do:
  * read on the server, published into this module during `HomeClient`'s render,

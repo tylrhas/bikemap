@@ -9,8 +9,8 @@ import { slugValidator, valueField } from './vocabulary-fields';
  * Like `trail-ratings` this was a hardcoded `select`, and it carries the two
  * things a kind decides about how a trail is drawn:
  *
- * - **Colour**, which is an *override*. Left blank the trail takes its rating's
- *   colour, which is what singletrack does; set, it wins, which is how
+ * - **Color**, which is an *override*. Left blank the trail takes its rating's
+ *   color, which is what singletrack does; set, it wins, which is how
  *   greenways come out green whatever their difficulty.
  * - **Icon**, picked from the bundled set. A FontAwesome icon is an object and
  *   can't be stored, so the row holds a key that `iconForKind` maps back.
@@ -74,12 +74,12 @@ export const TrailKinds: CollectionConfig = {
           admin: {
             components: { Field: '@/payload/components/ColorField#ColorField' },
             description:
-              'Optional. Overrides the rating colour — leave blank to let difficulty decide.',
+              'Optional. Overrides the rating color — leave blank to let difficulty decide.',
             width: '50%',
           },
           validate: (value: unknown): string | true =>
             // Optional here, unlike on a rating: blank is the normal case and
-            // means "use the rating's colour".
+            // means "use the rating's color".
             value ? slugValidator.color(value) : true,
         },
       ],

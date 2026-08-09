@@ -58,7 +58,7 @@ export const TrailConditionTypes: CollectionConfig = {
           defaultValue: '#6b7280',
           admin: {
             components: { Field: '@/payload/components/ColorField#ColorField' },
-            description: 'The badge colour.',
+            description: 'The badge color.',
             width: '50%',
           },
           validate: slugValidator.color,
