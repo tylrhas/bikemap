@@ -10,6 +10,17 @@
   --app-surface: 245 239 230; /* cream  #F5EFE6 — light surface */
   --app-ink: 20 35 29; /* ink    #14231D — body copy */
   --app-accent: 252 167 147; /* coral  #FCA793 — accent */
+
+  /*
+   * The type stacks, same deal: `font-display` / `font-sans` read these, and
+   * the Map appearance global replaces them wholesale.
+   *
+   * `--font-display` and `--font-body` come from next/font, which declares them
+   * on <body> rather than here — fine, because a custom property is substituted
+   * where it is *used*, and everything that draws type is inside <body>.
+   */
+  --app-font-display: var(--font-display), Georgia, serif;
+  --app-font-body: var(--font-body), system-ui, sans-serif;
 }
 
 /*

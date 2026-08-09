@@ -392,8 +392,8 @@ measurements are still derived, via the same `measureParts` the OSM path uses.
 - `src/payload/globals/Theme.ts` + `read/theme.ts` — admin appearance, editable
   at `/admin/globals/theme` and injected by the admin layout
 - `src/payload/globals/MapAppearance.ts` + `read/map-appearance.ts` +
-  `src/data/brand-colors.ts` — the **public map's** palette, editable at
-  `/admin/globals/map-appearance`. See "The map's palette" below
+  `src/data/brand.ts` — the **public map's** name, logo, colours and type,
+  editable at `/admin/globals/map-appearance`. See "The map's brand" below
 - `src/payload/collections/{Organizations,TrailAreas}.ts` — the options behind
   the steward and trail-complex dropdowns. **Both are admin labels only**:
   "Steward" sits over the slug `organizations` and the field `organization`,
@@ -515,21 +515,22 @@ Things to know before touching it:
 - **`getThemeCss` never throws**, same rule as `getCityTrails` — a theme row
   must never lock anyone out of the admin. Its `customCss` is injected verbatim,
   so `sanitizeCss` strips `<`/`>`; don't remove that.
-- **The map's palette is five CSS variables, and the Map appearance global only
-  overrides them.** `--app-primary` (highlight), `--app-secondary` (deep
-  surface), `--app-surface` (light surface), `--app-ink` (body text) and
-  `--app-accent` are defined in `src/app/(frontend)/globals.css` and aliased in
-  `tailwind.config.ts` as `clay` / `forest` / `cream` / `ink` / `coral`. Things
-  to keep in mind:
-  - **Store them as space-separated RGB channels, not hex**, and write the alias
-    as `rgb(var(--x) / <alpha-value>)` — that is what keeps opacity modifiers
-    like `bg-cream/[0.94]` and `ring-app-primary/30` working. `toChannels` in
-    `src/data/brand-colors.ts` does the conversion.
+- **The map's brand is seven CSS variables plus a name and a logo, and the Map
+  appearance global only overrides them.** `--app-primary` (highlight),
+  `--app-secondary` (deep surface), `--app-surface` (light surface),
+  `--app-ink` (body text), `--app-accent`, `--app-font-display` and
+  `--app-font-body` are defined in `src/app/(frontend)/globals.css` and aliased
+  in `tailwind.config.ts` as `clay` / `forest` / `cream` / `ink` / `coral` /
+  `font-display` / `font-sans`. Things to keep in mind:
+  - **Store colours as space-separated RGB channels, not hex**, and write the
+    alias as `rgb(var(--x) / <alpha-value>)` — that is what keeps opacity
+    modifiers like `bg-cream/[0.94]` and `ring-app-primary/30` working.
+    `toChannels` in `src/data/brand.ts` does the conversion.
   - **Blank means the default.** Every field on the global is optional and
     `buildAppearanceCss` returns `''` when none is set, so a fork that never
-    opens the form — or has no database at all — is still fully coloured, and
+    opens the form — or has no database at all — is still fully branded, and
     clearing a field is how a curator resets it.
-  - **`getMapAppearanceCss` never throws**, same rule as `getThemeCss`.
+  - **`getMapBrand` never throws**, same rule as `getThemeCss`.
   - **Reach for a token, never the hex.** A literal `#023428` or
     `rgba(2,52,40,…)` in a component silently opts out of the palette. Tinted
     shadows included — write `shadow-[0_1px_3px_rgb(var(--app-secondary)/0.18)]`.
@@ -537,6 +538,31 @@ Things to know before touching it:
     `advanced` and `forest-lift` are in the Tailwind palette with no uses, and a
     control that changes nothing is worse than no control. Give one a variable
     and a field when something starts using it.
+  - **The type stacks go through one variable each, fallbacks included** — the
+    Tailwind entry is bare `var(--app-font-display)`, not a list — because the
+    override replaces the whole stack. The bundled `--font-display` /
+    `--font-body` from `next/font` are named *inside* that variable's default,
+    and next/font declares them on `<body>` rather than `:root`; that works
+    because a custom property is substituted where it is **used**.
+  - **The logo and the webfont are URLs, not uploads.** There is no uploads
+    collection and no storage adapter — adding one means a bucket every forker
+    has to provision (ADR-0001, C3). A path like `/logo.svg` reads from
+    `public/`. `safeUrl` allows http(s) and site-relative paths and rejects
+    `javascript:`, `data:` and protocol-relative `//host`, which reads like a
+    path and is not.
+  - **A named font is not a fetched font.** `displayFont` only sets a
+    `font-family`; a `fontUrl` stylesheet is what makes it resolve. That link is
+    a runtime request, which is exactly what self-hosting the bundled faces
+    avoids — so leaving it blank stays the default and the fast path.
+  - **`sanitizeFontStack` is the defence, not escaping.** The value lands
+    straight in a stylesheet, so it must match a narrow shape (letters, digits,
+    quotes, commas, hyphens) or be dropped. Same for colours. Don't loosen it to
+    admit a font name with parentheses.
+  - **The name and logo travel as props, not CSS.** They are content and the
+    header is a client component, so the server page passes them to
+    `HomeClient`, which publishes them via `src/data/brand-source.ts` during
+    render — the same road the trails take. `Wordmark` falls back to
+    `site.config.ts`, so the panel is never anonymous.
 - **The project is ESM** (`"type": "module"` — Payload 3's CLI requires it). New
   root config files must be ESM or `.cjs`.
 - **There is no root `src/app/layout.tsx`, on purpose.** Payload's `RootLayout`

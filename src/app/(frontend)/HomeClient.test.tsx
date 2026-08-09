@@ -59,6 +59,7 @@ vi.mock('@/data/geo_data', () => ({
 }));
 
 // Imported after the mocks are set up.
+import { getBrandIdentity } from '@/data/brand-source';
 import HomeClient from './HomeClient';
 
 describe('HomeClient — share link URL parameter handling', () => {
@@ -182,5 +183,25 @@ describe('HomeClient — share link URL parameter handling', () => {
     );
     expect(trailEvents).toHaveLength(1);
     expect(routeEvents).toHaveLength(0);
+  });
+});
+
+describe('HomeClient — brand', () => {
+  afterEach(cleanup);
+
+  it('publishes the server brand so the header can read it', () => {
+    // The colours and type arrive as CSS from the layout; the name and logo
+    // are content, and this is the only path they take to the client.
+    render(
+      <HomeClient
+        brand={{ logoUrl: '/logo.svg', wordmark: 'COTA Trails' }}
+        trails={TRAILS}
+      />,
+    );
+
+    expect(getBrandIdentity()).toEqual({
+      logoUrl: '/logo.svg',
+      wordmark: 'COTA Trails',
+    });
   });
 });

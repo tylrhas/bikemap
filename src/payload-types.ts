@@ -778,13 +778,21 @@ export interface ConditionReporting {
   createdAt?: string | null;
 }
 /**
- * The colours riders see. Trail and condition colours live under Lists — these are the interface itself. Leave a field blank for the default.
+ * The name, colours and type riders see. Trail and condition colours live under Lists — these are the interface itself. Leave a field blank for the default.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "map-appearance".
  */
 export interface MapAppearance {
   id: number;
+  /**
+   * The name beside the logo. Also the logo’s alt text, so fill it in even when you have a logo.
+   */
+  wordmark?: string | null;
+  /**
+   * Shown instead of the name. Any image the browser can load — SVG keeps its edges on a retina screen. Drop a file in public/ and point at /logo.svg, or paste a full https:// address.
+   */
+  logoUrl?: string | null;
   /**
    * The trail panel, primary buttons and headings. The darkest colour on the map.
    */
@@ -805,6 +813,18 @@ export interface MapAppearance {
    * Reading copy on the light surface. Contrast against it matters more than the hue.
    */
   inkColor?: string | null;
+  /**
+   * A stylesheet that defines your fonts — a Google Fonts or Fontshare link, or your own @font-face file. Leave blank to use fonts the reader already has. Note this is fetched when the page loads: the bundled fonts are not, which is why they stay the default.
+   */
+  fontUrl?: string | null;
+  /**
+   * Trail names and headings. A stack, best to worst: "Fraunces", Georgia, serif.
+   */
+  displayFont?: string | null;
+  /**
+   * Everything else — list rows, stats, buttons. Legible at 11px matters more than character.
+   */
+  bodyFont?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -853,11 +873,16 @@ export interface ConditionReportingSelect<T extends boolean = true> {
  * via the `definition` "map-appearance_select".
  */
 export interface MapAppearanceSelect<T extends boolean = true> {
+  wordmark?: T;
+  logoUrl?: T;
   secondaryColor?: T;
   surfaceColor?: T;
   primaryColor?: T;
   accentColor?: T;
   inkColor?: T;
+  fontUrl?: T;
+  displayFont?: T;
+  bodyFont?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

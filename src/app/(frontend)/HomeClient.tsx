@@ -7,6 +7,8 @@ import { ConditionReportModal } from '@/components/ConditionReportModal';
 import { PwaInstallPrompt } from '@/components/PwaInstallPrompt';
 import { TrailConditionsProvider } from '@/components/TrailConditionsProvider';
 import { WelcomeModal } from '@/components/WelcomeModal';
+import type { BrandIdentity } from '@/data/brand';
+import { setBrandIdentity } from '@/data/brand-source';
 import { bikeRoutes } from '@/data/geo_data';
 import type { MountainBikeTrail } from '@/data/mountain-bike-trails';
 import { slugForTrail } from '@/data/mountain-bike-trails';
@@ -28,8 +30,12 @@ const BikeMap = dynamic(() => import('@/components/Map'), {
 });
 
 export default function HomeClient({
+  brand,
   trails,
 }: {
+  /** The header's name and logo, read from Payload. Nulls mean "use
+   *  site.config.ts". */
+  brand?: BrandIdentity;
   /** Trails read from Payload on the server. Empty means "use the checked-in
    *  data", which is what happens with no database configured. */
   trails: MountainBikeTrail[];
@@ -38,6 +44,9 @@ export default function HomeClient({
   // the map or sidebar read them. They don't change for the life of the page,
   // so this needs no state and triggers no re-render.
   setMountainBikeTrails(trails);
+  if (brand) {
+    setBrandIdentity(brand);
+  }
 
   // On mount, check URL for shared trail/route link and auto-select
   useEffect(() => {

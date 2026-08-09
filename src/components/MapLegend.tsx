@@ -25,9 +25,9 @@ import {
 } from './sidebar';
 import { getRideStyle } from './WelcomeModal';
 import { getSetting, setSetting } from '@/utils/settings';
-import { siteConfig } from '@/config/site.config';
 import { useIsNarrow } from '@/hooks/useIsNarrow';
 import { NavRail, type RailItem } from './sidebar/NavRail';
+import { Wordmark } from './sidebar/Wordmark';
 import {
   clampSnap,
   dragFraction,
@@ -582,15 +582,7 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
 
         {!narrow && isOpen && (
           <div className="absolute left-14 top-0 w-[320px] px-[18px] pt-[18px] pb-3.5 border-b border-cream/10 pointer-events-none">
-            <div className="flex items-center gap-2">
-              <FontAwesomeIcon
-                icon={faBicycle}
-                className="w-[17px] h-[17px] text-coral"
-              />
-              <span className="text-cream text-ui font-bold uppercase tracking-[0.12em]">
-                {siteConfig.shortName}
-              </span>
-            </div>
+            <Wordmark />
           </div>
         )}
 

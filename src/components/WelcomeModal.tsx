@@ -11,6 +11,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { cn } from '@/lib/utils';
 import { siteConfig } from '@/config/site.config';
+import { getBrandIdentity } from '@/data/brand-source';
 import { MAP_EVENTS } from '@/events';
 import { getSetting, setSetting, type RideStyle } from '@/utils/settings';
 
@@ -114,8 +115,11 @@ export function WelcomeModal() {
           <span className="inline-flex items-center justify-center w-[60px] h-[60px] rounded-full bg-app-primary text-app-secondary text-display mb-3">
             <FontAwesomeIcon icon={faBicycle} />
           </span>
+          {/* The admin's wordmark wins here too: a splash still saying the old
+              name while the panel behind it says the new one is worse than
+              using a short name where a long one was intended. */}
           <h1 className="text-display font-bold text-app-secondary mb-1 tracking-tight">
-            {siteConfig.name}
+            {getBrandIdentity().wordmark ?? siteConfig.name}
           </h1>
           <p className="text-body text-gray-500 font-normal">
             {siteConfig.tagline}

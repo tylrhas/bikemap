@@ -19,9 +19,11 @@ const config: Config = {
        */
       fontFamily: {
         // Fraunces for trail names and section titles, used with restraint;
-        // Public Sans for everything else.
-        display: ['var(--font-display)', 'Georgia', 'serif'],
-        sans: ['var(--font-body)', 'system-ui', 'sans-serif'],
+        // Public Sans for everything else. Both go through one variable each so
+        // the Map appearance global can swap the whole stack, fallbacks
+        // included — see `globals.css`.
+        display: ['var(--app-font-display)'],
+        sans: ['var(--app-font-body)'],
         mono: ['var(--font-geist-mono)', 'ui-monospace', 'monospace'],
       },
 

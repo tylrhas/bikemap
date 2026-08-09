@@ -12,6 +12,7 @@
  */
 import type { ReactElement } from 'react';
 import { activeCityId } from '@/config/map.config';
+import { getMapBrand } from '@/payload/read/map-appearance';
 import { getCityTrails } from '@/payload/read/trails';
 import HomeClient from './HomeClient';
 
@@ -21,7 +22,13 @@ import HomeClient from './HomeClient';
 export const revalidate = 60;
 
 export default async function Home(): Promise<ReactElement> {
-  const { trails } = await getCityTrails(activeCityId);
+  // The layout already injects the brand's colours and type as CSS. What it
+  // can't inject is the header's name and logo, which are content — so they
+  // come down as props, on the same never-throws read.
+  const [{ trails }, { logoUrl, wordmark }] = await Promise.all([
+    getCityTrails(activeCityId),
+    getMapBrand(),
+  ]);
 
-  return <HomeClient trails={trails} />;
+  return <HomeClient brand={{ logoUrl, wordmark }} trails={trails} />;
 }

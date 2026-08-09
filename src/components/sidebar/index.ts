@@ -17,6 +17,7 @@ export { DifficultyBadge } from './DifficultyBadge';
 export { TrailStats } from './TrailStats';
 export { TrailSparkline } from './TrailSparkline';
 export { TrailConditionsStrip } from './TrailConditionsStrip';
+export { Wordmark } from './Wordmark';
 
 // Types
 export type {

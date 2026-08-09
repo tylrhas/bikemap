@@ -6,7 +6,7 @@ import './map.css';
 import Script from 'next/script';
 import { headers } from 'next/headers';
 import { siteConfig, siteConfigForHostname } from '@/config/site.config';
-import { getMapAppearanceCss } from '@/payload/read/map-appearance';
+import { getMapBrand } from '@/payload/read/map-appearance';
 
 // Self-hosted to keep production builds reproducible and offline-capable
 // (next/font/google would fetch from Google Fonts at build time).
@@ -78,19 +78,21 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const config = siteConfigForHostname(await getRequestHostname());
-  // Colours edited in the admin win over the defaults in globals.css. Empty
-  // when nothing is saved or the database is unreachable — the map keeps its
-  // brand either way.
-  const appearanceCss = await getMapAppearanceCss();
+  // Colours and type edited in the admin win over the defaults in globals.css.
+  // Empty when nothing is saved or the database is unreachable — the map keeps
+  // its brand either way.
+  const brand = await getMapBrand();
 
   return (
     <html lang="en">
       <head>
-        {/* Built from hex values the read layer validated, never from raw
-            input — a malformed colour is dropped rather than escaped. */}
-        {appearanceCss && (
-          <style dangerouslySetInnerHTML={{ __html: appearanceCss }} />
-        )}
+        {/* A deployment that names its own fonts has to load them from
+            somewhere. The bundled faces need no such request, which is why
+            leaving this blank is the faster path and the default. */}
+        {brand.fontUrl && <link href={brand.fontUrl} rel="stylesheet" />}
+        {/* Built from values the read layer validated, never from raw input —
+            a malformed colour or font name is dropped rather than escaped. */}
+        {brand.css && <style dangerouslySetInnerHTML={{ __html: brand.css }} />}
         <link rel="icon" href="/favicon.png" type="image/png" sizes="32x32" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
