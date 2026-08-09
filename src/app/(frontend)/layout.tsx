@@ -24,6 +24,24 @@ const geistMono = localFont({
   display: 'swap',
 });
 
+// Fraunces for trail names and section titles; Public Sans for everything
+// else. Self-hosted for the same reason Geist is — the design brief asks for
+// next/font/google, but its concern is a runtime @import, and local files
+// satisfy that without giving up a build that needs no network.
+const displayFont = localFont({
+  src: './fonts/Fraunces-Variable.woff2',
+  variable: '--font-display',
+  weight: '400 700',
+  display: 'swap',
+});
+
+const bodyFont = localFont({
+  src: './fonts/PublicSans-Variable.woff2',
+  variable: '--font-body',
+  weight: '400 700',
+  display: 'swap',
+});
+
 export async function generateMetadata(): Promise<Metadata> {
   const config = siteConfigForHostname(await getRequestHostname());
 
@@ -160,7 +178,7 @@ export default async function RootLayout({
         />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${displayFont.variable} ${bodyFont.variable} ${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
       >
         {children}
         <Script src="/register-sw.js" strategy="lazyOnload" />

@@ -1,11 +1,21 @@
 /*
- * Brand colours as RGB channels. Tailwind's `app-primary` / `app-secondary`
- * read these, and the Map appearance global overrides them per deployment —
- * so these are the fallback, and the app is fully coloured without a database.
+ * Brand colours as RGB channels. Tailwind's `app-primary` / `app-secondary` —
+ * and their COTA names, `clay` and `forest` — read these, and the Map
+ * appearance global overrides them per deployment. So these are the fallback,
+ * and the app is fully coloured without a database.
  */
 :root {
-  --app-primary: 195 244 77;
-  --app-secondary: 26 67 78;
+  --app-primary: 189 129 90; /* clay   #BD815A */
+  --app-secondary: 2 52 40; /* forest #023428 */
+}
+
+/*
+ * Part of the accessibility floor, per the design brief: every focusable thing
+ * gets the same clay ring, so nothing has to remember to define its own.
+ */
+*:focus-visible {
+  outline: 2px solid rgb(var(--app-primary));
+  outline-offset: 2px;
 }
 
 @tailwind base;

@@ -17,6 +17,14 @@ const config: Config = {
        * Sizes only, no paired line-height: the arbitrary values they replace
        * inherited theirs, and pinning one here would shift existing layout.
        */
+      fontFamily: {
+        // Fraunces for trail names and section titles, used with restraint;
+        // Public Sans for everything else.
+        display: ['var(--font-display)', 'Georgia', 'serif'],
+        sans: ['var(--font-body)', 'system-ui', 'sans-serif'],
+        mono: ['var(--font-geist-mono)', 'ui-monospace', 'monospace'],
+      },
+
       fontSize: {
         micro: '0.5625rem', // 9px  — chart axis labels
         meta: '0.6875rem', // 11px — stats, badges, uppercase labels
@@ -118,6 +126,9 @@ const config: Config = {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
+        // The design brief's two: 8px on controls, 12px on cards.
+        control: '8px',
+        card: '12px',
       },
       colors: {
         // App brand colors
@@ -127,6 +138,24 @@ const config: Config = {
         // deployment via the Map appearance global.
         'app-primary': 'rgb(var(--app-primary) / <alpha-value>)',
         'app-secondary': 'rgb(var(--app-secondary) / <alpha-value>)',
+
+        /**
+         * COTA. `forest` and `clay` are the two the admin can edit — they are
+         * the same variables as app-secondary and app-primary, named for what
+         * the design calls them. The rest are fixed.
+         */
+        forest: 'rgb(var(--app-secondary) / <alpha-value>)',
+        clay: 'rgb(var(--app-primary) / <alpha-value>)',
+        'forest-lift': '#0A4536',
+        coral: '#FCA793',
+        cream: '#F5EFE6',
+        ink: '#14231D',
+        // Semantic, and deliberately not the accent: a condition being fine or
+        // hazardous is not the same kind of information as an active control.
+        good: '#4C8A69',
+        warn: '#C25E3F',
+        // Difficulty. Beginner and intermediate reuse good/clay per the brief.
+        advanced: '#B5573B',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {
