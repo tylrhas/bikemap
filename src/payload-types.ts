@@ -778,7 +778,7 @@ export interface ConditionReporting {
   createdAt?: string | null;
 }
 /**
- * The colours riders see. Trail and condition colours live under Lists — these are the interface itself.
+ * The colours riders see. Trail and condition colours live under Lists — these are the interface itself. Leave a field blank for the default.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "map-appearance".
@@ -786,13 +786,25 @@ export interface ConditionReporting {
 export interface MapAppearance {
   id: number;
   /**
-   * Selected trails, focus rings, the main button. Used sparingly — leave blank for the default.
+   * The trail panel, primary buttons and headings. The darkest colour on the map.
+   */
+  secondaryColor?: string | null;
+  /**
+   * The detail dock, condition pills and text sitting on the deep surface.
+   */
+  surfaceColor?: string | null;
+  /**
+   * The selected trail, active switches and focus rings. Used sparingly — one thing per screen.
    */
   primaryColor?: string | null;
   /**
-   * Headings and body text across the map interface. Needs to stay readable on white.
+   * Small marks against the deep surface, like the logo. Needs to be legible on it.
    */
-  secondaryColor?: string | null;
+  accentColor?: string | null;
+  /**
+   * Reading copy on the light surface. Contrast against it matters more than the hue.
+   */
+  inkColor?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -841,8 +853,11 @@ export interface ConditionReportingSelect<T extends boolean = true> {
  * via the `definition` "map-appearance_select".
  */
 export interface MapAppearanceSelect<T extends boolean = true> {
-  primaryColor?: T;
   secondaryColor?: T;
+  surfaceColor?: T;
+  primaryColor?: T;
+  accentColor?: T;
+  inkColor?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

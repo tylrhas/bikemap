@@ -3,6 +3,7 @@ import * as migration_20260807_202004_trail_conditions from './20260807_202004_t
 import * as migration_20260807_213812_condition_report_locks from './20260807_213812_condition_report_locks';
 import * as migration_20260807_234413_condition_marks_closed from './20260807_234413_condition_marks_closed';
 import * as migration_20260809_041945_map_appearance from './20260809_041945_map_appearance';
+import * as migration_20260809_220403_map_palette from './20260809_220403_map_palette';
 
 export const migrations = [
   {
@@ -28,6 +29,11 @@ export const migrations = [
   {
     up: migration_20260809_041945_map_appearance.up,
     down: migration_20260809_041945_map_appearance.down,
-    name: '20260809_041945_map_appearance'
+    name: '20260809_041945_map_appearance',
+  },
+  {
+    up: migration_20260809_220403_map_palette.up,
+    down: migration_20260809_220403_map_palette.down,
+    name: '20260809_220403_map_palette'
   },
 ];

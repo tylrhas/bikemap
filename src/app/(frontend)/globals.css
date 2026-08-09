@@ -5,8 +5,11 @@
  * and the app is fully coloured without a database.
  */
 :root {
-  --app-primary: 189 129 90; /* clay   #BD815A */
-  --app-secondary: 2 52 40; /* forest #023428 */
+  --app-primary: 189 129 90; /* clay   #BD815A — highlight */
+  --app-secondary: 2 52 40; /* forest #023428 — deep surface */
+  --app-surface: 245 239 230; /* cream  #F5EFE6 — light surface */
+  --app-ink: 20 35 29; /* ink    #14231D — body copy */
+  --app-accent: 252 167 147; /* coral  #FCA793 — accent */
 }
 
 /*

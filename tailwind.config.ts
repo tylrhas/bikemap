@@ -147,9 +147,9 @@ const config: Config = {
         forest: 'rgb(var(--app-secondary) / <alpha-value>)',
         clay: 'rgb(var(--app-primary) / <alpha-value>)',
         'forest-lift': '#0A4536',
-        coral: '#FCA793',
-        cream: '#F5EFE6',
-        ink: '#14231D',
+        coral: 'rgb(var(--app-accent) / <alpha-value>)',
+        cream: 'rgb(var(--app-surface) / <alpha-value>)',
+        ink: 'rgb(var(--app-ink) / <alpha-value>)',
         // Semantic, and deliberately not the accent: a condition being fine or
         // hazardous is not the same kind of information as an active control.
         good: '#4C8A69',

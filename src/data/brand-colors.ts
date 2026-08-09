@@ -13,9 +13,21 @@
 const HEX = /^#[0-9a-f]{6}$/i;
 
 export interface BrandColors {
+  accentColor?: null | string;
+  inkColor?: null | string;
   primaryColor?: null | string;
   secondaryColor?: null | string;
+  surfaceColor?: null | string;
 }
+
+/** Field to CSS variable. Only colours something actually reads appear here. */
+const VARIABLES: [keyof BrandColors, string][] = [
+  ['primaryColor', '--app-primary'],
+  ['secondaryColor', '--app-secondary'],
+  ['surfaceColor', '--app-surface'],
+  ['inkColor', '--app-ink'],
+  ['accentColor', '--app-accent'],
+];
 
 /** `#c3f44d` -> `195 244 77`. Null for anything that isn't a 6-digit hex. */
 export function toChannels(hex: null | string | undefined): null | string {
@@ -35,13 +47,11 @@ export function toChannels(hex: null | string | undefined): null | string {
 export function buildAppearanceCss(colors: BrandColors): string {
   const declarations: string[] = [];
 
-  const primary = toChannels(colors.primaryColor);
-  if (primary) {
-    declarations.push(`--app-primary:${primary}`);
-  }
-  const secondary = toChannels(colors.secondaryColor);
-  if (secondary) {
-    declarations.push(`--app-secondary:${secondary}`);
+  for (const [field, variable] of VARIABLES) {
+    const channels = toChannels(colors[field]);
+    if (channels) {
+      declarations.push(`${variable}:${channels}`);
+    }
   }
 
   return declarations.length > 0 ? `:root{${declarations.join(';')}}` : '';
