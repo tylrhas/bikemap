@@ -685,6 +685,7 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
                     <ToggleRow
                       icon={faMountain}
                       label="Nationwide trails"
+                      hint="Everything in OpenStreetMap, beyond the curated list"
                       isActive={showOsmTrails}
                       onToggle={toggleOsmTrailsLayer}
                     />

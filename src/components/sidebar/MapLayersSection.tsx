@@ -1,14 +1,18 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import type { IconDefinition } from '@fortawesome/free-solid-svg-icons';
 import type { ReactNode } from 'react';
+import { cn } from '@/lib/utils';
 import { ToggleSwitch } from './ToggleSwitch';
 
 // Shared "Map Layers" sidebar section used by both the Casual and MTB tabs.
 export function MapLayersSection({ children }: { children: ReactNode }) {
   return (
-    <div className="mb-6">
-      <h3 className="text-sm font-medium mb-2 text-gray-600">Map Layers</h3>
-      <div className="flex flex-col gap-2">{children}</div>
+    <div className="mb-5">
+      {/* The design's section label: uppercase, small, tracked out. */}
+      <h3 className="px-4 pt-3 pb-1.5 text-meta font-bold uppercase tracking-[0.08em] text-cream/70">
+        Map layers
+      </h3>
+      <div className="flex flex-col">{children}</div>
     </div>
   );
 }
@@ -16,12 +20,20 @@ export function MapLayersSection({ children }: { children: ReactNode }) {
 interface ToggleRowProps {
   icon: IconDefinition;
   label: string;
+  /** One line saying what the layer actually is. Optional. */
+  hint?: string;
   isActive: boolean;
   onToggle: () => void;
 }
 
 // A single labeled toggle row (icon + label + switch) with keyboard support.
-export function ToggleRow({ icon, label, isActive, onToggle }: ToggleRowProps) {
+export function ToggleRow({
+  icon,
+  label,
+  hint,
+  isActive,
+  onToggle,
+}: ToggleRowProps) {
   return (
     <div
       onClick={onToggle}
@@ -33,11 +45,24 @@ export function ToggleRow({ icon, label, isActive, onToggle }: ToggleRowProps) {
       }}
       role="button"
       tabIndex={0}
-      className="p-2 rounded cursor-pointer transition-all duration-200 flex items-center justify-between hover:bg-blue-600/5"
+      className={cn(
+        'w-full px-4 py-2.5 cursor-pointer transition-colors flex items-center gap-3',
+        'border-l-[3px] hover:bg-cream/[0.07]',
+        // The same clay rail the active trail carries, so "this layer is on"
+        // and "this trail is selected" read as one idea.
+        isActive ? 'border-l-clay' : 'border-l-transparent',
+      )}
     >
-      <div className="flex items-center gap-3">
-        <FontAwesomeIcon icon={icon} className="w-4 h-4 text-gray-500" />
-        <span className="font-medium">{label}</span>
+      <FontAwesomeIcon
+        icon={icon}
+        className={cn(
+          'w-4 h-4 shrink-0 transition-colors',
+          isActive ? 'text-clay' : 'text-cream/50',
+        )}
+      />
+      <div className="min-w-0 flex-1">
+        <div className="text-ui font-medium text-cream truncate">{label}</div>
+        {hint && <div className="text-meta text-cream/45 truncate">{hint}</div>}
       </div>
       <ToggleSwitch isActive={isActive} />
     </div>
