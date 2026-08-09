@@ -20,6 +20,7 @@ import { getPayload } from 'payload';
 import config from '@payload-config';
 import type { CityId } from '@/data/cities/types';
 import type { MountainBikeTrail } from '@/data/mountain-bike-trails';
+import { toSpark } from '@/data/trail-spark';
 import { appearanceFor } from './appearance';
 import type { Trail, TrailKind, TrailRating } from '@/payload-types';
 
@@ -72,6 +73,16 @@ function areaOf(trail: Trail): { name: string; region?: string } {
   return { name: '' };
 }
 
+/** `elevationProfile` is a loose `json` column, so prove its shape before use. */
+function sparkFor(value: Trail['elevationProfile']): number[] | undefined {
+  const profile = (value as { profile?: unknown } | null)?.profile;
+  if (!Array.isArray(profile)) {
+    return undefined;
+  }
+  const spark = toSpark(profile as [number, number, number, number][]);
+  return spark.length > 0 ? spark : undefined;
+}
+
 function toMountainBikeTrail(trail: Trail): MountainBikeTrail {
   const area = areaOf(trail);
   // Colour, icon and the rating key all come off the two vocabulary rows —
@@ -94,6 +105,9 @@ function toMountainBikeTrail(trail: Trail): MountainBikeTrail {
     // REGION_MAP otherwise.
     region: area.region,
     slug: trail.slug ?? undefined,
+    // The profile is already loaded here and otherwise discarded; the list
+    // cannot fetch one per trail, so it travels downsampled with the row.
+    spark: sparkFor(trail.elevationProfile),
     trailName: trail.trailName ?? '',
   };
 }

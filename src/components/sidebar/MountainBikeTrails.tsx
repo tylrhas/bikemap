@@ -9,6 +9,7 @@ import { regionOf } from '@/data/trail-region';
 import { getMountainBikeTrails } from '@/data/trail-source';
 import { useTrailConditions } from '@/components/TrailConditionsProvider';
 import { ConditionBadge } from './ConditionBadge';
+import { TrailSparkline } from './TrailSparkline';
 import type { MountainBikeTrailsProps } from './types';
 import type { MountainBikeTrail } from '@/data/mountain-bike-trails';
 import { slugForTrail } from '@/data/mountain-bike-trails';
@@ -121,23 +122,29 @@ function TrailRow({
         selectedTrail && selectedTrail !== trail.trailName && 'opacity-70',
       )}
     >
-      <div className="flex items-center gap-3">
+      {/*
+        Two rows rather than one: the name gets its own line so it stops
+        competing with the numbers, and the numbers drop to a line where they
+        can align. The swatch and the sparkline span both.
+      */}
+      <div className="flex items-center gap-2.5">
         <div
           className={shapeFor(trail.rating)}
           style={{ backgroundColor: trail.color }}
         />
-        <span className="font-medium text-ui min-w-0 truncate">
-          {trail.displayName}
-        </span>
-        {/* Beside the name — the stats already own the right-hand side. */}
-        <ConditionBadge report={condition} />
-        {trail.distance || trail.elevationGain ? (
-          <span className="text-meta text-gray-500 ml-auto shrink-0">
-            {trail.distance ? `${trail.distance} mi` : ''}
-            {trail.distance && trail.elevationGain ? ' \u00B7 ' : ''}
-            {trail.elevationGain ? `\u2191${trail.elevationGain} ft` : ''}
-          </span>
-        ) : null}
+        <div className="min-w-0 flex-1">
+          <div className="font-medium text-body truncate">
+            {trail.displayName}
+          </div>
+          <div className="flex items-center gap-2 text-meta text-gray-500 tabular-nums">
+            {trail.distance ? <span>{trail.distance} mi</span> : null}
+            {trail.elevationGain ? (
+              <span>{`\u2191${trail.elevationGain.toLocaleString()} ft`}</span>
+            ) : null}
+            <ConditionBadge report={condition} />
+          </div>
+        </div>
+        <TrailSparkline color={trail.color} values={trail.spark} />
       </div>
     </div>
   );

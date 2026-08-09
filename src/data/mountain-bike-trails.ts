@@ -34,6 +34,12 @@ export interface MountainBikeTrail {
   elevationMax?: number; // Highest point in feet
   defaultBounds?: [number, number, number, number]; // [swLng, swLat, neLng, neLat]
   bounds?: mapboxgl.LngLatBounds;
+  /**
+   * Normalised elevation shape for the sidebar sparkline, downsampled from the
+   * stored profile by the read layer. Absent for a trail with no profile, or a
+   * flat one — see `trail-spark.ts`.
+   */
+  spark?: number[];
   // OSM way ids this trail rides on. Set for cities whose curated layer renders
   // from the OSM trails tileset (matched by OSM_ID rather than a trail name) —
   // see CuratedTrailLayerConfig.matchBy. Unset for tileset-name layers.
