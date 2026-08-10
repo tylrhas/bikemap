@@ -1,3 +1,5 @@
+import { cn } from '@/lib/utils';
+
 /** Shared Tailwind class strings for components that appear in multiple files */
 
 /**
@@ -12,13 +14,28 @@ export const TOGGLE_BTN_CLASS =
 export const TOGGLE_ICON_CLASS = 'w-5 h-5 text-forest';
 
 /**
- * The clay rail that marks the selected row, as an inset shadow rather than a
- * left border.
+ * A pickable row in the trail panel: trails, routes, rides, layer toggles.
  *
- * A border is inside the box — `box-sizing: border-box` is set globally — so a
- * 3px one made the padding 17px on the left against 14px on the right. A shadow
- * takes no space at all, which leaves `px-3.5` meaning what it says and removes
- * the need for a transparent placeholder to stop the row shifting.
+ * One function because they are one thing. Four copies of the same tile drifted
+ * apart twice already — once over the radius, once over the padding — and each
+ * time the fix had to be made in four places and was missed in one.
+ *
+ * The clay rail marking the selected row is an inset shadow rather than a left
+ * border. `box-sizing: border-box` is global, so a 3px border came out of the
+ * padding and left a row 11px in on the left against 14px on the right; a
+ * shadow takes no space, which also retires the transparent placeholder border
+ * that existed only to stop the row shifting when selection landed.
+ *
+ * `leading-tight` is here for the same reason: at the default 1.5 there is more
+ * half-leading above a 15px name than below an 11px stat line, so equal padding
+ * did not look equal.
  */
-export const ROW_RAIL_CLASS =
-  'shadow-[inset_3px_0_0_0_rgb(var(--app-primary))]';
+export function rowClass(selected: boolean, extra?: string): string {
+  return cn(
+    'w-full text-left block px-3.5 py-2.5 rounded-card leading-tight cursor-pointer transition-colors',
+    selected
+      ? 'shadow-[inset_3px_0_0_0_rgb(var(--app-primary))] bg-clay/[0.22]'
+      : 'bg-forest-lift hover:bg-cream/[0.10]',
+    extra,
+  );
+}

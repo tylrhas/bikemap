@@ -2907,6 +2907,58 @@
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
+    },
+    "public.map_layers": {
+      "name": "map_layers",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "casual_routes": {
+          "name": "casual_routes",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": true
+        },
+        "rides": {
+          "name": "rides",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": true
+        },
+        "osm_trails": {
+          "name": "osm_trails",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
     }
   },
   "enums": {
@@ -3026,6 +3078,6 @@
     "tables": {},
     "columns": {}
   },
-  "id": "10b5a7eb-df5d-4b0c-b571-bee4378939d3",
-  "prevId": "00000000-0000-0000-0000-000000000000"
+  "id": "af52514b-b88f-4b1d-ba44-d3d16085927f",
+  "prevId": "9c6df599-178e-4bb5-8d71-a81453bb918e"
 }

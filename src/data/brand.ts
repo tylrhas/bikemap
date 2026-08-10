@@ -28,9 +28,13 @@ const FONT_STACK = /^[\p{L}\p{N}\s,'"_-]+$/u;
 const FONT_STACK_MAX = 200;
 
 /**
- * The palette the app ships with, as hex. Four values come from cotamtb.com's
- * own theme variables; the highlight is the design brief's clay, kept
- * deliberately — see the note in `globals.css`.
+ * The palette the app ships with, as hex.
+ *
+ * Deliberately **not** COTA's. This is what a fork gets with no database, or
+ * before anyone opens the Theme form: the app's own teal and lime over white,
+ * which is a working, neutral interface rather than someone else's branding
+ * baked into the source. COTA's palette is data, seeded by a migration — see
+ * `COTA_BRAND_COLORS`.
  *
  * These are the same five colors `globals.css` declares as channels — said
  * twice, on purpose, because CSS cannot import a TypeScript constant and the
@@ -38,16 +42,32 @@ const FONT_STACK_MAX = 200;
  * `brand.test.ts` reads the stylesheet and asserts the two agree, so the
  * duplication cannot drift silently.
  *
- * The migration seeds these into the Theme global so the form opens showing the
- * palette rather than five empty boxes — you cannot nudge a color you cannot
- * see. Seeding only fills a blank, so a curator's choice is never overwritten.
- *
  * **Fonts are deliberately not seeded.** The bundled faces are loaded by
- * `next/font`, which invents the family name, so a literal `"Fraunces", serif`
- * here would name a font nothing has loaded and quietly fall through to Georgia.
- * Blank is what keeps them working.
+ * `next/font`, which invents the family name, so a literal `"Poppins"` here
+ * would name a font nothing has loaded and quietly fall through.
  */
 export const DEFAULT_BRAND_COLORS = {
+  accentColor: '#1A434E',
+  inkColor: '#1F2937',
+  primaryColor: '#C3F44D',
+  secondaryColor: '#1A434E',
+  surfaceColor: '#FFFFFF',
+} as const;
+
+/**
+ * COTA's palette, lifted from cotamtb.com's own theme variables — Squarespace
+ * stores them as HSL: `--black-hsl` is `#023428`, `--white-hsl` `#FFFFFF`,
+ * `--accent-hsl` `#00634B`. Body copy takes the black again, which is what the
+ * site does.
+ *
+ * The highlight is the exception and is deliberate: `#BD815A` is the design
+ * brief's clay, kept because COTA has no warm color that reads on the deep
+ * green — their light accent manages 3.6:1 there against clay's 4.2:1.
+ *
+ * Seeded by `20260810_000000_brand_and_layers`, which imports this rather than
+ * repeating the hexes in SQL.
+ */
+export const COTA_BRAND_COLORS = {
   accentColor: '#00634B',
   inkColor: '#023428',
   primaryColor: '#BD815A',

@@ -1,8 +1,7 @@
 import React from 'react';
-import { cn } from '@/lib/utils';
 import { bikeRoutes } from '@/data/geo_data';
 import type { BikeRoutesProps } from './types';
-import { ROW_RAIL_CLASS } from '@/components/styles';
+import { rowClass } from '@/components/styles';
 
 export function BikeRoutes({ selectedRoute, onRouteSelect }: BikeRoutesProps) {
   if (bikeRoutes.length === 0) {
@@ -24,14 +23,7 @@ export function BikeRoutes({ selectedRoute, onRouteSelect }: BikeRoutesProps) {
           role="button"
           tabIndex={0}
           data-selected={selectedRoute === route.id || undefined}
-          className={cn(
-            // The same tile a trail row gets, and the same clay rail — a route
-            // and a trail are the same kind of thing to pick.
-            'px-3.5 py-2.5 rounded-card leading-tight cursor-pointer transition-colors',
-            selectedRoute === route.id
-              ? cn(ROW_RAIL_CLASS, 'bg-clay/[0.22]')
-              : 'bg-forest-lift hover:bg-cream/[0.10]',
-          )}
+          className={rowClass(selectedRoute === route.id)}
         >
           <div className="flex items-center gap-3">
             <div

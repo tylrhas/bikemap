@@ -530,29 +530,32 @@ Things to know before touching it:
     `buildAppearanceCss` returns `''` when none is set, so a fork that never
     opens the form — or has no database at all — is still fully branded, and
     clearing a field is how a curator resets it.
-  - **The colors are also seeded, so the form is not five empty boxes.**
-    `DEFAULT_BRAND_COLORS` in `brand.ts` mirrors the channels in `globals.css`
-    — CSS cannot import a constant, so the palette is written twice and
-    `brand.test.ts` reads the stylesheet to hold the two together. The seeding
-    migration only ever fills a blank (`COALESCE`), so it is idempotent and
-    never overwrites a curator's choice. **Fonts are not seeded**: the bundled
-    faces are loaded by `next/font` under a generated family name, so a literal
-    `"Fraunces", serif` would name a font nothing loaded and fall through to
-    Georgia.
+  - **The colors are also seeded, so the form is not five empty boxes.** The
+    seeding only ever fills a blank (`COALESCE`), so it is idempotent and never
+    overwrites a curator's choice. `DEFAULT_BRAND_COLORS` mirrors the channels
+    in `globals.css` — CSS cannot import a constant, so that pair is written
+    twice and `brand.test.ts` reads the stylesheet to hold them together.
+    **Fonts are not seeded**: the bundled faces are loaded by `next/font` under
+    a generated family name, so a literal `"Poppins"` would name a font nothing
+    loaded and fall through.
   - **`getMapBrand` never throws**, same rule as `getCityTrails`.
   - **Reach for a token, never the hex.** A literal `#023428` or
     `rgba(2,52,40,…)` in a component silently opts out of the palette. Tinted
     shadows included — write `shadow-[0_1px_3px_rgb(var(--app-secondary)/0.18)]`.
-  - **Four defaults are lifted from cotamtb.com's own theme variables**, which
-    Squarespace stores as HSL: `--black-hsl` is `#023428` (deep surface),
-    `--white-hsl` `#FFFFFF`, `--accent-hsl` `#00634B`, and body copy is the
-    black again, which is what the site does. `docs/design specs.md` describes a
-    warmer palette and only its deep green was ever COTA's.
-  - **The highlight is the exception, on purpose.** `clay` `#BD815A` is the
-    brief's, not COTA's — kept because COTA has no warm color that reads on the
-    deep green: their light accent manages 3.6:1 there against clay's 4.2:1, and
-    their accent and dark accent are 1.9:1 and 1.4:1. That last pair is also why
-    `coral` belongs on light surfaces only — never reach for it on the panel.
+  - **The shipped palette is the app's own, not COTA's.** `globals.css` and
+    `DEFAULT_BRAND_COLORS` hold teal and lime over white — a working, neutral
+    interface for a fork with no database or an untouched form. **COTA's is
+    data**: `COTA_BRAND_COLORS`, seeded by the migration, which imports the
+    constant rather than repeating hexes in SQL. Don't put one org's branding
+    back in the source.
+  - **COTA's four site colors come from cotamtb.com's theme variables**, which
+    Squarespace stores as HSL: `--black-hsl` is `#023428`, `--white-hsl`
+    `#FFFFFF`, `--accent-hsl` `#00634B`, and body copy is the black again. The
+    highlight is the exception on purpose — `clay` `#BD815A` is the brief's,
+    kept because COTA has no warm color that reads on the deep green: their
+    light accent manages 3.6:1 there against clay's 4.2:1, and their accent and
+    dark accent are 1.9:1 and 1.4:1. That last pair is also why `coral` belongs
+    on light surfaces only — never reach for it on the panel.
   - **The panel has three greens, and two of them are mixed, not written.**
     `forest-sunk` and `forest-lift` are `color-mix` off `--app-secondary` in
     `globals.css`. Derived rather than literal so a deployment that recolours
@@ -714,6 +717,17 @@ Things to know before touching it:
   that must not be bypassed belongs in the hook — that's why
   `resolveTrailGeometry` parses `geom` itself and throws a `ValidationError`.
   The field's `validate` still runs in the browser, which is its real job.
+- **A migration that has not been pushed is still a draft.** The brand and
+  layers work arrived as eight migrations written a decision at a time; they
+  were squashed into `20260810_000000_brand_and_layers` before anything ran
+  outside a laptop, because shipping the sequence would make every deployment
+  replay a conversation. The five before it are published and are left alone.
+  Squashing means fixing three things, in this order: the `.ts`, the `.json`
+  **snapshot** (drizzle diffs the next migration against the newest one, so a
+  hand-written migration with no snapshot makes `db:migrate:create` propose the
+  same changes forever), and the `payload_migrations` rows on any database that
+  already ran the originals. Prove it by migrating a scratch database from empty
+  and diffing `information_schema.columns` against the real one.
 - **`push` is off**; the schema changes only through `pnpm db:migrate:create`.
   Re-run `pnpm generate:types` after any collection change and commit both.
 - **Re-run `pnpm generate:importmap`** after adding or renaming an admin

@@ -4,7 +4,6 @@ import {
   faChevronRight,
   faChevronDown,
 } from '@fortawesome/free-solid-svg-icons';
-import { cn } from '@/lib/utils';
 import {
   dominantElevation,
   formatElevationChange,
@@ -17,7 +16,7 @@ import { TrailSparkline } from './TrailSparkline';
 import type { MountainBikeTrailsProps } from './types';
 import type { MountainBikeTrail } from '@/data/mountain-bike-trails';
 import { slugForTrail } from '@/data/mountain-bike-trails';
-import { ROW_RAIL_CLASS } from '@/components/styles';
+import { rowClass } from '@/components/styles';
 
 /**
  * Groups the current trail list region -> area -> trails, with a trail count
@@ -98,15 +97,7 @@ function TrailRow({
       onClick={() => onTrailSelect(trail.trailName)}
       data-selected={active || undefined}
       data-faded={(selectedTrail && !active) || undefined}
-      className={cn(
-        // A raised tile on the panel rather than a stripe across it: depth
-        // belongs to the thing you tap. The clay rail marks the active trail
-        // and costs no space, so the padding stays even on both sides.
-        'w-full text-left block rounded-card px-3.5 py-2.5 leading-tight transition-colors',
-        active
-          ? cn(ROW_RAIL_CLASS, 'bg-clay/[0.22]')
-          : 'bg-forest-lift hover:bg-cream/[0.10]',
-      )}
+      className={rowClass(active)}
     >
       <div className="flex items-center justify-between gap-2 mb-1.5">
         <span className="font-display text-cream text-body font-semibold truncate">

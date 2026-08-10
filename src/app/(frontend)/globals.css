@@ -1,22 +1,20 @@
 /*
  * Brand colors as RGB channels. Tailwind's `app-primary` / `app-secondary` —
- * and their COTA names, `clay` and `forest` — read these, and the Map
- * appearance global overrides them per deployment. So these are the fallback,
- * and the app is fully colored without a database.
+ * and their design names, `clay` and `forest` — read these, and the Theme
+ * global overrides them per deployment. So these are the fallback, and the app
+ * is fully colored without a database.
  *
- * Four of the five are lifted from cotamtb.com's own theme variables. The
- * highlight is the exception: it is the design brief's clay, kept because it
- * was liked and because it is the better-contrasting choice anyway — 4.2:1 on
- * the deep green against the light accent's 3.6:1. COTA has no warm colour that
- * reads on this panel, so this is the palette borrowing rather than drifting.
- * See "The map's brand" in CLAUDE.md.
+ * These are **the app's own colors, not COTA's**: teal and lime over white,
+ * which is what a fork gets before anyone opens the Theme form. COTA's palette
+ * is data, seeded by a migration — see `COTA_BRAND_COLORS` in `data/brand.ts`.
+ * `brand.test.ts` holds these channels and `DEFAULT_BRAND_COLORS` together.
  */
 :root {
-  --app-primary: 189 129 90; /* #BD815A — clay, the highlight. Not COTA's. */
-  --app-secondary: 2 52 40; /* #023428 — COTA black, the deep surface */
-  --app-surface: 255 255 255; /* #FFFFFF — COTA white, the light surface */
-  --app-ink: 2 52 40; /* #023428 — COTA black again; body copy on white */
-  --app-accent: 0 99 75; /* #00634B — COTA accent, on light surfaces only */
+  --app-primary: 195 244 77; /* #C3F44D — the highlight */
+  --app-secondary: 26 67 78; /* #1A434E — the deep surface */
+  --app-surface: 255 255 255; /* #FFFFFF — the light surface */
+  --app-ink: 31 41 55; /* #1F2937 — body copy on the light surface */
+  --app-accent: 26 67 78; /* #1A434E — on light surfaces only */
 
   /*
    * Two steps either side of the deep surface, so the panel has depth instead
