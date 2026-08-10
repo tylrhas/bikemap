@@ -111,6 +111,28 @@ Routes are styled via Mapbox Studio (referenced by layer IDs like `riverwalk-loo
 
 The MTB trails layer contains 220+ trails identified by the `Trail` feature property. The editable trail array (`mountainBikeTrails`) lives in `src/data/mountain-bike-trails.data.ts` with precalculated `defaultBounds` for zoom-to-fit and `distance` in miles; the wrapper `src/data/mountain-bike-trails.ts` holds the types, the `MTN_BIKE_*` layer-id constants, and `REGION_MAP`/`regionFor`, and re-exports the array. Both are re-exported from `src/data/geo_data.ts`. Code uses `MTN_BIKE_*` constants and the `mountainBikeTrails` array everywhere — names like "SORBA" only appear when referring to the upstream GIS dataset.
 
+#### Trail name labels
+
+Each curated trail layer gets a `symbol` sublayer, `${layerId} Label`, built by
+`trailLabelLayer` and attached last in `initMtnBikeLayers` so names sit above
+every line in the group. Points worth knowing:
+
+- **The text comes from `cfg.trailProp`**, the same property the click handler
+  and the opacity expressions match on — so a name on the map is the name in the
+  list, for both cities, without a second lookup.
+- **`minzoom` is 12.** Below that a region is a few hundred lines a couple of
+  pixels apart and a name on each is a smear. Mapbox's collision detection does
+  the rest.
+- **`text-font` must be a pair the style has glyphs for.** `['DIN Offc Pro
+  Medium', 'Arial Unicode MS Regular']` is what the OSM POI layer already uses.
+  A font the style cannot serve renders nothing, with nothing logged.
+- **The label takes the same filter as its lines**, or it names trails that
+  aren't drawn — that matters most for `matchBy: 'osmId'` layers, where the
+  filter is the only thing keeping the nationwide tileset down to curated ways.
+- **Anything that emphasises a line must emphasise its label**, or selecting a
+  trail dims its line and leaves every other name at full strength.
+  `setTrailOpacity` and `highlightMtnBikeArea` both do.
+
 #### The Mapbox style ≠ the MTB trails tileset
 
 The Mapbox Studio style does **not** include the MTB trails tileset. We attach it ourselves at runtime via `ensureMtnBikeSource(map)` (in `utils/map.ts`), called during `style.load` before `initMtnBikeColors` / `initMtnBikeLayers`. The source is added as `MTN_BIKE_SOURCE_ID` pointing at `MTN_BIKE_TILESET_URL` (currently `mapbox://swuller.ccfw1cmr`), with the main `MTN_BIKE_LAYER_ID` layer attached on top. Everything downstream (color expression, casing/glow/hit, filter, opacity, selection, hit-testing) assumes the layer is named `MTN_BIKE_LAYER_ID` regardless of how it was attached.

@@ -422,6 +422,59 @@ function hitId(layerId: string): string {
 function closedId(layerId: string): string {
   return `${layerId} Closed`;
 }
+function labelId(layerId: string): string {
+  return `${layerId} Label`;
+}
+
+/**
+ * Trail names, written along the trails.
+ *
+ * From `zoom 12`: below that a region is a few hundred lines a couple of pixels
+ * apart, and a name on each is a smear. Mapbox's own collision detection thins
+ * the rest out as you zoom, so what survives is whatever fits.
+ *
+ * `symbol-placement: 'line'` repeats the name along a trail rather than
+ * labelling it once — a trail is a long thin thing and you are rarely looking
+ * at all of it.
+ *
+ * The font is the pair the style is known to have glyphs for; the OSM POI layer
+ * uses the same. A font the style cannot serve renders nothing at all, with
+ * nothing logged.
+ */
+const TRAIL_LABEL_MIN_ZOOM = 12;
+
+function trailLabelLayer(
+  cfg: TrailLayerConfig,
+  source: string,
+): mapboxgl.LayerSpecification {
+  return {
+    id: labelId(cfg.layerId),
+    type: 'symbol',
+    source,
+    ...(cfg.sourceLayer ? { 'source-layer': cfg.sourceLayer } : {}),
+    minzoom: TRAIL_LABEL_MIN_ZOOM,
+    layout: {
+      'text-field': ['coalesce', ['get', cfg.trailProp], ''],
+      'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Regular'],
+      'text-size': ['interpolate', ['linear'], ['zoom'], 12, 10, 16, 13],
+      'symbol-placement': 'line',
+      'symbol-spacing': 300,
+      // Near Mapbox's default of 45. Singletrack switchbacks hard, and every
+      // degree taken off here is another trail that goes unnamed because no
+      // stretch of it was straight enough — the failure mode is a missing
+      // label, not a bent one.
+      'text-max-angle': 40,
+      'text-padding': 4,
+      'text-letter-spacing': 0.01,
+    },
+    paint: {
+      'text-color': '#1F2937',
+      'text-halo-color': '#ffffff',
+      'text-halo-width': 1.4,
+      'text-halo-blur': 0.4,
+    },
+  } as mapboxgl.LayerSpecification;
+}
 
 /**
  * The red of a closure. One color rather than the condition's own, because
@@ -1141,6 +1194,7 @@ export function initMtnBikeLayers(map: mapboxgl.Map): void {
     const cId = casingId(cfg.layerId);
     const gId = glowId(cfg.layerId);
     const hId = hitId(cfg.layerId);
+    const lId = labelId(cfg.layerId);
 
     if (!map.getLayer(cId)) {
       map.addLayer(
@@ -1206,6 +1260,12 @@ export function initMtnBikeLayers(map: mapboxgl.Map): void {
       });
     }
 
+    // Added last, so it sits above every line in the group and reads against
+    // them rather than under the next trail along.
+    if (!map.getLayer(lId)) {
+      map.addLayer(trailLabelLayer(cfg, source));
+    }
+
     map.setLayoutProperty(cfg.layerId, 'line-cap', 'round');
     map.setLayoutProperty(cfg.layerId, 'line-join', 'round');
     map.setLayoutProperty(cfg.layerId, 'line-round-limit', 0.1);
@@ -1235,7 +1295,7 @@ export function initMtnBikeLayers(map: mapboxgl.Map): void {
       ];
     }
     if (filter) {
-      for (const id of [cfg.layerId, cId, gId, hId]) {
+      for (const id of [cfg.layerId, cId, gId, hId, lId]) {
         if (map.getLayer(id)) {
           map.setFilter(id, filter);
         }
@@ -1251,11 +1311,24 @@ function setTrailOpacity(
 ): void {
   const cId = casingId(cfg.layerId);
   const gId = glowId(cfg.layerId);
+  const lId = labelId(cfg.layerId);
 
   if (selectedTrailName) {
     const sel = trailMatchExpr(cfg, selectedTrailName);
     map.setPaintProperty(cfg.layerId, 'line-opacity', ['case', sel, 0.9, 0.5]);
     map.setPaintProperty(cfg.layerId, 'line-width', ['case', sel, 4, 3]);
+
+    // Names fade with their lines, so the one you picked is the one you read.
+    // The halo fades too — a bright halo round faint text is worse than either.
+    if (map.getLayer(lId)) {
+      map.setPaintProperty(lId, 'text-opacity', ['case', sel, 1, 0.45]);
+      map.setPaintProperty(lId, 'text-halo-color', [
+        'case',
+        sel,
+        '#ffffff',
+        'rgba(255,255,255,0.6)',
+      ]);
+    }
 
     if (map.getLayer(cId)) {
       map.setPaintProperty(cId, 'line-opacity', ['case', sel, 0.9, 0.5]);
@@ -1269,6 +1342,11 @@ function setTrailOpacity(
   } else {
     map.setPaintProperty(cfg.layerId, 'line-opacity', 0.5);
     map.setPaintProperty(cfg.layerId, 'line-width', 3);
+
+    if (map.getLayer(lId)) {
+      map.setPaintProperty(lId, 'text-opacity', 1);
+      map.setPaintProperty(lId, 'text-halo-color', '#ffffff');
+    }
 
     if (map.getLayer(cId)) {
       map.setPaintProperty(cId, 'line-opacity', 0.5);
@@ -1315,6 +1393,7 @@ export function highlightMtnBikeArea(
 
     const cId = casingId(cfg.layerId);
     const gId = glowId(cfg.layerId);
+    const lId = labelId(cfg.layerId);
 
     try {
       map.setPaintProperty(cfg.layerId, 'line-opacity', [
@@ -1323,6 +1402,12 @@ export function highlightMtnBikeArea(
         0.9,
         0.4,
       ]);
+
+      // Names follow the same emphasis as the lines, or picking an area would
+      // dim its trails and leave every other trail's name at full strength.
+      if (map.getLayer(lId)) {
+        map.setPaintProperty(lId, 'text-opacity', ['case', inArea, 1, 0.4]);
+      }
       map.setPaintProperty(cfg.layerId, 'line-width', ['case', inArea, 3, 3]);
 
       if (map.getLayer(cId)) {

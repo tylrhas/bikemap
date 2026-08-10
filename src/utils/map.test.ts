@@ -9,6 +9,7 @@ import {
   updateMtnBikeOpacity,
   highlightMtnBikeArea,
   initMtnBikeColors,
+  initMtnBikeLayers,
   hideStrayStyleLayers,
   detectTrailAtPoint,
   toLngLatBounds,
@@ -641,6 +642,86 @@ describe('updateMtnBikeOpacity', () => {
       `${MTN_BIKE_LAYER_ID} Glow`,
       'line-width',
       expect.anything(),
+    );
+  });
+});
+
+describe('trail name labels', () => {
+  function addedLayers(): Record<string, mapboxgl.LayerSpecification> {
+    const layers: Record<string, mapboxgl.LayerSpecification> = {};
+    const mockMap = {
+      addLayer: vi.fn((layer: mapboxgl.LayerSpecification) => {
+        layers[layer.id] = layer;
+      }),
+      getLayer: vi.fn((id: string) =>
+        id === MTN_BIKE_LAYER_ID ? { id, source: 'composite' } : undefined,
+      ),
+      setFilter: vi.fn(),
+      setLayoutProperty: vi.fn(),
+    } as unknown as mapboxgl.Map;
+    initMtnBikeLayers(mockMap);
+    return layers;
+  }
+
+  it('writes the trail name along the line', () => {
+    // The union type narrows per layer type, and the assertion is about a
+    // symbol layer's layout — read it as the record it is.
+    const label = addedLayers()[`${MTN_BIKE_LAYER_ID} Label`] as unknown as {
+      layout: Record<string, unknown>;
+      type: string;
+    };
+
+    expect(label).toBeDefined();
+    expect(label.type).toBe('symbol');
+    // Reads the same property the click handler matches trails on, so a name
+    // on the map is the name in the list.
+    expect(label.layout['text-field']).toEqual([
+      'coalesce',
+      ['get', 'Trail'],
+      '',
+    ]);
+    // Repeated along the trail rather than placed once — a trail is long and
+    // thin and you are rarely looking at all of it.
+    expect(label.layout['symbol-placement']).toBe('line');
+  });
+
+  it('stays off until the lines are far enough apart to name', () => {
+    // A region at low zoom is a few hundred lines a couple of pixels apart.
+    expect(addedLayers()[`${MTN_BIKE_LAYER_ID} Label`].minzoom).toBe(12);
+  });
+
+  it('is added after the lines, so names sit above them', () => {
+    const ids = Object.keys(addedLayers());
+    expect(ids.indexOf(`${MTN_BIKE_LAYER_ID} Label`)).toBe(ids.length - 1);
+  });
+
+  it('fades the names of trails that are not selected', () => {
+    const mockMap = {
+      setPaintProperty: vi.fn(),
+      getLayer: vi.fn().mockReturnValue(true),
+    } as unknown as mapboxgl.Map;
+
+    updateMtnBikeOpacity(mockMap, 'Five Points');
+
+    expect(mockMap.setPaintProperty).toHaveBeenCalledWith(
+      `${MTN_BIKE_LAYER_ID} Label`,
+      'text-opacity',
+      ['case', ['==', ['get', 'Trail'], 'Five Points'], 1, 0.45],
+    );
+  });
+
+  it('puts every name back when nothing is selected', () => {
+    const mockMap = {
+      setPaintProperty: vi.fn(),
+      getLayer: vi.fn().mockReturnValue(true),
+    } as unknown as mapboxgl.Map;
+
+    updateMtnBikeOpacity(mockMap, null);
+
+    expect(mockMap.setPaintProperty).toHaveBeenCalledWith(
+      `${MTN_BIKE_LAYER_ID} Label`,
+      'text-opacity',
+      1,
     );
   });
 });
