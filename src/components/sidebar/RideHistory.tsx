@@ -111,7 +111,7 @@ export function RideHistory({
   }
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-1.5">
       {summaries.map((s) => (
         <div
           key={s.id}
@@ -125,12 +125,12 @@ export function RideHistory({
           role="button"
           tabIndex={0}
           className={cn(
-            // The same clay rail the active trail carries, so "this ride is
-            // selected" and "this trail is selected" read as one idea.
-            'px-3 py-2.5 -mx-1 rounded-control cursor-pointer transition-colors border-l-[3px]',
+            // The same raised tile and clay rail a trail row carries, so "this
+            // ride is selected" and "this trail is selected" read as one idea.
+            'px-3.5 py-2.5 rounded-card cursor-pointer transition-colors border-l-[3px]',
             selectedRideId === s.id
-              ? 'border-l-clay bg-cream/[0.09]'
-              : 'border-l-transparent hover:bg-cream/[0.06]',
+              ? 'border-l-clay bg-clay/[0.22]'
+              : 'border-l-transparent bg-forest-lift hover:bg-cream/[0.10]',
           )}
         >
           <div className="flex items-center gap-3">

@@ -9,10 +9,10 @@ export function MapLayersSection({ children }: { children: ReactNode }) {
   return (
     <div className="mb-5">
       {/* The design's section label: uppercase, small, tracked out. */}
-      <h3 className="-mx-4 px-4 py-2 bg-forest-lift border-y border-black/15 text-meta font-bold uppercase tracking-[0.08em] text-cream/75">
+      <h3 className="px-1 pb-1 text-meta font-bold uppercase tracking-[0.08em] text-cream/70">
         Map layers
       </h3>
-      <div className="flex flex-col">{children}</div>
+      <div className="flex flex-col gap-1.5">{children}</div>
     </div>
   );
 }
@@ -38,11 +38,13 @@ export function ToggleRow({ icon, label, isActive, onToggle }: ToggleRowProps) {
       role="button"
       tabIndex={0}
       className={cn(
-        'w-full px-4 py-2.5 cursor-pointer transition-colors flex items-center gap-3',
-        'border-l-[3px] hover:bg-cream/[0.07]',
-        // The same clay rail the active trail carries, so "this layer is on"
-        // and "this trail is selected" read as one idea.
-        isActive ? 'border-l-clay' : 'border-l-transparent',
+        'w-full px-3.5 py-2.5 cursor-pointer transition-colors flex items-center gap-3',
+        // Same raised tile as a trail row, and the same clay rail, so "this
+        // layer is on" and "this trail is selected" read as one idea.
+        'rounded-card border-l-[3px]',
+        isActive
+          ? 'border-l-clay bg-clay/[0.22]'
+          : 'border-l-transparent bg-forest-lift hover:bg-cream/[0.10]',
       )}
     >
       <FontAwesomeIcon

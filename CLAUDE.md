@@ -555,12 +555,16 @@ Things to know before touching it:
     `coral` belongs on light surfaces only — never reach for it on the panel.
   - **The panel has three greens, and two of them are mixed, not written.**
     `forest-sunk` and `forest-lift` are `color-mix` off `--app-secondary` in
-    `globals.css` — the rail and the sheet's header sink, region and section
-    headers lift into bands. Derived rather than literal so a deployment that
-    recolours the deep surface gets a matching rail and matching bands instead
-    of two shades left behind at the old green. They take no alpha modifier:
-    they are already a mix, so `bg-forest-lift/50` will not resolve. Bands sit
-    inside a `px-4` scroll container and use `-mx-4` to reach the panel edge.
+    `globals.css`. Derived rather than literal so a deployment that recolours
+    the deep surface gets a matching set instead of two shades left behind at
+    the old green. They take no alpha modifier: they are already a mix, so
+    `bg-forest-lift/50` will not resolve.
+  - **Depth belongs to the rows, not the headers.** Anything you tap — a trail,
+    a ride, a layer toggle — is a `rounded-card bg-forest-lift` tile with a
+    clay left rail when active; group headers are plain text on the panel.
+    Banding the headers instead was tried and rejected: it striped a list that
+    is mostly at rest. Chrome (`NavRail`, the panel header, the sheet's grab
+    strip and pill row) sinks to `forest-sunk`, because it is not list content.
   - **Only colors something reads are on the form.** `good`, `warn` and
     `advanced` are in the Tailwind palette with no uses, and a control that
     changes nothing is worse than no control. Give one a variable and a field

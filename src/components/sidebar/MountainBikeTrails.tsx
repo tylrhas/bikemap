@@ -98,12 +98,14 @@ function TrailRow({
       data-selected={active || undefined}
       data-faded={(selectedTrail && !active) || undefined}
       className={cn(
-        // The clay left rail is how the design marks the active trail; every
-        // row carries a transparent one so nothing shifts when it lands.
-        'w-full text-left block border-l-[3px] px-4 py-3 transition-colors',
+        // A raised tile on the panel rather than a stripe across it: depth
+        // belongs to the thing you tap. The clay left rail still marks the
+        // active trail, and every row carries a transparent one so nothing
+        // shifts when it lands.
+        'w-full text-left block rounded-card border-l-[3px] px-3.5 py-2.5 transition-colors',
         active
-          ? 'border-l-clay bg-clay/[0.18]'
-          : 'border-l-transparent hover:bg-cream/[0.07]',
+          ? 'border-l-clay bg-clay/[0.22]'
+          : 'border-l-transparent bg-forest-lift hover:bg-cream/[0.10]',
       )}
     >
       <div className="flex items-center justify-between gap-2 mb-1.5">
@@ -187,7 +189,7 @@ export function MountainBikeTrails({
 
   return (
     <div className="mb-6">
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-1.5">
         <div className="relative">
           <input
             ref={searchRef}
@@ -234,12 +236,7 @@ export function MountainBikeTrails({
             return (
               <React.Fragment key={region}>
                 <div
-                  className={cn(
-                    // A band, not floating text: the panel is one colour and a
-                    // region header had nothing to sit on.
-                    'text-meta font-bold uppercase tracking-[0.08em] text-cream/75 cursor-pointer py-2 px-4 flex items-center whitespace-nowrap transition-colors',
-                    '-mx-4 bg-forest-lift border-y border-black/15 hover:text-cream',
-                  )}
+                  className="mt-3 first:mt-0 text-meta font-bold uppercase tracking-[0.08em] text-cream/70 cursor-pointer pb-0.5 px-1 flex items-center whitespace-nowrap transition-colors hover:text-cream"
                   onClick={() => {
                     toggleSet(setExpandedRegions, region);
                     onAreaSelect(region);
@@ -275,7 +272,7 @@ export function MountainBikeTrails({
                       <React.Fragment key={area}>
                         {!singleArea && (
                           <div
-                            className="text-meta font-semibold uppercase text-cream/55 tracking-[0.08em] cursor-pointer py-2 pb-1 px-4 pl-6 flex items-baseline transition-colors hover:text-cream/85"
+                            className="mt-1 text-meta font-semibold uppercase text-cream/55 tracking-[0.08em] cursor-pointer pb-0.5 px-1 pl-3 flex items-baseline transition-colors hover:text-cream/85"
                             onClick={() => handleAreaClick(area)}
                             onKeyDown={(e) => {
                               if (e.key === 'Enter' || e.key === ' ') {
