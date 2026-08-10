@@ -134,7 +134,7 @@ export function RideHistory({
           )}
         >
           <div className="flex items-center gap-3">
-            <div className="w-3 h-3 rounded-sm shrink-0 bg-coral" />
+            <div className="w-3 h-3 rounded-sm shrink-0 bg-clay" />
             <span className="text-ui font-medium text-cream truncate">
               {s.name}
             </span>

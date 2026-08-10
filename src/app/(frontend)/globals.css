@@ -3,13 +3,18 @@
  * and their COTA names, `clay` and `forest` — read these, and the Map
  * appearance global overrides them per deployment. So these are the fallback,
  * and the app is fully colored without a database.
+ *
+ * Every value is lifted from cotamtb.com's own theme variables. The written
+ * brief's palette was warmer — a tan, a coral, an off-white — and only its deep
+ * green was actually COTA's. See "The map's brand" in CLAUDE.md for why the
+ * highlight is the light accent and not one of the darker two.
  */
 :root {
-  --app-primary: 189 129 90; /* clay   #BD815A — highlight */
-  --app-secondary: 2 52 40; /* forest #023428 — deep surface */
-  --app-surface: 245 239 230; /* cream  #F5EFE6 — light surface */
-  --app-ink: 20 35 29; /* ink    #14231D — body copy */
-  --app-accent: 252 167 147; /* coral  #FCA793 — accent */
+  --app-primary: 122 136 92; /* #7A885C — COTA lightAccent, the highlight */
+  --app-secondary: 2 52 40; /* #023428 — COTA black, the deep surface */
+  --app-surface: 255 255 255; /* #FFFFFF — COTA white, the light surface */
+  --app-ink: 2 52 40; /* #023428 — COTA black again; body copy on white */
+  --app-accent: 0 99 75; /* #00634B — COTA accent, on light surfaces only */
 
   /*
    * The type stacks, same deal: `font-display` / `font-sans` read these, and

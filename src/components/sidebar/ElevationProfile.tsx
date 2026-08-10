@@ -699,7 +699,7 @@ export function ElevationProfile() {
           <div className="flex gap-2">
             {conditionSlug && (
               <button
-                className="flex-1 rounded-control border border-forest/25 px-3.5 py-[11px] text-ui font-medium text-forest whitespace-nowrap transition-colors hover:bg-forest/5"
+                className="flex-1 rounded-control border border-app-accent/40 px-3.5 py-[11px] text-ui font-semibold text-app-accent whitespace-nowrap transition-colors hover:bg-app-accent/[0.08]"
                 onClick={() =>
                   window.dispatchEvent(
                     new CustomEvent(MAP_EVENTS.CONDITION_REPORT_OPEN, {

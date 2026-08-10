@@ -543,6 +543,15 @@ Things to know before touching it:
   - **Reach for a token, never the hex.** A literal `#023428` or
     `rgba(2,52,40,…)` in a component silently opts out of the palette. Tinted
     shadows included — write `shadow-[0_1px_3px_rgb(var(--app-secondary)/0.18)]`.
+  - **Every default is lifted from cotamtb.com's own theme variables**, which
+    Squarespace stores as HSL: `--black-hsl` is `#023428` (deep surface),
+    `--white-hsl` `#FFFFFF`, `--lightAccent-hsl` `#7A885C`, `--accent-hsl`
+    `#00634B`, `--darkAccent-hsl` `#7E2200`. `docs/design specs.md` describes a
+    warmer palette — a tan, a coral, an off-white — and only its deep green was
+    ever COTA's; the brand wins. The **light accent is the highlight** because
+    it is the only COTA color that reads on both grounds (3.6:1 on the deep
+    green, 3.8:1 on white); the accent and dark accent are 1.9:1 and 1.4:1 on
+    the panel, so `coral` belongs on light surfaces only.
   - **Only colors something reads are on the form.** `good`, `warn`,
     `advanced` and `forest-lift` are in the Tailwind palette with no uses, and a
     control that changes nothing is worse than no control. Give one a variable

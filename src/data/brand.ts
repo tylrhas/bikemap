@@ -28,7 +28,8 @@ const FONT_STACK = /^[\p{L}\p{N}\s,'"_-]+$/u;
 const FONT_STACK_MAX = 200;
 
 /**
- * The palette the app ships with, as hex.
+ * The palette the app ships with, as hex — every value from cotamtb.com's own
+ * theme variables.
  *
  * These are the same five colors `globals.css` declares as channels — said
  * twice, on purpose, because CSS cannot import a TypeScript constant and the
@@ -46,11 +47,11 @@ const FONT_STACK_MAX = 200;
  * Blank is what keeps them working.
  */
 export const DEFAULT_BRAND_COLORS = {
-  accentColor: '#FCA793',
-  inkColor: '#14231D',
-  primaryColor: '#BD815A',
+  accentColor: '#00634B',
+  inkColor: '#023428',
+  primaryColor: '#7A885C',
   secondaryColor: '#023428',
-  surfaceColor: '#F5EFE6',
+  surfaceColor: '#FFFFFF',
 } as const;
 
 export interface Brand {

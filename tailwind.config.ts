@@ -142,9 +142,14 @@ const config: Config = {
         'app-secondary': 'rgb(var(--app-secondary) / <alpha-value>)',
 
         /**
-         * COTA. `forest` and `clay` are the two the admin can edit — they are
-         * the same variables as app-secondary and app-primary, named for what
-         * the design calls them. The rest are fixed.
+         * COTA, taken from cotamtb.com's own theme variables. `forest` is their
+         * black, `cream` their white, `clay` their light accent, `coral` their
+         * accent. All five are editable in the admin; the names are what the
+         * design brief called them, and are kept so the components read the
+         * same.
+         *
+         * `coral` is a deep green and only reads on a light surface — 1.9:1
+         * against `forest`. Don't reach for it on the panel.
          */
         forest: 'rgb(var(--app-secondary) / <alpha-value>)',
         clay: 'rgb(var(--app-primary) / <alpha-value>)',

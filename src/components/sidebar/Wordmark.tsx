@@ -40,8 +40,10 @@ export function Wordmark({ className }: { className?: string }) {
 
   return (
     <div className={cn('flex items-center gap-2', className)}>
+      {/* White, which is what COTA puts on its dark sections. The accent is a
+          deep green — 1.9:1 against this panel, so it would barely be there. */}
       <FontAwesomeIcon
-        className="w-[17px] h-[17px] text-coral"
+        className="w-[17px] h-[17px] text-cream"
         icon={faBicycle}
       />
       <span className="text-cream text-ui font-bold uppercase tracking-[0.12em]">
