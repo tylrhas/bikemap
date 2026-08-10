@@ -13,7 +13,7 @@ import {
 import { SidebarCard } from './SidebarCard';
 import type { BikeRentalListProps } from './types';
 
-const BADGE_CLASS = 'bg-cream/10 px-2 py-0.5 rounded text-cream/70';
+const BADGE_CLASS = 'bg-cream/10 px-2 py-0.5 rounded-control text-cream/70';
 
 // Lowercase plural for a vehicle type label, e.g. "E-bike" -> "e-bikes".
 function pluralizeType(label: string): string {

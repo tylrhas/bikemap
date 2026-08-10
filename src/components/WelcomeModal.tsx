@@ -106,7 +106,7 @@ export function WelcomeModal() {
       {/* biome-ignore lint/a11y/noStaticElementInteractions: stop propagation for content area */}
       <div
         className={cn(
-          'bg-white rounded-3xl w-full max-w-[400px] px-7 pt-7 pb-6 text-center shadow-[0_24px_48px_rgba(0,0,0,0.25)] animate-welcome-slide-up',
+          'bg-white rounded-float w-full max-w-[400px] px-7 pt-7 pb-6 text-center shadow-[0_24px_48px_rgba(0,0,0,0.25)] animate-welcome-slide-up',
           exiting && 'animate-welcome-slide-down',
         )}
         onClick={(e) => e.stopPropagation()}
@@ -131,7 +131,7 @@ export function WelcomeModal() {
             <div key={f.title} className="flex items-center gap-4">
               <div
                 className={cn(
-                  'shrink-0 w-10 h-10 rounded-xl flex items-center justify-center text-white text-lg',
+                  'shrink-0 w-10 h-10 rounded-control flex items-center justify-center text-white text-lg',
                   f.bg,
                 )}
               >
@@ -158,7 +158,7 @@ export function WelcomeModal() {
             <button
               key={c.style}
               type="button"
-              className="flex-1 flex flex-col items-center gap-2 py-4 px-3 border-2 border-gray-200 rounded-2xl bg-white cursor-pointer transition-all duration-150 hover:border-app-primary hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] active:scale-[0.97] active:border-[#a5d730]"
+              className="flex-1 flex flex-col items-center gap-2 py-4 px-3 border-2 border-gray-200 rounded-control bg-white cursor-pointer transition-all duration-150 hover:border-app-primary hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] active:scale-[0.97] active:border-[#a5d730]"
               onClick={() => choose(c.style)}
             >
               <span

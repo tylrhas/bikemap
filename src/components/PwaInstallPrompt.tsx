@@ -103,7 +103,7 @@ export function PwaInstallPrompt(): React.ReactElement | null {
 
   return (
     <div className="fixed bottom-4 left-4 right-4 z-prompt sm:hidden">
-      <div className="flex items-start gap-3 rounded-2xl border border-emerald-200 bg-white/95 p-4 shadow-lg backdrop-blur">
+      <div className="flex items-start gap-3 rounded-float border border-emerald-200 bg-white/95 p-4 shadow-lg backdrop-blur">
         <div className="flex-1">
           <p className="text-sm font-semibold text-emerald-900">
             Add {siteConfig.name} to your home screen

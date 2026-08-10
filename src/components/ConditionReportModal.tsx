@@ -163,7 +163,7 @@ export function ConditionReportModal() {
       <div
         aria-labelledby="condition-report-title"
         aria-modal="true"
-        className="relative bg-white rounded-3xl w-full max-w-[380px] px-6 pt-5 pb-5 shadow-[0_24px_48px_rgba(0,0,0,0.25)] animate-welcome-slide-up"
+        className="relative bg-white rounded-float w-full max-w-[380px] px-6 pt-5 pb-5 shadow-[0_24px_48px_rgba(0,0,0,0.25)] animate-welcome-slide-up"
         role="dialog"
       >
         <div className="flex items-start gap-3 mb-4">
@@ -208,7 +208,7 @@ export function ConditionReportModal() {
             Condition
           </label>
           <select
-            className="w-full py-2 px-3 border border-gray-300 rounded-lg text-sm text-app-secondary bg-white outline-none focus:border-app-primary focus:ring-2 focus:ring-app-primary/30"
+            className="w-full py-2 px-3 border border-gray-300 rounded-control text-sm text-app-secondary bg-white outline-none focus:border-app-primary focus:ring-2 focus:ring-app-primary/30"
             id="condition-report-condition"
             onChange={(event) => setCondition(event.target.value)}
             ref={selectRef}
@@ -238,7 +238,7 @@ export function ConditionReportModal() {
             When did you ride it?
           </label>
           <input
-            className="w-full py-2 px-3 border border-gray-300 rounded-lg text-sm text-app-secondary bg-white outline-none focus:border-app-primary focus:ring-2 focus:ring-app-primary/30"
+            className="w-full py-2 px-3 border border-gray-300 rounded-control text-sm text-app-secondary bg-white outline-none focus:border-app-primary focus:ring-2 focus:ring-app-primary/30"
             id="condition-report-date"
             max={toDateInputValue(new Date())}
             onChange={(event) => setObservedAt(event.target.value)}
@@ -254,7 +254,7 @@ export function ConditionReportModal() {
 
           <button
             className={cn(
-              'w-full mt-5 py-2.5 rounded-xl border-none text-app-secondary font-semibold text-body transition-opacity',
+              'w-full mt-5 py-2.5 rounded-control border-none text-app-secondary font-semibold text-body transition-opacity',
               submitting
                 ? 'bg-gray-200 cursor-wait opacity-70'
                 : 'bg-app-primary cursor-pointer hover:opacity-90',

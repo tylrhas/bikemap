@@ -559,6 +559,15 @@ Things to know before touching it:
     the deep surface gets a matching set instead of two shades left behind at
     the old green. They take no alpha modifier: they are already a mix, so
     `bg-forest-lift/50` will not resolve.
+  - **Corners are square, and that is the point.** `card` is 0, `control` 2px,
+    `float` 4px for the few things that sit over the map and want a visible
+    edge. The brief asked for 8/12px, which is the radius every generated
+    interface has, and cotamtb.com's own blocks are 0. What stays `rounded-full`
+    is what is round for a reason — switches, dots, the section pills — and that
+    contrast is doing the work a single middling radius everywhere cannot.
+  - **Nothing is separated by a line.** Surfaces meet on their colour change:
+    the sunk rail against the panel, a lifted tile against the panel. Adding a
+    hairline back puts an outline around a change that is already visible.
   - **Depth belongs to the rows, not the headers.** Anything you tap — a trail,
     a ride, a layer toggle — is a `rounded-card bg-forest-lift` tile with a
     clay left rail when active; group headers are plain text on the panel.

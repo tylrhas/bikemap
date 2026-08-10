@@ -128,9 +128,21 @@ const config: Config = {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
-        // The design brief's two: 8px on controls, 12px on cards.
-        control: '8px',
-        card: '12px',
+        /**
+         * Square, near enough.
+         *
+         * The brief asked for 8px controls and 12px cards, which is the radius
+         * every generated interface has — and cotamtb.com's own blocks are 0.
+         * So surfaces in the panel are square and controls take 2px, which
+         * reads as a softened edge rather than a rounded one. What stays fully
+         * round is what is round for a reason: switches, dots, section pills.
+         * That contrast is the point; a single middling radius everywhere is
+         * what makes a page look untouched.
+         */
+        control: '2px',
+        card: '0px',
+        /** Things that float over the map and want an edge you can see. */
+        float: '4px',
       },
       colors: {
         // App brand colors

@@ -600,7 +600,7 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
           'z-drawer overflow-hidden flex bg-forest',
           narrow
             ? cn(
-                'fixed flex-col left-0 right-0 bottom-0 h-[92%] rounded-t-2xl shadow-[0_-8px_32px_rgba(0,0,0,0.16)]',
+                'fixed flex-col left-0 right-0 bottom-0 h-[92%] rounded-t-float shadow-[0_-8px_32px_rgba(0,0,0,0.16)]',
                 !dragging && 'transition-transform duration-300 ease-in-out',
               )
             : cn(
@@ -659,7 +659,7 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
               'absolute top-0 w-[320px] px-[18px] pt-[18px] pb-3.5 pointer-events-none',
               // A surface rather than a floating label — the list scrolls
               // under it, and on one flat green that read as text on text.
-              'bg-forest-sunk border-b border-black/25',
+              'bg-forest-sunk',
               showRail ? 'left-14' : 'left-0',
             )}
           >
@@ -676,7 +676,7 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
           {/* The phone has no rail, so it keeps the pill — for the same
               reason the rail goes, one section gets no pill either. */}
           {showRail && (
-            <div className="md:hidden flex justify-center items-center px-4 pl-[68px] pb-3 pt-1 bg-forest-sunk border-b border-black/25">
+            <div className="md:hidden flex justify-center items-center px-4 pl-[68px] pb-3 pt-1 bg-forest-sunk">
               <div className="flex bg-cream/[0.08] rounded-full p-1 w-full">
                 {hasRoutesSection && (
                   <button

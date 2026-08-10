@@ -34,7 +34,7 @@ export function DifficultyBadge({
   return (
     <span
       className={cn(
-        'inline-block text-[10.5px] font-bold uppercase tracking-[0.05em] px-2 py-[3px] rounded-[4px] whitespace-nowrap capitalize',
+        'inline-block text-[10.5px] font-bold uppercase tracking-[0.05em] px-2 py-[3px] rounded-control whitespace-nowrap capitalize',
         className,
       )}
       style={

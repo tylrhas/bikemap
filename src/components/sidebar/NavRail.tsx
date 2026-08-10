@@ -42,7 +42,7 @@ export function NavRail({
   return (
     <nav
       aria-label="Sections"
-      className="flex-none w-14 h-full bg-forest-sunk border-r border-black/25 flex flex-col items-center gap-1 py-3 pt-[calc(0.75rem+env(safe-area-inset-top))]"
+      className="flex-none w-14 h-full bg-forest-sunk flex flex-col items-center gap-1 py-3 pt-[calc(0.75rem+env(safe-area-inset-top))]"
     >
       {items.map((item) => {
         const selected = item.key === active;
@@ -50,7 +50,7 @@ export function NavRail({
           <button
             aria-current={selected ? 'page' : undefined}
             className={cn(
-              'group relative w-10 h-10 rounded-xl grid place-items-center transition-colors',
+              'group relative w-10 h-10 rounded-control grid place-items-center transition-colors',
               selected
                 ? 'bg-app-primary text-app-secondary'
                 : 'text-white/60 hover:text-white hover:bg-white/10',

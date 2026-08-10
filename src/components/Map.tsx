@@ -1588,7 +1588,7 @@ const MapboxMap = memo(function MapboxMap() {
       {toastMessage && (
         <div
           className={cn(
-            'absolute left-1/2 -translate-x-1/2 bg-black/65 text-white px-6 py-3 rounded-lg text-base font-medium z-toast shadow-[0_4px_12px_rgba(0,0,0,0.3)] pointer-events-none animate-toast-fade-in top-[calc(1.25rem+env(safe-area-inset-top))]',
+            'absolute left-1/2 -translate-x-1/2 bg-black/65 text-white px-6 py-3 rounded-float text-base font-medium z-toast shadow-[0_4px_12px_rgba(0,0,0,0.3)] pointer-events-none animate-toast-fade-in top-[calc(1.25rem+env(safe-area-inset-top))]',
             toastFadingOut && 'animate-toast-fade-out',
           )}
         >

@@ -134,7 +134,7 @@ export function RideHistory({
           )}
         >
           <div className="flex items-center gap-3">
-            <div className="w-3 h-3 rounded-sm shrink-0 bg-clay" />
+            <div className="w-3 h-3 rounded-control shrink-0 bg-clay" />
             <span className="text-ui font-medium text-cream truncate">
               {s.name}
             </span>
@@ -173,9 +173,9 @@ function StorageIndicator() {
 
   return (
     <div className="pt-3 pb-1 text-meta text-cream/50">
-      <div className="h-1 rounded-sm bg-cream/15 mb-1">
+      <div className="h-1 rounded-control bg-cream/15 mb-1">
         <div
-          className={`h-full rounded-sm transition-[width] duration-300 ${pct > 80 ? 'bg-red-500' : 'bg-clay'}`}
+          className={`h-full rounded-control transition-[width] duration-300 ${pct > 80 ? 'bg-red-500' : 'bg-clay'}`}
           style={{ width: `${pct}%` }}
         />
       </div>

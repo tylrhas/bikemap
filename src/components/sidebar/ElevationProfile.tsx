@@ -87,9 +87,9 @@ function curatedSlug(trailName: string): string | null {
 export const MAX_GRADIENT_STOPS = 600;
 
 const CHART_SVG_CLASS =
-  'w-full h-[15vh] min-h-[80px] max-h-[160px] cursor-crosshair rounded touch-none';
+  'w-full h-[15vh] min-h-[80px] max-h-[160px] cursor-crosshair rounded-control touch-none';
 const ACTION_BTN_CLASS =
-  'bg-transparent border-none cursor-pointer text-ink/45 text-2xl px-2 py-1 rounded transition-colors hover:text-ink hover:bg-forest/5';
+  'bg-transparent border-none cursor-pointer text-ink/45 text-2xl px-2 py-1 rounded-control transition-colors hover:text-ink hover:bg-forest/5';
 
 export function gradeToColor(grade: number): string {
   const g = Math.min(Math.abs(grade), GRADE_RED);
@@ -771,7 +771,7 @@ export function ElevationProfile() {
   return (
     <div
       className={cn(
-        'absolute bottom-4 right-4 left-4 bg-cream rounded-card shadow-[0_4px_16px_rgb(var(--app-secondary)/0.22)] px-4 pt-2.5 pb-1.5 z-elevation pointer-events-auto transition-all duration-300',
+        'absolute bottom-4 right-4 left-4 bg-cream rounded-float shadow-[0_4px_16px_rgb(var(--app-secondary)/0.22)] px-4 pt-2.5 pb-1.5 z-elevation pointer-events-auto transition-all duration-300',
         'max-md:left-2 max-md:right-2 max-md:px-2 max-md:pt-2 max-md:pb-1',
         // Rides on top of the sheet rather than under it. The fallback covers
         // the moment before the sheet has measured itself.
@@ -1167,7 +1167,7 @@ function HoverTooltip({
 
   return (
     <div
-      className="absolute pointer-events-none z-10 whitespace-nowrap rounded-[5px] bg-forest px-[9px] py-[5px] text-meta text-cream tabular-nums"
+      className="absolute pointer-events-none z-10 whitespace-nowrap rounded-control bg-forest px-[9px] py-[5px] text-meta text-cream tabular-nums"
       style={{
         left: `${x}px`,
         top: `${(y / CHART_HEIGHT) * 100}%`,

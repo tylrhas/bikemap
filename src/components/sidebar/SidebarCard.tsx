@@ -96,7 +96,7 @@ export function SidebarCard({
         {showArrow && (
           <div
             className={cn(
-              'flex items-center justify-center p-1.5 rounded ml-2',
+              'flex items-center justify-center p-1.5 rounded-control ml-2',
               colors.arrow,
             )}
           >

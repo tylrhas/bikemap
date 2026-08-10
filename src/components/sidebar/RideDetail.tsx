@@ -157,7 +157,7 @@ function IconButton({
     <button
       type="button"
       onClick={onClick}
-      className="bg-transparent border-none cursor-pointer text-cream/50 p-1 text-ui leading-none rounded hover:text-cream hover:bg-cream/10"
+      className="bg-transparent border-none cursor-pointer text-cream/50 p-1 text-ui leading-none rounded-control hover:text-cream hover:bg-cream/10"
     >
       <FontAwesomeIcon icon={icon} />
     </button>
