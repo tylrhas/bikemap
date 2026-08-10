@@ -1,7 +1,12 @@
 'use client';
 
 /**
- * Distance and climb, inline with their icons.
+ * Distance and elevation, inline with their icons.
+ *
+ * Both directions, because most of this map goes down: a shuttle run that only
+ * advertised its climbing said nothing about the ride. `elevationFigures` drops
+ * whichever is a rounding error beside the other, so a climb still reads as a
+ * climb.
  *
  * The design also shows a duration ("1h 15m"). There is no such field on a
  * trail here and no honest way to derive one — pace on singletrack varies more
@@ -9,22 +14,28 @@
  * estimated. A map people plan rides from should not state a time it guessed.
  */
 import {
+  faArrowTrendDown,
   faArrowTrendUp,
   faLocationDot,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { elevationFigures } from '@/data/trail-elevation';
 import { cn } from '@/lib/utils';
 
 export function TrailStats({
   className,
   distance,
   elevationGain,
+  elevationLoss,
 }: {
   className?: string;
   distance?: number;
   elevationGain?: number;
+  elevationLoss?: number;
 }) {
-  if (!distance && !elevationGain) {
+  const { climb, descent } = elevationFigures({ elevationGain, elevationLoss });
+
+  if (!distance && climb === null && descent === null) {
     return null;
   }
 
@@ -41,10 +52,16 @@ export function TrailStats({
           {distance} mi
         </span>
       ) : null}
-      {elevationGain ? (
+      {climb !== null ? (
         <span className="flex items-center gap-1">
           <FontAwesomeIcon className="w-3 h-3" icon={faArrowTrendUp} />
-          {`+${elevationGain.toLocaleString()} ft`}
+          {`${climb.toLocaleString()} ft`}
+        </span>
+      ) : null}
+      {descent !== null ? (
+        <span className="flex items-center gap-1">
+          <FontAwesomeIcon className="w-3 h-3" icon={faArrowTrendDown} />
+          {`${descent.toLocaleString()} ft`}
         </span>
       ) : null}
     </div>

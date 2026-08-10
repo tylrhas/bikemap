@@ -5,6 +5,10 @@ import {
   faChevronDown,
 } from '@fortawesome/free-solid-svg-icons';
 import { cn } from '@/lib/utils';
+import {
+  dominantElevation,
+  formatElevationChange,
+} from '@/data/trail-elevation';
 import { regionOf } from '@/data/trail-region';
 import { getMountainBikeTrails } from '@/data/trail-source';
 import { useTrailConditions } from '@/components/TrailConditionsProvider';
@@ -83,6 +87,9 @@ function TrailRow({
   const condition = latest[slugForTrail(trail)];
 
   const active = selectedTrail === trail.trailName;
+  // One figure here, whichever way the trail mostly goes: a row is for
+  // scanning. The dock shows both, where you are deciding rather than skimming.
+  const elevation = dominantElevation(trail);
 
   return (
     <button
@@ -107,8 +114,10 @@ function TrailRow({
       </div>
       <div className="flex items-center gap-2.5 text-cream/55 text-meta tabular-nums">
         {trail.distance ? <span>{trail.distance} mi</span> : null}
-        {trail.elevationGain ? (
-          <span>{`+${trail.elevationGain.toLocaleString()} ft`}</span>
+        {elevation ? (
+          <span>
+            {formatElevationChange(elevation.feet, elevation.direction)}
+          </span>
         ) : null}
         {trail.rating ? (
           <span className="capitalize">{trail.rating}</span>

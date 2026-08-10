@@ -601,6 +601,16 @@ Things to know before touching it:
   sections; the reveal button is `md:hidden`; and nothing should reintroduce a
   desktop control for it, which is why `MapControls` lost its "Map layers"
   button and `sidebarOpen` left `Settings`.
+- **A trail is described by whichever way it goes, not by its climbing.** Every
+  elevation figure went through `+elevationGain`, which is wrong for most of
+  this map — 112 of Bend's 184 measured trails lose more than they climb and 37
+  climb nothing at all, so "50 Shades of Blue" rendered no elevation whatsoever
+  (zero is falsy) and Larison Rock advertised "+11 ft" beside a 2,111-foot
+  descent. `src/data/trail-elevation.ts` owns the rule: `elevationFigures` for
+  the dock and the pane, which show both directions and drop whichever is a
+  rounding error beside the other (`MINOR_SHARE`); `dominantElevation` for a
+  list row, which takes one figure because a row is for scanning. Don't read
+  `elevationGain` straight in a component.
 - **Recording is phone only; the history is on both.** `MyRides` hides the
   Record button, the live controls and the recovery banner off `useIsNarrow` —
   you start a ride by riding it, and nobody is holding a desktop while they do.

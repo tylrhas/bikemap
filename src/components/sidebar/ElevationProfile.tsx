@@ -10,6 +10,7 @@ import React, {
 import type { ElevationProfile as ElevationProfileData } from '@/data/geo_data';
 import { getMountainBikeTrails } from '@/data/trail-source';
 import { slugForTrail } from '@/data/mountain-bike-trails';
+import { elevationFigures } from '@/data/trail-elevation';
 import { slugify } from '@/utils/string';
 import { downloadFile } from '@/utils/format';
 import { escapeXml } from '@/utils/gpx';
@@ -690,6 +691,7 @@ export function ElevationProfile() {
             className="mb-4"
             distance={dockTrail?.distance}
             elevationGain={dockTrail?.elevationGain}
+            elevationLoss={dockTrail?.elevationLoss}
           />
           {/* No "Start ride" here. The dock is desktop only, where My rides is
               one press away in the rail — and a second way in only mattered
@@ -798,11 +800,24 @@ export function ElevationProfile() {
           </span>
         )}
         {points && profile && (
-          <div className="flex gap-3 text-meta text-ink/60 ml-auto shrink-0">
+          <div className="flex gap-3 text-meta text-ink/60 ml-auto shrink-0 tabular-nums">
             <span>{(points[points.length - 1][0] / 5280).toFixed(1)} mi</span>
-            <span>
-              +{Math.round(profile.gain).toLocaleString()} ft climbing
-            </span>
+            {/* Both directions — a shuttle run that only advertised its
+                climbing said nothing about the ride. */}
+            {(() => {
+              const { climb, descent } = elevationFigures({
+                elevationGain: profile.gain,
+                elevationLoss: profile.loss,
+              });
+              return (
+                <>
+                  {climb !== null && <span>+{climb.toLocaleString()} ft</span>}
+                  {descent !== null && (
+                    <span>&minus;{descent.toLocaleString()} ft</span>
+                  )}
+                </>
+              );
+            })()}
           </div>
         )}
         <div className={cn('flex gap-1 shrink-0', points ? 'ml-2' : 'ml-auto')}>
