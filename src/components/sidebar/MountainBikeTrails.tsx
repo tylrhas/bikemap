@@ -114,15 +114,23 @@ function TrailRow({
         </span>
         <ConditionBadge report={condition} />
       </div>
-      <div className="flex items-center gap-2.5 text-cream/55 text-meta tabular-nums">
-        {trail.distance ? <span>{trail.distance} mi</span> : null}
+      {/* Spread across the card rather than bunched on the left. `gap-2.5` is
+          the floor, so a long grade beside a four-figure descent still has air
+          between them. Every trail here has a distance and a grade, so there
+          are always three things to spread; the `only-child` rule keeps the
+          sparkline on the right anyway, for a fork whose data is sparser —
+          `justify-between` would otherwise park a lone item on the left. */}
+      <div className="flex items-center justify-between gap-2.5 text-cream/55 text-meta tabular-nums [&>svg:only-child]:ml-auto">
+        {trail.distance ? (
+          <span className="whitespace-nowrap">{trail.distance} mi</span>
+        ) : null}
         {elevation ? (
-          <span>
+          <span className="whitespace-nowrap">
             {formatElevationChange(elevation.feet, elevation.direction)}
           </span>
         ) : null}
         {trail.rating ? (
-          <span className="capitalize">{trail.rating}</span>
+          <span className="capitalize whitespace-nowrap">{trail.rating}</span>
         ) : null}
         <TrailSparkline color={trail.color} values={trail.spark} />
       </div>
