@@ -553,10 +553,18 @@ Things to know before touching it:
     deep green: their light accent manages 3.6:1 there against clay's 4.2:1, and
     their accent and dark accent are 1.9:1 and 1.4:1. That last pair is also why
     `coral` belongs on light surfaces only — never reach for it on the panel.
-  - **Only colors something reads are on the form.** `good`, `warn`,
-    `advanced` and `forest-lift` are in the Tailwind palette with no uses, and a
-    control that changes nothing is worse than no control. Give one a variable
-    and a field when something starts using it.
+  - **The panel has three greens, and two of them are mixed, not written.**
+    `forest-sunk` and `forest-lift` are `color-mix` off `--app-secondary` in
+    `globals.css` — the rail and the sheet's header sink, region and section
+    headers lift into bands. Derived rather than literal so a deployment that
+    recolours the deep surface gets a matching rail and matching bands instead
+    of two shades left behind at the old green. They take no alpha modifier:
+    they are already a mix, so `bg-forest-lift/50` will not resolve. Bands sit
+    inside a `px-4` scroll container and use `-mx-4` to reach the panel edge.
+  - **Only colors something reads are on the form.** `good`, `warn` and
+    `advanced` are in the Tailwind palette with no uses, and a control that
+    changes nothing is worse than no control. Give one a variable and a field
+    when something starts using it.
   - **The type is Poppins and Public Sans, not what the brief says.**
     `docs/design specs.md` asks for Fraunces and Public Sans; cotamtb.com sets
     body, buttons and meta in **Poppins** and headings in Adobe's

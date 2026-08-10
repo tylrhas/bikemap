@@ -69,7 +69,7 @@ export function MyRides() {
       />
 
       {narrow && (
-        <div className="mt-4 pt-3 border-t border-cream/10">
+        <div className="mt-4 -mx-4 px-4 pt-3 pb-1 bg-forest-sunk border-t border-black/25">
           {isRecording ? (
             <div className="flex flex-col gap-2.5">
               <div className="flex justify-between text-center">

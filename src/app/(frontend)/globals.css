@@ -19,6 +19,18 @@
   --app-accent: 0 99 75; /* #00634B — COTA accent, on light surfaces only */
 
   /*
+   * Two steps either side of the deep surface, so the panel has depth instead
+   * of being one flat green with everything separated by text opacity alone.
+   *
+   * Mixed from `--app-secondary` rather than written out, so a deployment that
+   * recolours the deep surface in the admin gets a matching rail and matching
+   * bands for free — a hardcoded pair would stay this green while everything
+   * around it moved.
+   */
+  --app-forest-sunk: color-mix(in srgb, rgb(var(--app-secondary)) 80%, #000);
+  --app-forest-lift: color-mix(in srgb, rgb(var(--app-secondary)) 93%, #fff);
+
+  /*
    * The type stacks, same deal: `font-display` / `font-sans` read these, and
    * the Map appearance global replaces them wholesale.
    *

@@ -9,7 +9,7 @@ export function MapLayersSection({ children }: { children: ReactNode }) {
   return (
     <div className="mb-5">
       {/* The design's section label: uppercase, small, tracked out. */}
-      <h3 className="px-4 pt-3 pb-1.5 text-meta font-bold uppercase tracking-[0.08em] text-cream/70">
+      <h3 className="-mx-4 px-4 py-2 bg-forest-lift border-y border-black/15 text-meta font-bold uppercase tracking-[0.08em] text-cream/75">
         Map layers
       </h3>
       <div className="flex flex-col">{children}</div>

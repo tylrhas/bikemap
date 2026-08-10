@@ -42,7 +42,7 @@ export function NavRail({
   return (
     <nav
       aria-label="Sections"
-      className="flex-none w-14 h-full bg-app-secondary flex flex-col items-center gap-1 py-3 pt-[calc(0.75rem+env(safe-area-inset-top))]"
+      className="flex-none w-14 h-full bg-forest-sunk border-r border-black/25 flex flex-col items-center gap-1 py-3 pt-[calc(0.75rem+env(safe-area-inset-top))]"
     >
       {items.map((item) => {
         const selected = item.key === active;

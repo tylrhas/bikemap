@@ -152,7 +152,12 @@ const config: Config = {
          */
         forest: 'rgb(var(--app-secondary) / <alpha-value>)',
         clay: 'rgb(var(--app-primary) / <alpha-value>)',
-        'forest-lift': '#0A4536',
+        // Two steps either side of `forest`: the rail sinks, bands lift. Both
+        // are mixed from the deep surface in globals.css, so they follow it
+        // when a deployment recolours. No alpha modifier on these — they are
+        // already a mix, and `bg-forest-lift/50` would not resolve.
+        'forest-sunk': 'var(--app-forest-sunk)',
+        'forest-lift': 'var(--app-forest-lift)',
         coral: 'rgb(var(--app-accent) / <alpha-value>)',
         cream: 'rgb(var(--app-surface) / <alpha-value>)',
         ink: 'rgb(var(--app-ink) / <alpha-value>)',

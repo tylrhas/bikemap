@@ -624,7 +624,7 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
           <button
             type="button"
             aria-label="Drag to resize, or use the arrow keys"
-            className="flex-none w-full grid place-items-center py-2.5 cursor-grab active:cursor-grabbing touch-none"
+            className="flex-none w-full grid place-items-center py-2.5 cursor-grab active:cursor-grabbing touch-none bg-forest-sunk"
             onPointerDown={onHandleDown}
             onPointerMove={onHandleMove}
             onPointerUp={onHandleUp}
@@ -656,7 +656,10 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
         {!narrow && (
           <div
             className={cn(
-              'absolute top-0 w-[320px] px-[18px] pt-[18px] pb-3.5 border-b border-cream/10 pointer-events-none',
+              'absolute top-0 w-[320px] px-[18px] pt-[18px] pb-3.5 pointer-events-none',
+              // A surface rather than a floating label — the list scrolls
+              // under it, and on one flat green that read as text on text.
+              'bg-forest-sunk border-b border-black/25',
               showRail ? 'left-14' : 'left-0',
             )}
           >
@@ -673,7 +676,7 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
           {/* The phone has no rail, so it keeps the pill — for the same
               reason the rail goes, one section gets no pill either. */}
           {showRail && (
-            <div className="md:hidden flex justify-center items-center px-4 pl-[68px] pb-3 pt-1">
+            <div className="md:hidden flex justify-center items-center px-4 pl-[68px] pb-3 pt-1 bg-forest-sunk border-b border-black/25">
               <div className="flex bg-cream/[0.08] rounded-full p-1 w-full">
                 {hasRoutesSection && (
                   <button

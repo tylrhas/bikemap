@@ -234,7 +234,12 @@ export function MountainBikeTrails({
             return (
               <React.Fragment key={region}>
                 <div
-                  className="text-meta font-bold uppercase tracking-[0.08em] text-cream/70 cursor-pointer rounded pt-3 pb-1.5 px-4 flex items-center whitespace-nowrap hover:text-cream"
+                  className={cn(
+                    // A band, not floating text: the panel is one colour and a
+                    // region header had nothing to sit on.
+                    'text-meta font-bold uppercase tracking-[0.08em] text-cream/75 cursor-pointer py-2 px-4 flex items-center whitespace-nowrap transition-colors',
+                    '-mx-4 bg-forest-lift border-y border-black/15 hover:text-cream',
+                  )}
                   onClick={() => {
                     toggleSet(setExpandedRegions, region);
                     onAreaSelect(region);
@@ -270,7 +275,7 @@ export function MountainBikeTrails({
                       <React.Fragment key={area}>
                         {!singleArea && (
                           <div
-                            className="text-meta font-semibold uppercase text-cream/50 tracking-[0.08em] cursor-pointer rounded py-2 pb-1 px-4 pl-6 flex items-baseline hover:text-cream/80"
+                            className="text-meta font-semibold uppercase text-cream/55 tracking-[0.08em] cursor-pointer py-2 pb-1 px-4 pl-6 flex items-baseline transition-colors hover:text-cream/85"
                             onClick={() => handleAreaClick(area)}
                             onKeyDown={(e) => {
                               if (e.key === 'Enter' || e.key === ' ') {
