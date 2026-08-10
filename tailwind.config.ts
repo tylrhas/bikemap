@@ -142,11 +142,10 @@ const config: Config = {
         'app-secondary': 'rgb(var(--app-secondary) / <alpha-value>)',
 
         /**
-         * COTA, taken from cotamtb.com's own theme variables. `forest` is their
-         * black, `cream` their white, `clay` their light accent, `coral` their
-         * accent. All five are editable in the admin; the names are what the
-         * design brief called them, and are kept so the components read the
-         * same.
+         * `forest` is COTA's black, `cream` their white, `coral` their accent.
+         * `clay` is the design brief's tan rather than one of theirs — kept
+         * because COTA has no warm colour that reads on the deep green. All
+         * five are editable in the admin.
          *
          * `coral` is a deep green and only reads on a light surface — 1.9:1
          * against `forest`. Don't reach for it on the panel.

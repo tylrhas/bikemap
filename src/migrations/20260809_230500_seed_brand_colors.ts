@@ -26,9 +26,9 @@ import { MigrateUpArgs, MigrateDownArgs, sql } from '@payloadcms/db-postgres';
 export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   await db.execute(sql`
   INSERT INTO "map_appearance" ("id", "primary_color", "secondary_color", "surface_color", "ink_color", "accent_color", "updated_at", "created_at")
-  VALUES (1, '#7A885C', '#023428', '#FFFFFF', '#023428', '#00634B', now(), now())
+  VALUES (1, '#BD815A', '#023428', '#FFFFFF', '#023428', '#00634B', now(), now())
   ON CONFLICT ("id") DO UPDATE SET
-    "primary_color"   = COALESCE(NULLIF("map_appearance"."primary_color", ''),   '#7A885C'),
+    "primary_color"   = COALESCE(NULLIF("map_appearance"."primary_color", ''),   '#BD815A'),
     "secondary_color" = COALESCE(NULLIF("map_appearance"."secondary_color", ''), '#023428'),
     "surface_color"   = COALESCE(NULLIF("map_appearance"."surface_color", ''),   '#FFFFFF'),
     "ink_color"       = COALESCE(NULLIF("map_appearance"."ink_color", ''),       '#023428'),
@@ -46,7 +46,7 @@ export async function down({
 }: MigrateDownArgs): Promise<void> {
   await db.execute(sql`
   UPDATE "map_appearance" SET
-    "primary_color"   = NULLIF("primary_color",   '#7A885C'),
+    "primary_color"   = NULLIF("primary_color",   '#BD815A'),
     "secondary_color" = NULLIF("secondary_color", '#023428'),
     "surface_color"   = NULLIF("surface_color",   '#FFFFFF'),
     "ink_color"       = NULLIF("ink_color",       '#023428'),

@@ -4,13 +4,15 @@
  * appearance global overrides them per deployment. So these are the fallback,
  * and the app is fully colored without a database.
  *
- * Every value is lifted from cotamtb.com's own theme variables. The written
- * brief's palette was warmer — a tan, a coral, an off-white — and only its deep
- * green was actually COTA's. See "The map's brand" in CLAUDE.md for why the
- * highlight is the light accent and not one of the darker two.
+ * Four of the five are lifted from cotamtb.com's own theme variables. The
+ * highlight is the exception: it is the design brief's clay, kept because it
+ * was liked and because it is the better-contrasting choice anyway — 4.2:1 on
+ * the deep green against the light accent's 3.6:1. COTA has no warm colour that
+ * reads on this panel, so this is the palette borrowing rather than drifting.
+ * See "The map's brand" in CLAUDE.md.
  */
 :root {
-  --app-primary: 122 136 92; /* #7A885C — COTA lightAccent, the highlight */
+  --app-primary: 189 129 90; /* #BD815A — clay, the highlight. Not COTA's. */
   --app-secondary: 2 52 40; /* #023428 — COTA black, the deep surface */
   --app-surface: 255 255 255; /* #FFFFFF — COTA white, the light surface */
   --app-ink: 2 52 40; /* #023428 — COTA black again; body copy on white */

@@ -9,6 +9,7 @@ import * as migration_20260809_225622_drop_admin_theme from './20260809_225622_d
 import * as migration_20260809_230500_seed_brand_colors from './20260809_230500_seed_brand_colors';
 import * as migration_20260809_230729_map_layers from './20260809_230729_map_layers';
 import * as migration_20260809_235500_cota_palette from './20260809_235500_cota_palette';
+import * as migration_20260809_236200_clay_highlight from './20260809_236200_clay_highlight';
 import * as migration_20260809_232604_map_layer_switches from './20260809_232604_map_layer_switches';
 
 export const migrations = [
