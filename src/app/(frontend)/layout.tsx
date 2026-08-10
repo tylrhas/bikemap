@@ -28,6 +28,10 @@ const geistMono = localFont({
 // else. Self-hosted for the same reason Geist is — the design brief asks for
 // next/font/google, but its concern is a runtime @import, and local files
 // satisfy that without giving up a build that needs no network.
+// The file is a single SemiBold instance — its only axis is `opsz`, so weight
+// does not vary and `font-bold` on display text will not make it heavier. That
+// is what the brief asks for ("Fraunces (600), use with restraint"); the range
+// below is declared so the browser matches rather than synthesises.
 const displayFont = localFont({
   src: './fonts/Fraunces-Variable.woff2',
   variable: '--font-display',
@@ -41,6 +45,14 @@ const bodyFont = localFont({
   weight: '400 700',
   display: 'swap',
 });
+
+/** Declared on <html> so `:root` can resolve them — see the note in RootLayout. */
+const FONT_VARIABLES = [
+  displayFont.variable,
+  bodyFont.variable,
+  geistSans.variable,
+  geistMono.variable,
+].join(' ');
 
 export async function generateMetadata(): Promise<Metadata> {
   const config = siteConfigForHostname(await getRequestHostname());
@@ -84,7 +96,14 @@ export default async function RootLayout({
   const brand = await getMapBrand();
 
   return (
-    <html lang="en">
+    // The font variables go on <html>, not <body>, because `globals.css`
+    // resolves them on `:root`. A custom property substitutes its own `var()`
+    // references on the element it is declared on — so `--app-font-display`,
+    // declared on `:root` as `var(--font-display), Georgia, serif`, was
+    // resolving against an element that did not have `--font-display` and
+    // becoming invalid. Everything then fell back to the browser's default
+    // serif, which is why the app was not in its own fonts.
+    <html className={FONT_VARIABLES} lang="en">
       <head>
         {/* A deployment that names its own fonts has to load them from
             somewhere. The bundled faces need no such request, which is why
@@ -179,9 +198,7 @@ export default async function RootLayout({
           media="(device-width: 810px) and (device-height: 1080px) and (-webkit-device-pixel-ratio: 2)"
         />
       </head>
-      <body
-        className={`${displayFont.variable} ${bodyFont.variable} ${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
-      >
+      <body className="font-sans antialiased">
         {children}
         <Script src="/register-sw.js" strategy="lazyOnload" />
       </body>

@@ -551,8 +551,13 @@ Things to know before touching it:
     Tailwind entry is bare `var(--app-font-display)`, not a list — because the
     override replaces the whole stack. The bundled `--font-display` /
     `--font-body` from `next/font` are named *inside* that variable's default,
-    and next/font declares them on `<body>` rather than `:root`; that works
-    because a custom property is substituted where it is **used**.
+    which is why **the layout puts next/font's classes on `<html>`, not
+    `<body>`**. A custom property resolves its own `var()` references on the
+    element it is *declared* on, not where it is used: with them on `<body>`,
+    `--app-font-display` computed on `:root` against an element that lacked
+    `--font-display`, became the guaranteed-invalid value, and silently took the
+    whole app back to the browser's default serif. Nothing warns about this —
+    the stylesheet, the classes and the Tailwind config all look right.
   - **The logo and the webfont are URLs, not uploads.** There is no uploads
     collection and no storage adapter — adding one means a bucket every forker
     has to provision (ADR-0001, C3). A path like `/logo.svg` reads from

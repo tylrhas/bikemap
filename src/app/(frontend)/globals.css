@@ -15,9 +15,12 @@
    * The type stacks, same deal: `font-display` / `font-sans` read these, and
    * the Map appearance global replaces them wholesale.
    *
-   * `--font-display` and `--font-body` come from next/font, which declares them
-   * on <body> rather than here — fine, because a custom property is substituted
-   * where it is *used*, and everything that draws type is inside <body>.
+   * `--font-display` and `--font-body` come from next/font, and the layout puts
+   * those classes on <html> **so that they are in scope here**. A custom
+   * property resolves its own `var()` references on the element it is declared
+   * on, not where it is eventually used — so with them on <body> this line
+   * computed against an element that lacked them, became invalid, and took the
+   * whole app back to the browser's default serif. Don't move them.
    */
   --app-font-display: var(--font-display), Georgia, serif;
   --app-font-body: var(--font-body), system-ui, sans-serif;
