@@ -2,6 +2,7 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 import { bikeRoutes } from '@/data/geo_data';
 import type { BikeRoutesProps } from './types';
+import { ROW_RAIL_CLASS } from '@/components/styles';
 
 export function BikeRoutes({ selectedRoute, onRouteSelect }: BikeRoutesProps) {
   if (bikeRoutes.length === 0) {
@@ -26,10 +27,10 @@ export function BikeRoutes({ selectedRoute, onRouteSelect }: BikeRoutesProps) {
           className={cn(
             // The same tile a trail row gets, and the same clay rail — a route
             // and a trail are the same kind of thing to pick.
-            'px-3.5 py-2.5 rounded-card cursor-pointer transition-colors border-l-[3px]',
+            'px-3.5 py-2.5 rounded-card leading-tight cursor-pointer transition-colors',
             selectedRoute === route.id
-              ? 'border-l-clay bg-clay/[0.22]'
-              : 'border-l-transparent bg-forest-lift hover:bg-cream/[0.10]',
+              ? cn(ROW_RAIL_CLASS, 'bg-clay/[0.22]')
+              : 'bg-forest-lift hover:bg-cream/[0.10]',
           )}
         >
           <div className="flex items-center gap-3">

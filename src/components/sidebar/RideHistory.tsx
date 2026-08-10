@@ -20,6 +20,7 @@ import {
 import { useIsNarrow } from '@/hooks/useIsNarrow';
 import { cn } from '@/lib/utils';
 import { RideDetail } from './RideDetail';
+import { ROW_RAIL_CLASS } from '@/components/styles';
 
 export interface RideHistoryProps {
   selectedRideId: string | null;
@@ -127,10 +128,10 @@ export function RideHistory({
           className={cn(
             // The same raised tile and clay rail a trail row carries, so "this
             // ride is selected" and "this trail is selected" read as one idea.
-            'px-3.5 py-2.5 rounded-card cursor-pointer transition-colors border-l-[3px]',
+            'px-3.5 py-2.5 rounded-card leading-tight cursor-pointer transition-colors',
             selectedRideId === s.id
-              ? 'border-l-clay bg-clay/[0.22]'
-              : 'border-l-transparent bg-forest-lift hover:bg-cream/[0.10]',
+              ? cn(ROW_RAIL_CLASS, 'bg-clay/[0.22]')
+              : 'bg-forest-lift hover:bg-cream/[0.10]',
           )}
         >
           <div className="flex items-center gap-3">

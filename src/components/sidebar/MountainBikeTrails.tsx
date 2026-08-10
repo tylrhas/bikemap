@@ -17,6 +17,7 @@ import { TrailSparkline } from './TrailSparkline';
 import type { MountainBikeTrailsProps } from './types';
 import type { MountainBikeTrail } from '@/data/mountain-bike-trails';
 import { slugForTrail } from '@/data/mountain-bike-trails';
+import { ROW_RAIL_CLASS } from '@/components/styles';
 
 /**
  * Groups the current trail list region -> area -> trails, with a trail count
@@ -99,13 +100,12 @@ function TrailRow({
       data-faded={(selectedTrail && !active) || undefined}
       className={cn(
         // A raised tile on the panel rather than a stripe across it: depth
-        // belongs to the thing you tap. The clay left rail still marks the
-        // active trail, and every row carries a transparent one so nothing
-        // shifts when it lands.
-        'w-full text-left block rounded-card border-l-[3px] px-3.5 py-2.5 transition-colors',
+        // belongs to the thing you tap. The clay rail marks the active trail
+        // and costs no space, so the padding stays even on both sides.
+        'w-full text-left block rounded-card px-3.5 py-2.5 leading-tight transition-colors',
         active
-          ? 'border-l-clay bg-clay/[0.22]'
-          : 'border-l-transparent bg-forest-lift hover:bg-cream/[0.10]',
+          ? cn(ROW_RAIL_CLASS, 'bg-clay/[0.22]')
+          : 'bg-forest-lift hover:bg-cream/[0.10]',
       )}
     >
       <div className="flex items-center justify-between gap-2 mb-1.5">

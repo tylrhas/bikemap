@@ -565,6 +565,14 @@ Things to know before touching it:
     interface has, and cotamtb.com's own blocks are 0. What stays `rounded-full`
     is what is round for a reason — switches, dots, the section pills — and that
     contrast is doing the work a single middling radius everywhere cannot.
+  - **The selected-row rail is an inset shadow, not a left border**
+    (`ROW_RAIL_CLASS` in `components/styles.ts`). `box-sizing: border-box` is
+    global, so a 3px border ate 3px of the left padding and a row read 17px in
+    on the left against 14px on the right. A shadow takes no space, which also
+    retires the transparent placeholder border that existed only to stop the row
+    shifting. Rows carry `leading-tight` for the same reason: at the default 1.5
+    there is more half-leading above a 15px name than below an 11px stat line,
+    so equal padding did not look equal.
   - **Nothing is separated by a line.** Surfaces meet on their colour change:
     the sunk rail against the panel, a lifted tile against the panel. Adding a
     hairline back puts an outline around a change that is already visible.
