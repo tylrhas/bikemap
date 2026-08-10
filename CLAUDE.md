@@ -576,6 +576,14 @@ Things to know before touching it:
   - **Nothing is separated by a line.** Surfaces meet on their colour change:
     the sunk rail against the panel, a lifted tile against the panel. Adding a
     hairline back puts an outline around a change that is already visible.
+  - **A trail's own colour is for the map, not for the panel.** Rating colours
+    are picked to draw lines over terrain, so several are near-black —
+    "advanced" is `#374151` and measured **1.09:1** against the tile, which is
+    not a faint sparkline but no sparkline. Anything painting a trail colour on
+    the dark panel goes through `onDarkSurface` (`src/data/trail-color.ts`),
+    which raises lightness while keeping hue and saturation, so a green trail
+    still reads green and black stays grey. Leave the map alone — there the
+    colours are doing the job they were chosen for.
   - **Depth belongs to the rows, not the headers.** Anything you tap — a trail,
     a ride, a layer toggle — is a `rounded-card bg-forest-lift` tile with a
     clay left rail when active; group headers are plain text on the panel.
