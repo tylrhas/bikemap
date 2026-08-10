@@ -22,7 +22,7 @@
    * computed against an element that lacked them, became invalid, and took the
    * whole app back to the browser's default serif. Don't move them.
    */
-  --app-font-display: var(--font-display), Georgia, serif;
+  --app-font-display: var(--font-display), system-ui, sans-serif;
   --app-font-body: var(--font-body), system-ui, sans-serif;
 }
 

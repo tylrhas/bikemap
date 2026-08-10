@@ -547,6 +547,16 @@ Things to know before touching it:
     `advanced` and `forest-lift` are in the Tailwind palette with no uses, and a
     control that changes nothing is worse than no control. Give one a variable
     and a field when something starts using it.
+  - **The type is Poppins and Public Sans, not what the brief says.**
+    `docs/design specs.md` asks for Fraunces and Public Sans; cotamtb.com sets
+    body, buttons and meta in **Poppins** and headings in Adobe's
+    **acumin-pro**, and has no serif anywhere. The real brand wins. Acumin is
+    licensed through Adobe Fonts and cannot be self-hosted, so headings use
+    Public Sans — a Libre Franklin fork, so the same Franklin grotesque lineage
+    Acumin comes from, which keeps COTA's grotesque-against-geometric pairing.
+    A deployment with an Adobe kit can paste it into Theme → Type and name
+    `acumin-pro`; that field exists for this. Poppins ships as static weights
+    rather than a variable font, so it is four files (latin only, 31 KB).
   - **The type stacks go through one variable each, fallbacks included** — the
     Tailwind entry is bare `var(--app-font-display)`, not a list — because the
     override replaces the whole stack. The bundled `--font-display` /

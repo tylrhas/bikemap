@@ -24,25 +24,41 @@ const geistMono = localFont({
   display: 'swap',
 });
 
-// Fraunces for trail names and section titles; Public Sans for everything
-// else. Self-hosted for the same reason Geist is — the design brief asks for
-// next/font/google, but its concern is a runtime @import, and local files
-// satisfy that without giving up a build that needs no network.
-// The file is a single SemiBold instance — its only axis is `opsz`, so weight
-// does not vary and `font-bold` on display text will not make it heavier. That
-// is what the brief asks for ("Fraunces (600), use with restraint"); the range
-// below is declared so the browser matches rather than synthesises.
+/**
+ * COTA's own type, as closely as we can ship it.
+ *
+ * cotamtb.com sets headings in Adobe's `acumin-pro` and everything else in
+ * Poppins. The written brief said Fraunces and Public Sans, and Fraunces is a
+ * serif — COTA has no serif anywhere, so the brief lost to the actual brand.
+ *
+ * Poppins is on Google Fonts, so body type is exactly right. Acumin is licensed
+ * through Adobe Fonts and cannot be self-hosted, so headings use **Public Sans**
+ * — a Libre Franklin fork, which puts it in the same Franklin grotesque lineage
+ * Acumin comes from, and keeps COTA's pairing of a grotesque against a geometric
+ * sans. A deployment that has an Adobe kit can paste it into Theme → Type and
+ * name `acumin-pro` there; that field exists for exactly this.
+ *
+ * Self-hosted for the same reason Geist is — the brief asks for
+ * next/font/google, but its concern is a runtime @import, and local files
+ * satisfy that without giving up a build that needs no network. Only the latin
+ * subsets are checked in: four weights come to 31 KB.
+ */
 const displayFont = localFont({
-  src: './fonts/Fraunces-Variable.woff2',
+  src: './fonts/PublicSans-Variable.woff2',
   variable: '--font-display',
   weight: '400 700',
   display: 'swap',
 });
 
+// Poppins ships as static weights, not a variable font, so each is its own file.
 const bodyFont = localFont({
-  src: './fonts/PublicSans-Variable.woff2',
+  src: [
+    { path: './fonts/Poppins-400.woff2', weight: '400', style: 'normal' },
+    { path: './fonts/Poppins-500.woff2', weight: '500', style: 'normal' },
+    { path: './fonts/Poppins-600.woff2', weight: '600', style: 'normal' },
+    { path: './fonts/Poppins-700.woff2', weight: '700', style: 'normal' },
+  ],
   variable: '--font-body',
-  weight: '400 700',
   display: 'swap',
 });
 

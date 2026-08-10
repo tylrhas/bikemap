@@ -18,8 +18,8 @@ const config: Config = {
        * inherited theirs, and pinning one here would shift existing layout.
        */
       fontFamily: {
-        // Fraunces for trail names and section titles, used with restraint;
-        // Public Sans for everything else. Both go through one variable each so
+        // Public Sans for trail names and section titles, standing in for COTA's
+        // Acumin; Poppins for everything else. Both go through one variable so
         // the Map appearance global can swap the whole stack, fallbacks
         // included — see `globals.css`.
         display: ['var(--app-font-display)'],
