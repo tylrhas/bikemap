@@ -551,8 +551,9 @@ describe('flyToBounds', () => {
 describe('updateMtnBikeOpacity', () => {
   it('should set conditional expressions when a trail is selected', () => {
     const mockMap = {
-      setPaintProperty: vi.fn(),
       getLayer: vi.fn().mockReturnValue(true),
+      setLayoutProperty: vi.fn(),
+      setPaintProperty: vi.fn(),
     } as unknown as mapboxgl.Map;
 
     updateMtnBikeOpacity(mockMap, 'Five Points');
@@ -572,8 +573,9 @@ describe('updateMtnBikeOpacity', () => {
 
   it('should reset to default opacity and width when selectedTrailName is null', () => {
     const mockMap = {
-      setPaintProperty: vi.fn(),
       getLayer: vi.fn().mockReturnValue(true),
+      setLayoutProperty: vi.fn(),
+      setPaintProperty: vi.fn(),
     } as unknown as mapboxgl.Map;
 
     updateMtnBikeOpacity(mockMap, null);
@@ -593,10 +595,11 @@ describe('updateMtnBikeOpacity', () => {
   it('should handle missing casing and glow layers gracefully', () => {
     const mainLayers = new Set([MTN_BIKE_LAYER_ID, 'Godsey Ridge Trails']);
     const mockMap = {
-      setPaintProperty: vi.fn(),
       getLayer: vi.fn((id: string) =>
         mainLayers.has(id) ? { id } : undefined,
       ),
+      setLayoutProperty: vi.fn(),
+      setPaintProperty: vi.fn(),
     } as unknown as mapboxgl.Map;
 
     expect(() => {
@@ -614,8 +617,9 @@ describe('updateMtnBikeOpacity', () => {
 
   it('should also update casing and glow layers when they exist and trail is selected', () => {
     const mockMap = {
-      setPaintProperty: vi.fn(),
       getLayer: vi.fn().mockReturnValue(true),
+      setLayoutProperty: vi.fn(),
+      setPaintProperty: vi.fn(),
     } as unknown as mapboxgl.Map;
 
     updateMtnBikeOpacity(mockMap, 'Five Points');
@@ -650,12 +654,15 @@ describe('trail name labels', () => {
   function addedLayers(): Record<string, mapboxgl.LayerSpecification> {
     const layers: Record<string, mapboxgl.LayerSpecification> = {};
     const mockMap = {
+      addImage: vi.fn(),
       addLayer: vi.fn((layer: mapboxgl.LayerSpecification) => {
         layers[layer.id] = layer;
       }),
       getLayer: vi.fn((id: string) =>
         id === MTN_BIKE_LAYER_ID ? { id, source: 'composite' } : undefined,
       ),
+      hasImage: vi.fn().mockReturnValue(false),
+      removeImage: vi.fn(),
       setFilter: vi.fn(),
       setLayoutProperty: vi.fn(),
     } as unknown as mapboxgl.Map;
@@ -680,9 +687,36 @@ describe('trail name labels', () => {
       ['get', 'Trail'],
       '',
     ]);
-    // Repeated along the trail rather than placed once — a trail is long and
-    // thin and you are rarely looking at all of it.
-    expect(label.layout['symbol-placement']).toBe('line');
+    // One card at the middle of the trail. Repeating suits text drawn on the
+    // line; a card repeated every few hundred pixels reads as several things.
+    expect(label.layout['symbol-placement']).toBe('line-center');
+    // The card is a stretched sprite behind the text, and it stays upright.
+    expect(label.layout['icon-text-fit']).toBe('both');
+    expect(label.layout['icon-rotation-alignment']).toBe('viewport');
+  });
+
+  it('registers the card swatches before the layer that draws them', () => {
+    const calls: string[] = [];
+    const mockMap = {
+      addImage: vi.fn((id: string) => calls.push(`image:${id}`)),
+      addLayer: vi.fn((layer: mapboxgl.LayerSpecification) =>
+        calls.push(`layer:${layer.id}`),
+      ),
+      getLayer: vi.fn((id: string) =>
+        id === MTN_BIKE_LAYER_ID ? { id, source: 'composite' } : undefined,
+      ),
+      hasImage: vi.fn().mockReturnValue(false),
+      removeImage: vi.fn(),
+      setFilter: vi.fn(),
+      setLayoutProperty: vi.fn(),
+    } as unknown as mapboxgl.Map;
+
+    initMtnBikeLayers(mockMap);
+
+    // A layer naming an image the style does not have draws no icon at all.
+    const label = calls.indexOf(`layer:${MTN_BIKE_LAYER_ID} Label`);
+    expect(calls.indexOf('image:trail-name-card')).toBeLessThan(label);
+    expect(calls.indexOf('image:trail-name-card-selected')).toBeLessThan(label);
   });
 
   it('stays off until the lines are far enough apart to name', () => {
@@ -697,8 +731,9 @@ describe('trail name labels', () => {
 
   it('fades the names of trails that are not selected', () => {
     const mockMap = {
-      setPaintProperty: vi.fn(),
       getLayer: vi.fn().mockReturnValue(true),
+      setLayoutProperty: vi.fn(),
+      setPaintProperty: vi.fn(),
     } as unknown as mapboxgl.Map;
 
     updateMtnBikeOpacity(mockMap, 'Five Points');
@@ -706,14 +741,27 @@ describe('trail name labels', () => {
     expect(mockMap.setPaintProperty).toHaveBeenCalledWith(
       `${MTN_BIKE_LAYER_ID} Label`,
       'text-opacity',
-      ['case', ['==', ['get', 'Trail'], 'Five Points'], 1, 0.45],
+      ['case', ['==', ['get', 'Trail'], 'Five Points'], 1, 0.55],
+    );
+    // The selected card turns clay: a swap, not a tint, because only an SDF
+    // sprite can take `icon-color`.
+    expect(mockMap.setLayoutProperty).toHaveBeenCalledWith(
+      `${MTN_BIKE_LAYER_ID} Label`,
+      'icon-image',
+      [
+        'case',
+        ['==', ['get', 'Trail'], 'Five Points'],
+        'trail-name-card-selected',
+        'trail-name-card',
+      ],
     );
   });
 
   it('puts every name back when nothing is selected', () => {
     const mockMap = {
-      setPaintProperty: vi.fn(),
       getLayer: vi.fn().mockReturnValue(true),
+      setLayoutProperty: vi.fn(),
+      setPaintProperty: vi.fn(),
     } as unknown as mapboxgl.Map;
 
     updateMtnBikeOpacity(mockMap, null);
@@ -740,8 +788,9 @@ describe('highlightMtnBikeArea', () => {
 
   it('should highlight trails matching by recArea', () => {
     const mockMap = {
-      setPaintProperty: vi.fn(),
       getLayer: vi.fn().mockReturnValue(true),
+      setLayoutProperty: vi.fn(),
+      setPaintProperty: vi.fn(),
     } as unknown as mapboxgl.Map;
 
     const trails = [
@@ -773,8 +822,9 @@ describe('highlightMtnBikeArea', () => {
 
   it('should do nothing when no trails match the area', () => {
     const mockMap = {
-      setPaintProperty: vi.fn(),
       getLayer: vi.fn().mockReturnValue(true),
+      setLayoutProperty: vi.fn(),
+      setPaintProperty: vi.fn(),
     } as unknown as mapboxgl.Map;
 
     const trails = [

@@ -111,27 +111,40 @@ Routes are styled via Mapbox Studio (referenced by layer IDs like `riverwalk-loo
 
 The MTB trails layer contains 220+ trails identified by the `Trail` feature property. The editable trail array (`mountainBikeTrails`) lives in `src/data/mountain-bike-trails.data.ts` with precalculated `defaultBounds` for zoom-to-fit and `distance` in miles; the wrapper `src/data/mountain-bike-trails.ts` holds the types, the `MTN_BIKE_*` layer-id constants, and `REGION_MAP`/`regionFor`, and re-exports the array. Both are re-exported from `src/data/geo_data.ts`. Code uses `MTN_BIKE_*` constants and the `mountainBikeTrails` array everywhere — names like "SORBA" only appear when referring to the upstream GIS dataset.
 
-#### Trail name labels
+#### Trail name cards
 
 Each curated trail layer gets a `symbol` sublayer, `${layerId} Label`, built by
-`trailLabelLayer` and attached last in `initMtnBikeLayers` so names sit above
-every line in the group. Points worth knowing:
+`trailLabelLayer` and attached last in `initMtnBikeLayers` so cards sit above
+every line in the group. It looks like the elevation chart's hover tooltip on
+purpose — that is the app's existing "here is a reading" object.
 
+- **The card is a stretched sprite**, not a border: Mapbox has no box behind
+  text. `cardImage` builds eight pixels of solid colour as raw RGBA (no canvas —
+  square corners mean nothing to anti-alias), registered with `stretchX` /
+  `stretchY` / `content` so `icon-text-fit: 'both'` grows it to the label.
+  `ensureTrailCardImages` runs before the layer, because a layer naming an image
+  the style lacks draws no icon at all, silently. Style changes drop images, so
+  it re-registers.
+- **Its colour is read from the CSS variables** (`appColor`), so a deployment
+  that recolours the deep surface in the admin gets matching cards. A literal
+  would stay this green while the rest of the map moved.
+- **Selection swaps the image rather than tinting it** — `icon-color` only
+  works on SDF sprites, and these are ordinary ones.
 - **The text comes from `cfg.trailProp`**, the same property the click handler
   and the opacity expressions match on — so a name on the map is the name in the
   list, for both cities, without a second lookup.
-- **`minzoom` is 12.** Below that a region is a few hundred lines a couple of
-  pixels apart and a name on each is a smear. Mapbox's collision detection does
-  the rest.
+- **`minzoom` is 12**, and placement is `line-center`: one card per trail, not a
+  name repeated along it. Mapbox's collision detection does the rest.
 - **`text-font` must be a pair the style has glyphs for.** `['DIN Offc Pro
   Medium', 'Arial Unicode MS Regular']` is what the OSM POI layer already uses.
   A font the style cannot serve renders nothing, with nothing logged.
 - **The label takes the same filter as its lines**, or it names trails that
   aren't drawn — that matters most for `matchBy: 'osmId'` layers, where the
   filter is the only thing keeping the nationwide tileset down to curated ways.
-- **Anything that emphasises a line must emphasise its label**, or selecting a
-  trail dims its line and leaves every other name at full strength.
-  `setTrailOpacity` and `highlightMtnBikeArea` both do.
+- **Anything that emphasises a line must emphasise its card**, and must do it
+  **last**. `setTrailOpacity` is wrapped in a per-layer `try`/`catch`, so a card
+  that throws before the casing and glow updates silently stops them — which is
+  exactly what happened until a test caught the casing no longer changing.
 
 #### The Mapbox style ≠ the MTB trails tileset
 

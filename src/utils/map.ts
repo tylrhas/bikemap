@@ -427,21 +427,88 @@ function labelId(layerId: string): string {
 }
 
 /**
- * Trail names, written along the trails.
+ * Trail names, as little cards on the trails.
+ *
+ * Shaped like the elevation chart's hover tooltip — a deep-surface card with
+ * cream text — because that is the app's existing "here is a reading" object
+ * and a second look for the same idea would be one too many.
  *
  * From `zoom 12`: below that a region is a few hundred lines a couple of pixels
  * apart, and a name on each is a smear. Mapbox's own collision detection thins
  * the rest out as you zoom, so what survives is whatever fits.
  *
- * `symbol-placement: 'line'` repeats the name along a trail rather than
- * labelling it once — a trail is a long thin thing and you are rarely looking
- * at all of it.
+ * `line-center` puts one card at the middle of each trail rather than repeating
+ * the name along it. Repeating suits text drawn on the line; a card repeated
+ * every few hundred pixels reads as several different things.
  *
  * The font is the pair the style is known to have glyphs for; the OSM POI layer
  * uses the same. A font the style cannot serve renders nothing at all, with
  * nothing logged.
  */
 const TRAIL_LABEL_MIN_ZOOM = 12;
+const TRAIL_CARD_IMAGE = 'trail-name-card';
+const TRAIL_CARD_IMAGE_SELECTED = 'trail-name-card-selected';
+
+/**
+ * One of the app's brand colors, as RGB, read from the document.
+ *
+ * The palette is editable in the admin and lands as CSS variables, so a card
+ * baked from a literal would stay this green while the rest of the map moved.
+ * Falls back when there is no document to read — the value only has to be a
+ * color, and a card in the wrong one beats a map that throws.
+ */
+function appColor(variable: string, fallback: [number, number, number]) {
+  if (typeof document === 'undefined') {
+    return fallback;
+  }
+  const raw = getComputedStyle(document.documentElement)
+    .getPropertyValue(variable)
+    .trim();
+  const parts = raw.split(/[\s,]+/).map(Number);
+  return parts.length === 3 && parts.every(Number.isFinite)
+    ? ([parts[0], parts[1], parts[2]] as [number, number, number])
+    : fallback;
+}
+
+/**
+ * A solid square swatch for `icon-text-fit` to stretch behind a label.
+ *
+ * Built as raw RGBA rather than drawn on a canvas: it is eight pixels of one
+ * colour, and a canvas would only add a DOM dependency to something that has
+ * no curves in it. Square corners are the design's, so there is nothing to
+ * anti-alias and the stretch cannot produce artefacts.
+ */
+function cardImage(rgb: [number, number, number]) {
+  const size = 8;
+  const data = new Uint8Array(size * size * 4);
+  for (let i = 0; i < size * size; i++) {
+    data[i * 4] = rgb[0];
+    data[i * 4 + 1] = rgb[1];
+    data[i * 4 + 2] = rgb[2];
+    data[i * 4 + 3] = 255;
+  }
+  return { data, height: size, width: size };
+}
+
+/** Registers the two card swatches. Style changes drop images, so this reruns. */
+function ensureTrailCardImages(map: mapboxgl.Map): void {
+  const options = {
+    content: [1, 1, 7, 7] as [number, number, number, number],
+    pixelRatio: 2,
+    stretchX: [[2, 6]] as [number, number][],
+    stretchY: [[2, 6]] as [number, number][],
+  };
+  const cards: [string, [number, number, number]][] = [
+    [TRAIL_CARD_IMAGE, appColor('--app-secondary', [2, 52, 40])],
+    [TRAIL_CARD_IMAGE_SELECTED, appColor('--app-primary', [189, 129, 90])],
+  ];
+  for (const [id, rgb] of cards) {
+    if (map.hasImage(id)) {
+      map.removeImage(id);
+    }
+    map.addImage(id, cardImage(rgb), options);
+  }
+}
 
 function trailLabelLayer(
   cfg: TrailLayerConfig,
@@ -456,22 +523,23 @@ function trailLabelLayer(
     layout: {
       'text-field': ['coalesce', ['get', cfg.trailProp], ''],
       'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Regular'],
-      'text-size': ['interpolate', ['linear'], ['zoom'], 12, 10, 16, 13],
-      'symbol-placement': 'line',
-      'symbol-spacing': 300,
-      // Near Mapbox's default of 45. Singletrack switchbacks hard, and every
-      // degree taken off here is another trail that goes unnamed because no
-      // stretch of it was straight enough — the failure mode is a missing
-      // label, not a bent one.
-      'text-max-angle': 40,
-      'text-padding': 4,
+      'text-size': ['interpolate', ['linear'], ['zoom'], 12, 10, 16, 12],
+      'text-max-width': 12,
       'text-letter-spacing': 0.01,
+      'symbol-placement': 'line-center',
+      // Upright, not running along the trail. A card that tilts with the line
+      // stops looking like a card and starts looking like a mistake.
+      'text-rotation-alignment': 'viewport',
+      'icon-rotation-alignment': 'viewport',
+      'icon-image': TRAIL_CARD_IMAGE,
+      'icon-text-fit': 'both',
+      // Matches the hover tooltip's 9px/5px, near enough at this size.
+      'icon-text-fit-padding': [3, 7, 3, 7],
+      'text-padding': 3,
     },
     paint: {
-      'text-color': '#1F2937',
-      'text-halo-color': '#ffffff',
-      'text-halo-width': 1.4,
-      'text-halo-blur': 0.4,
+      'text-color': '#ffffff',
+      'icon-opacity': 0.95,
     },
   } as mapboxgl.LayerSpecification;
 }
@@ -1263,6 +1331,7 @@ export function initMtnBikeLayers(map: mapboxgl.Map): void {
     // Added last, so it sits above every line in the group and reads against
     // them rather than under the next trail along.
     if (!map.getLayer(lId)) {
+      ensureTrailCardImages(map);
       map.addLayer(trailLabelLayer(cfg, source));
     }
 
@@ -1318,18 +1387,6 @@ function setTrailOpacity(
     map.setPaintProperty(cfg.layerId, 'line-opacity', ['case', sel, 0.9, 0.5]);
     map.setPaintProperty(cfg.layerId, 'line-width', ['case', sel, 4, 3]);
 
-    // Names fade with their lines, so the one you picked is the one you read.
-    // The halo fades too — a bright halo round faint text is worse than either.
-    if (map.getLayer(lId)) {
-      map.setPaintProperty(lId, 'text-opacity', ['case', sel, 1, 0.45]);
-      map.setPaintProperty(lId, 'text-halo-color', [
-        'case',
-        sel,
-        '#ffffff',
-        'rgba(255,255,255,0.6)',
-      ]);
-    }
-
     if (map.getLayer(cId)) {
       map.setPaintProperty(cId, 'line-opacity', ['case', sel, 0.9, 0.5]);
       map.setPaintProperty(cId, 'line-width', ['case', sel, 6, 5]);
@@ -1339,14 +1396,27 @@ function setTrailOpacity(
       map.setPaintProperty(gId, 'line-opacity', ['case', sel, 0.7, 0]);
       map.setPaintProperty(gId, 'line-width', ['case', sel, 24, 0]);
     }
+
+    // Last on purpose. The caller swallows exceptions per layer group, so a
+    // card that fails must not take the lines down with it — it did, before a
+    // test noticed the casing had stopped updating.
+    //
+    // The selected trail's card turns clay and the rest recede. Swapping the
+    // image rather than tinting it: these are ordinary sprites, and only an SDF
+    // can take `icon-color`.
+    if (map.getLayer(lId)) {
+      map.setLayoutProperty(lId, 'icon-image', [
+        'case',
+        sel,
+        TRAIL_CARD_IMAGE_SELECTED,
+        TRAIL_CARD_IMAGE,
+      ]);
+      map.setPaintProperty(lId, 'text-opacity', ['case', sel, 1, 0.55]);
+      map.setPaintProperty(lId, 'icon-opacity', ['case', sel, 1, 0.6]);
+    }
   } else {
     map.setPaintProperty(cfg.layerId, 'line-opacity', 0.5);
     map.setPaintProperty(cfg.layerId, 'line-width', 3);
-
-    if (map.getLayer(lId)) {
-      map.setPaintProperty(lId, 'text-opacity', 1);
-      map.setPaintProperty(lId, 'text-halo-color', '#ffffff');
-    }
 
     if (map.getLayer(cId)) {
       map.setPaintProperty(cId, 'line-opacity', 0.5);
@@ -1356,6 +1426,12 @@ function setTrailOpacity(
     if (map.getLayer(gId)) {
       map.setPaintProperty(gId, 'line-opacity', 0);
       map.setPaintProperty(gId, 'line-width', 0);
+    }
+
+    if (map.getLayer(lId)) {
+      map.setLayoutProperty(lId, 'icon-image', TRAIL_CARD_IMAGE);
+      map.setPaintProperty(lId, 'text-opacity', 1);
+      map.setPaintProperty(lId, 'icon-opacity', 0.95);
     }
   }
 }
@@ -1404,9 +1480,10 @@ export function highlightMtnBikeArea(
       ]);
 
       // Names follow the same emphasis as the lines, or picking an area would
-      // dim its trails and leave every other trail's name at full strength.
+      // dim its trails and leave every other trail's card at full strength.
       if (map.getLayer(lId)) {
         map.setPaintProperty(lId, 'text-opacity', ['case', inArea, 1, 0.4]);
+        map.setPaintProperty(lId, 'icon-opacity', ['case', inArea, 0.95, 0.4]);
       }
       map.setPaintProperty(cfg.layerId, 'line-width', ['case', inArea, 3, 3]);
 
