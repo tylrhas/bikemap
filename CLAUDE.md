@@ -601,6 +601,11 @@ Things to know before touching it:
   sections; the reveal button is `md:hidden`; and nothing should reintroduce a
   desktop control for it, which is why `MapControls` lost its "Map layers"
   button and `sidebarOpen` left `Settings`.
+- **Recording is phone only; the history is on both.** `MyRides` hides the
+  Record button, the live controls and the recovery banner off `useIsNarrow` —
+  you start a ride by riding it, and nobody is holding a desktop while they do.
+  Looking back over one is exactly what a big screen is for, so the list stays.
+  The trail dock has no "Start ride" for the same reason: it is desktop only.
 - **My rides is a panel section, not a drawer.** Recording state lives in
   `RideRecordingProvider` **above** `MapLegendProvider`, because a ride has to
   survive switching to the trail list; the section reads it through `useRides`.

@@ -17,6 +17,7 @@ import {
   formatBytes,
   formatElevation,
 } from '@/utils/format';
+import { useIsNarrow } from '@/hooks/useIsNarrow';
 import { cn } from '@/lib/utils';
 import { RideDetail } from './RideDetail';
 
@@ -33,6 +34,8 @@ export function RideHistory({
 }: RideHistoryProps) {
   const [summaries, setSummaries] = useState<RideSummary[]>([]);
   const [selectedRide, setSelectedRide] = useState<RecordedRide | null>(null);
+  // Recording is a phone job, so on a desktop there is no Record to point at.
+  const narrow = useIsNarrow();
 
   const refreshSummaries = useCallback(() => {
     getRideSummaries()
@@ -98,7 +101,9 @@ export function RideHistory({
         <p className="text-ui leading-relaxed">
           {isRecording
             ? 'Logging your ride with GPS.'
-            : 'Tap Record to start logging your ride with GPS.'}{' '}
+            : narrow
+              ? 'Tap Record to start logging your ride with GPS.'
+              : 'Record one on your phone and it will be waiting here.'}{' '}
           Rides are saved offline on your device.
         </p>
       </div>
