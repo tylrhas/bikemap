@@ -64,7 +64,9 @@ import {
 } from '@/utils/map';
 import { loadRide } from '@/utils/ride-storage';
 import { mapConfig } from '@/config/map.config';
+import { useRaceEvents } from '@/components/RaceEventsProvider';
 import { useTrailConditions } from '@/components/TrailConditionsProvider';
+import { setRaceCourse } from '@/utils/race-overlay';
 import { closedTrails } from '@/data/trail-conditions';
 import { MapControls } from '@/components/MapControls';
 import { ConditionChips } from '@/components/sidebar/ConditionChips';
@@ -93,6 +95,7 @@ const MapboxMap = memo(function MapboxMap() {
   // layers to draw onto. Not a ref: this one has to trigger a render.
   const [mapReady, setMapReady] = useState(false);
   const { latest: latestConditions } = useTrailConditions();
+  const { visible: raceEvents } = useRaceEvents();
   const locationMarker = useRef<mapboxgl.Marker | null>(null);
   const locationAccuracy = useRef<number>(0);
   const watchId = useRef<number | null>(null);
@@ -1579,6 +1582,38 @@ const MapboxMap = memo(function MapboxMap() {
       closedTrails({ latest: latestConditions }, getMountainBikeTrails()),
     );
   }, [mapReady, latestConditions]);
+
+  /**
+   * The next visible race, drawn as a gold dashed line with direction arrows.
+   *
+   * `RaceEventsProvider` has already limited this list to the preview window
+   * and retired finished races. Drawing from that same list keeps the map in
+   * agreement with the race tag in the trail list: if the UI says a trail has
+   * a race, its course is visibly marked too.
+   *
+   * Nothing here re-runs on `style.load`, because this app never calls
+   * `setStyle` — the basemap is fixed for the life of the page. Add one if that
+   * changes: a style swap drops both the layers and the sprites they name, and
+   * the overlay would vanish with nothing logged.
+   */
+  useEffect(() => {
+    if (!mapReady || !map.current) {
+      return;
+    }
+    const racing = raceEvents.find((event) => event.course.length >= 2);
+    setRaceCourse(
+      map.current,
+      racing
+        ? {
+            course: racing.course,
+            direction: racing.direction,
+            name: racing.name,
+            originLabel: racing.originLabel,
+            terminusLabel: racing.terminusLabel,
+          }
+        : null,
+    );
+  }, [mapReady, raceEvents]);
 
   return (
     <>

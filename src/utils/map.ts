@@ -631,6 +631,23 @@ function closedFilterFor(
 
 export { TRAIL_LAYERS };
 
+/**
+ * The first curated trail's label layer, for anything that needs to sit just
+ * below the trail name cards.
+ *
+ * Exported so the race overlay can place itself without knowing the
+ * `${layerId} Suffix` convention, which stays private to this file.
+ */
+export function firstTrailLabelLayerId(map: mapboxgl.Map): string | undefined {
+  for (const cfg of TRAIL_LAYERS) {
+    const id = labelId(cfg.layerId);
+    if (map.getLayer(id)) {
+      return id;
+    }
+  }
+  return undefined;
+}
+
 function sourceIdForLayer(
   map: mapboxgl.Map,
   cfg: TrailLayerConfig,
