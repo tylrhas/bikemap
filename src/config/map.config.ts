@@ -58,6 +58,14 @@ export interface MapConfig {
     stateName: string;
   };
 
+  /**
+   * IANA zone the trails are in. Anything showing a wall clock — race start
+   * times, checkpoint estimates — renders here rather than in the viewer's
+   * zone: a rider standing at mile 40 needs the trail's clock, and someone
+   * checking the race from another state needs the same one.
+   */
+  timeZone: string;
+
   // Debug/development settings
   debug: {
     showLocationTracker: boolean;
@@ -112,6 +120,8 @@ const chattanoogaConfig: MapConfig = {
     stateName: 'Tennessee',
   },
 
+  timeZone: 'America/New_York',
+
   debug: {
     showLocationTracker: true,
     simulateLocation: false,
@@ -151,6 +161,8 @@ const bendConfig: MapConfig = {
     stateCode: 'OR',
     stateName: 'Oregon',
   },
+
+  timeZone: 'America/Los_Angeles',
 
   debug: {
     showLocationTracker: true,

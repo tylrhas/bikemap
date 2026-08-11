@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss';
+import { EVENT_COLOR, EVENT_DEEP_COLOR } from './src/data/race-colors';
 
 const config: Config = {
   darkMode: ['class'],
@@ -179,6 +180,11 @@ const config: Config = {
         warn: '#C25E3F',
         // Difficulty. Beginner and intermediate reuse good/clay per the brief.
         advanced: '#B5573B',
+        // A race is not a hazard. Gold rather than `warn`'s coral, and never
+        // `clay`, so a row can show a race and a rating at once. Imported so
+        // the Mapbox paint in `race-overlay.ts` cannot drift from the palette.
+        event: EVENT_COLOR,
+        'event-deep': EVENT_DEEP_COLOR,
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {
