@@ -8,6 +8,7 @@ import React, {
   useRef,
 } from 'react';
 import type { ElevationProfile as ElevationProfileData } from '@/data/geo_data';
+import type { RaceEvent } from '@/data/race-events';
 import { getMountainBikeTrails } from '@/data/trail-source';
 import { slugForTrail } from '@/data/mountain-bike-trails';
 import { elevationFigures } from '@/data/trail-elevation';
@@ -31,12 +32,19 @@ import { useTrailConditions } from '@/components/TrailConditionsProvider';
 import { useIsNarrow } from '@/hooks/useIsNarrow';
 import { DifficultyBadge } from './DifficultyBadge';
 import { TrailStats } from './TrailStats';
+import { useRaceEvents } from '@/components/RaceEventsProvider';
+import { CheckpointMarkers } from './CheckpointMarkers';
+import { EventBanner } from './EventBanner';
+import { EventEtaReadout } from './EventEtaReadout';
 import { TrailConditionsStrip } from './TrailConditionsStrip';
-
-const CHART_HEIGHT = 100;
-const CHART_PADDING_TOP = 4;
-const CHART_PADDING_BOTTOM = 4;
-const PLOT_HEIGHT = CHART_HEIGHT - CHART_PADDING_TOP - CHART_PADDING_BOTTOM;
+import {
+  CHART_HEIGHT,
+  CHART_PADDING_BOTTOM,
+  CHART_PADDING_TOP,
+  indexAtDistanceFt,
+  PLOT_HEIGHT,
+  profilePointToXY,
+} from './elevation-chart';
 
 const GRADE_YELLOW = 12;
 const GRADE_RED = 25;
@@ -292,6 +300,10 @@ export function ElevationProfile() {
 
   // Only to decide whether the pane has conditions worth opening for.
   const { options: conditionOptions } = useTrailConditions();
+  // Keyed off the same curated slug conditions use, so an OSM way or a ride
+  // can never pick up a race that belongs to a trail.
+  const { forTrail: raceForTrail, now: raceNow } = useRaceEvents();
+  const raceEvent = conditionSlug ? raceForTrail(conditionSlug) : undefined;
   const narrow = useIsNarrow();
   /**
    * True while the phone's sheet is raised above Peek.
@@ -558,16 +570,8 @@ export function ElevationProfile() {
       const x = clientX - rect.left;
       const fraction = Math.max(0, Math.min(1, x / rect.width));
       const maxDist = profile.profile[profile.profile.length - 1][0];
-      const targetDist = fraction * maxDist;
-
-      let lo = 0;
-      let hi = profile.profile.length - 1;
-      while (lo < hi) {
-        const mid = (lo + hi) >> 1;
-        if (profile.profile[mid][0] < targetDist) lo = mid + 1;
-        else hi = mid;
-      }
-      const idx = Math.max(0, Math.min(lo, profile.profile.length - 1));
+      const idx = indexAtDistanceFt(profile.profile, fraction * maxDist);
+      if (idx === null) return;
       setHoverIndex(idx);
 
       const pt = profile.profile[idx];
@@ -674,95 +678,125 @@ export function ElevationProfile() {
         className={cn(
           'absolute bottom-0 left-0 right-0 z-elevation pointer-events-auto',
           'bg-cream border-t-[3px] border-clay',
-          'grid grid-cols-[minmax(260px,340px)_1fr] items-stretch',
         )}
       >
-        <div className="px-[22px] pt-[18px] pb-5 border-r border-forest/10 min-w-0">
-          <DifficultyBadge
-            className="mb-2"
-            color={dockTrail?.color ?? 'rgb(var(--app-primary))'}
-            outline
-            rating={dockTrail?.rating ?? ''}
-          />
-          <div className="font-display text-[27px] leading-[1.05] text-forest mb-2.5 truncate">
-            {trailName}
-          </div>
-          <TrailStats
-            className="mb-4"
-            distance={dockTrail?.distance}
-            elevationGain={dockTrail?.elevationGain}
-            elevationLoss={dockTrail?.elevationLoss}
-          />
-          {/* No "Start ride" here. The dock is desktop only, where My rides is
+        {/* Spans both columns: the race is about the trail, not about its
+            identity block or its chart. */}
+        <EventBanner event={raceEvent} now={raceNow} />
+
+        <div className="grid grid-cols-[minmax(260px,340px)_1fr] items-stretch">
+          <div className="px-[22px] pt-[18px] pb-5 border-r border-forest/10 min-w-0">
+            <DifficultyBadge
+              className="mb-2"
+              color={dockTrail?.color ?? 'rgb(var(--app-primary))'}
+              outline
+              rating={dockTrail?.rating ?? ''}
+            />
+            <div className="font-display text-[27px] leading-[1.05] text-forest mb-2.5 truncate">
+              {trailName}
+            </div>
+            <TrailStats
+              className="mb-4"
+              distance={dockTrail?.distance}
+              elevationGain={dockTrail?.elevationGain}
+              elevationLoss={dockTrail?.elevationLoss}
+            />
+            {/* No "Start ride" here. The dock is desktop only, where My rides is
               one press away in the rail — and a second way in only mattered
               back when rides were behind a drawer on the far side of the map. */}
-          <div className="flex gap-2">
-            {conditionSlug && (
-              <button
-                className="flex-1 rounded-control border border-app-accent/40 px-3.5 py-[11px] text-ui font-semibold text-app-accent whitespace-nowrap transition-colors hover:bg-app-accent/[0.08]"
-                onClick={() =>
-                  window.dispatchEvent(
-                    new CustomEvent(MAP_EVENTS.CONDITION_REPORT_OPEN, {
-                      detail: { slug: conditionSlug, trailName },
-                    }),
-                  )
-                }
-                type="button"
-              >
-                Report
-              </button>
-            )}
-          </div>
-        </div>
-
-        <div className="px-5 pt-3.5 pb-3 min-w-0">
-          <div className="flex items-baseline justify-between mb-1">
-            <span className="text-meta font-bold uppercase tracking-[0.08em] text-forest/70">
-              Elevation profile
-            </span>
-            {/* The reading rides with the cursor now, so this stays an
-                invitation rather than repeating it. */}
-            <span className="text-meta text-ink/50">
-              Hover to scrub the trail
-            </span>
-          </div>
-          {points && profile ? (
-            <div className="relative">
-              <ElevationSvg
-                points={points}
-                gradeColors={gradeColors}
-                profile={profile}
-                chartWidth={chartWidth}
-                svgRef={svgRef}
-                onMouseMove={handleMouseMove}
-                onMouseLeave={clearHover}
-                onTouchStart={handleTouch}
-                onTouchMove={handleTouch}
-                onTouchEnd={clearHover}
-              />
-              {hoverIndex !== null && (
-                <>
-                  <HoverIndicator
-                    points={points}
-                    profile={profile}
-                    chartWidth={chartWidth}
-                    hoverIndex={hoverIndex}
-                  />
-                  <HoverTooltip
-                    chartWidth={chartWidth}
-                    grade={grades[hoverIndex]}
-                    hoverIndex={hoverIndex}
-                    points={points}
-                    profile={profile}
-                  />
-                </>
+            <div className="flex gap-2">
+              {conditionSlug && (
+                <button
+                  className="flex-1 rounded-control border border-app-accent/40 px-3.5 py-[11px] text-ui font-semibold text-app-accent whitespace-nowrap transition-colors hover:bg-app-accent/[0.08]"
+                  onClick={() =>
+                    window.dispatchEvent(
+                      new CustomEvent(MAP_EVENTS.CONDITION_REPORT_OPEN, {
+                        detail: { slug: conditionSlug, trailName },
+                      }),
+                    )
+                  }
+                  type="button"
+                >
+                  Report
+                </button>
               )}
             </div>
-          ) : (
-            <div className="h-[124px] grid place-items-center text-ui text-ink/40">
-              No elevation recorded for this trail yet.
+          </div>
+
+          <div className="px-5 pt-3.5 pb-3 min-w-0">
+            <div className="flex items-baseline justify-between mb-1">
+              <span className="text-meta font-bold uppercase tracking-[0.08em] text-forest/70">
+                Elevation profile
+              </span>
+              {/* The reading rides with the cursor now, so this stays an
+                invitation rather than repeating it. */}
+              <span className="text-meta text-ink/50">
+                Hover to scrub the trail
+              </span>
             </div>
-          )}
+            {points && profile ? (
+              <div className="relative">
+                <ElevationSvg
+                  points={points}
+                  gradeColors={gradeColors}
+                  profile={profile}
+                  chartWidth={chartWidth}
+                  svgRef={svgRef}
+                  onMouseMove={handleMouseMove}
+                  onMouseLeave={clearHover}
+                  onTouchStart={handleTouch}
+                  onTouchMove={handleTouch}
+                  onTouchEnd={clearHover}
+                />
+                {/* Before the hover overlay, so scrubbing draws on top of a
+                  checkpoint rather than behind it. */}
+                {raceEvent && (
+                  <CheckpointMarkers
+                    chartWidth={chartWidth}
+                    checkpoints={raceEvent.checkpoints}
+                    points={points}
+                    profile={profile}
+                  />
+                )}
+                {hoverIndex !== null && (
+                  <>
+                    <HoverIndicator
+                      points={points}
+                      profile={profile}
+                      chartWidth={chartWidth}
+                      hoverIndex={hoverIndex}
+                    />
+                    <HoverTooltip
+                      chartWidth={chartWidth}
+                      grade={grades[hoverIndex]}
+                      hoverIndex={hoverIndex}
+                      points={points}
+                      profile={profile}
+                    />
+                  </>
+                )}
+              </div>
+            ) : (
+              <div className="h-[124px] grid place-items-center text-ui text-ink/40">
+                No elevation recorded for this trail yet.
+              </div>
+            )}
+
+            {/* The dock had no readout row at all — the floating card kept the
+              only one. This is where a race matters most: a desktop, a curated
+              trail, and someone deciding whether to go out today. Reserved
+              height so nothing shifts as the cursor enters the chart. */}
+            {points && (
+              <ElevationReadout
+                className="mt-1"
+                gradeColors={gradeColors}
+                grades={grades}
+                hoverIndex={hoverIndex}
+                points={points}
+                raceEvent={raceEvent}
+              />
+            )}
+          </div>
         </div>
       </div>
     );
@@ -859,6 +893,11 @@ export function ElevationProfile() {
       </div>
 
       {/* Where the OSM tag strip sits: describes the trail, doesn't measure it. */}
+
+      {/* Not desktop-only: the phone and a selected OSM way get the same
+          notice, just tighter. */}
+      <EventBanner compact event={raceEvent} now={raceNow} />
+
       {hasConditions && conditionSlug && trailName && (
         <TrailConditionsStrip slug={conditionSlug} trailName={trailName} />
       )}
@@ -920,6 +959,14 @@ export function ElevationProfile() {
                 locationIndex={locationIndex}
               />
             )}
+            {raceEvent && (
+              <CheckpointMarkers
+                chartWidth={chartWidth}
+                checkpoints={raceEvent.checkpoints}
+                points={points}
+                profile={profile}
+              />
+            )}
             {hoverIndex !== null && (
               <>
                 <HoverIndicator
@@ -942,21 +989,62 @@ export function ElevationProfile() {
       )}
 
       {points && (
-        <div className="text-meta text-ink/65 text-center py-0.5 min-h-4">
-          {hoverIndex !== null ? (
-            <>
-              {`${(points[hoverIndex][0] / 5280).toFixed(2)} mi \u00B7 ${Math.round(points[hoverIndex][1]).toLocaleString()} ft \u00B7 `}
-              {/* Colored to match the chart under the cursor, so the number
-                  and the band it came from are visibly the same reading. */}
-              <span style={{ color: gradeColors[hoverIndex] }}>
-                {formatGrade(grades[hoverIndex])}
-              </span>
-            </>
-          ) : (
-            '\u00A0'
-          )}
-        </div>
+        <ElevationReadout
+          gradeColors={gradeColors}
+          grades={grades}
+          hoverIndex={hoverIndex}
+          points={points}
+          raceEvent={raceEvent}
+        />
       )}
+    </div>
+  );
+}
+
+function ElevationReadout({
+  className,
+  gradeColors,
+  grades,
+  hoverIndex,
+  points,
+  raceEvent,
+}: {
+  className?: string;
+  gradeColors: string[];
+  grades: number[];
+  hoverIndex: number | null;
+  points: [number, number, number, number][];
+  raceEvent: RaceEvent | undefined;
+}) {
+  let content: React.ReactNode = '\u00A0';
+  if (hoverIndex !== null) {
+    const mile = points[hoverIndex][0] / 5280;
+    content = (
+      <>
+        {`${mile.toFixed(2)} mi \u00B7 ${Math.round(points[hoverIndex][1]).toLocaleString()} ft \u00B7 `}
+        {/* Colored to match the chart under the cursor, so the number and the
+            band it came from are visibly the same reading. */}
+        <span style={{ color: gradeColors[hoverIndex] }}>
+          {formatGrade(grades[hoverIndex])}
+        </span>
+        {raceEvent && (
+          <>
+            {' \u00B7 '}
+            <EventEtaReadout event={raceEvent} mile={mile} />
+          </>
+        )}
+      </>
+    );
+  }
+
+  return (
+    <div
+      className={cn(
+        'text-meta text-ink/65 text-center py-0.5 min-h-4',
+        className,
+      )}
+    >
+      {content}
     </div>
   );
 }
@@ -1079,23 +1167,6 @@ const ElevationSvg = React.memo(function ElevationSvg({
     </svg>
   );
 });
-
-export function profilePointToXY(
-  points: [number, number, number, number][],
-  index: number,
-  profile: ElevationProfileData,
-  chartWidth: number,
-): { x: number; y: number } {
-  const maxDist = points[points.length - 1][0];
-  const yRange = profile.max - profile.min || 1;
-  return {
-    x: (points[index][0] / maxDist) * chartWidth,
-    y:
-      CHART_PADDING_TOP +
-      PLOT_HEIGHT -
-      ((points[index][1] - profile.min) / yRange) * PLOT_HEIGHT,
-  };
-}
 
 // Lightweight hover overlay — renders on every mouse move without rebuilding paths
 function HoverIndicator({

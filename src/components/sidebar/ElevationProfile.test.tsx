@@ -7,8 +7,8 @@ import {
   formatGrade,
   MAX_GRADIENT_STOPS,
   findClosestProfileIndex,
-  profilePointToXY,
 } from './ElevationProfile';
+import { profilePointToXY } from './elevation-chart';
 import type { ElevationProfile as ElevationProfileData } from '@/data/geo_data';
 
 describe('gradeToColor', () => {
