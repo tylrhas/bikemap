@@ -38,6 +38,8 @@ import {
   PEEK,
   SNAP_FRACTIONS,
 } from '@/utils/sheet-snap';
+import { useRaceEvents } from './RaceEventsProvider';
+import { EventSpreadSummary } from './sidebar/EventSpreadSummary';
 import { TOGGLE_BTN_CLASS, TOGGLE_ICON_CLASS } from './styles';
 import { cn } from '@/lib/utils';
 import { mapConfig } from '@/config/map.config';
@@ -158,6 +160,7 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
   // Whether the nationwide toggle is offered at all — an admin setting, fixed
   // for the life of the page, so it is read rather than held in state.
   const offerOsmTrails = getMapLayerSettings().osmTrails;
+  const { now: raceNow, visible: raceEvents } = useRaceEvents();
   const [showBikeNetwork, setShowBikeNetwork] = useState(false);
   const sidebarRef = useRef<HTMLDivElement>(null);
   const toggleButtonRef = useRef<HTMLButtonElement>(null);
@@ -764,6 +767,13 @@ export function MapLegendProvider({ children }: { children: React.ReactNode }) {
 
               {activeSection === 'trails' && (
                 <>
+                  {/* Keyed to every visible race, not to what the search box
+                      has left on screen: this is a notice about the day, not a
+                      row in the list below it. */}
+                  {raceEvents.length > 0 && (
+                    <EventSpreadSummary event={raceEvents[0]} now={raceNow} />
+                  )}
+
                   {/* The whole section, not just the row: it is the only
                       layer the Trails tab offers, so a bare "Map layers"
                       heading over nothing would read as something failing to

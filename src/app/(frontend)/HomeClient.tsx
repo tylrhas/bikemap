@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import React, { useEffect } from 'react';
 import { ConditionReportModal } from '@/components/ConditionReportModal';
 import { PwaInstallPrompt } from '@/components/PwaInstallPrompt';
+import { RaceEventsProvider } from '@/components/RaceEventsProvider';
 import { TrailConditionsProvider } from '@/components/TrailConditionsProvider';
 import { WelcomeModal } from '@/components/WelcomeModal';
 import type { BrandIdentity } from '@/data/brand';
@@ -106,7 +107,12 @@ export default function HomeClient({
           copy of the conditions, and sits out here rather than inside BikeMap
           because the form is a sibling of the map, like WelcomeModal. */}
       <TrailConditionsProvider>
-        <BikeMap />
+        {/* Beside the conditions and for the same reason: the sidebar's tags,
+            the dock's banner and the map's corridor all read one copy, and one
+            shared clock, so they cannot disagree about what day it is. */}
+        <RaceEventsProvider>
+          <BikeMap />
+        </RaceEventsProvider>
         <ConditionReportModal />
       </TrailConditionsProvider>
       <PwaInstallPrompt />

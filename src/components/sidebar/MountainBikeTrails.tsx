@@ -10,8 +10,10 @@ import {
 } from '@/data/trail-elevation';
 import { regionOf } from '@/data/trail-region';
 import { getMountainBikeTrails } from '@/data/trail-source';
+import { useRaceEvents } from '@/components/RaceEventsProvider';
 import { useTrailConditions } from '@/components/TrailConditionsProvider';
 import { ConditionBadge } from './ConditionBadge';
+import { EventTag } from './EventTag';
 import { TrailSparkline } from './TrailSparkline';
 import type { MountainBikeTrailsProps } from './types';
 import type { MountainBikeTrail } from '@/data/mountain-bike-trails';
@@ -83,8 +85,11 @@ function TrailRow({
   onTrailSelect: (name: string) => void;
 }) {
   // Keyed by slug, not name: two complexes can both have a "Larry".
+  const slug = slugForTrail(trail);
   const { latest } = useTrailConditions();
-  const condition = latest[slugForTrail(trail)];
+  const condition = latest[slug];
+  const { forTrail, now } = useRaceEvents();
+  const race = forTrail(slug);
 
   const active = selectedTrail === trail.trailName;
   // One figure here, whichever way the trail mostly goes: a row is for
@@ -103,7 +108,12 @@ function TrailRow({
         <span className="font-display text-cream text-body font-semibold truncate">
           {trail.displayName}
         </span>
-        <ConditionBadge report={condition} />
+        {/* Both pills in one shrink-0 group, so `justify-between` still puts
+            them together on the right and the name keeps its truncation. */}
+        <div className="flex items-center gap-1 shrink-0">
+          <ConditionBadge report={condition} />
+          <EventTag event={race} now={now} />
+        </div>
       </div>
       {/* Spread across the card rather than bunched on the left. `gap-2.5` is
           the floor, so a long grade beside a four-figure descent still has air
