@@ -4,6 +4,7 @@ import * as migration_20260807_213812_condition_report_locks from './20260807_21
 import * as migration_20260807_234413_condition_marks_closed from './20260807_234413_condition_marks_closed';
 import * as migration_20260809_041945_map_appearance from './20260809_041945_map_appearance';
 import * as migration_20260810_000000_brand_and_layers from './20260810_000000_brand_and_layers';
+import * as migration_20260811_034619_race_events from './20260811_034619_race_events';
 
 export const migrations = [
   {
@@ -35,5 +36,10 @@ export const migrations = [
     up: migration_20260810_000000_brand_and_layers.up,
     down: migration_20260810_000000_brand_and_layers.down,
     name: '20260810_000000_brand_and_layers',
+  },
+  {
+    up: migration_20260811_034619_race_events.up,
+    down: migration_20260811_034619_race_events.down,
+    name: '20260811_034619_race_events',
   },
 ];

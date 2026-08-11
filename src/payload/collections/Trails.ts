@@ -52,22 +52,23 @@ const cityScoped: Access = ({ req }) => {
 };
 
 /**
- * Clears a trail's condition reports before the trail goes.
+ * Clears records with required trail relationships before the trail goes.
  *
- * `trail_conditions.trail_id` is NOT NULL with an ON DELETE SET NULL foreign key
- * — Payload generates that pair for a required relationship, and together they
- * make Postgres refuse the delete. Without this, deleting any trail someone had
- * reported on would fail with a raw constraint violation.
+ * Payload generates NOT NULL columns with ON DELETE SET NULL foreign keys for
+ * required relationships. Together they make Postgres refuse the parent
+ * delete, so every dependent collection is removed explicitly first.
  */
-const deleteConditionReports: CollectionBeforeDeleteHook = async ({
+const deleteTrailDependents: CollectionBeforeDeleteHook = async ({
   id,
   req,
 }) => {
-  await req.payload.delete({
-    collection: 'trail-conditions',
-    req,
-    where: { trail: { equals: id } },
-  });
+  for (const collection of ['trail-conditions', 'race-events'] as const) {
+    await req.payload.delete({
+      collection,
+      req,
+      where: { trail: { equals: id } },
+    });
+  }
 };
 
 export const Trails: CollectionConfig = {
@@ -93,7 +94,7 @@ export const Trails: CollectionConfig = {
   },
   hooks: {
     beforeChange: [resolveTrailGeometry],
-    beforeDelete: [deleteConditionReports],
+    beforeDelete: [deleteTrailDependents],
   },
   fields: [
     /**

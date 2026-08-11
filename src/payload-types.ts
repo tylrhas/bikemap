@@ -69,6 +69,7 @@ export interface Config {
   collections: {
     trails: Trail;
     'trail-conditions': TrailCondition;
+    'race-events': RaceEvent;
     'trail-areas': TrailArea;
     'trail-ratings': TrailRating;
     'trail-kinds': TrailKind;
@@ -84,6 +85,7 @@ export interface Config {
   collectionsSelect: {
     trails: TrailsSelect<false> | TrailsSelect<true>;
     'trail-conditions': TrailConditionsSelect<false> | TrailConditionsSelect<true>;
+    'race-events': RaceEventsSelect<false> | RaceEventsSelect<true>;
     'trail-areas': TrailAreasSelect<false> | TrailAreasSelect<true>;
     'trail-ratings': TrailRatingsSelect<false> | TrailRatingsSelect<true>;
     'trail-kinds': TrailKindsSelect<false> | TrailKindsSelect<true>;
@@ -446,6 +448,75 @@ export interface TrailConditionType {
   createdAt: string;
 }
 /**
+ * Races on a trail that stays open. The listing and map overlay appear a week out, and both come off when you tick “Finished”.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "race-events".
+ */
+export interface RaceEvent {
+  id: number;
+  /**
+   * Shown to riders as written, e.g. “CO Trail Series”.
+   */
+  name: string;
+  trail: number | Trail;
+  /**
+   * Gun time, in the trail’s local clock.
+   */
+  startsAt: string;
+  /**
+   * Which way racers travel along the trail’s stored geometry.
+   */
+  direction: 'forward' | 'reverse';
+  /**
+   * What is at the first point of the trail, e.g. “trailhead”. Used for “trailhead → summit”.
+   */
+  originLabel?: string | null;
+  /**
+   * What is at the last point, e.g. “summit”. Leave both blank to say nothing about direction.
+   */
+  terminusLabel?: string | null;
+  /**
+   * At minimum a start and a finish. Every aid station you add makes the times between them more accurate — with only two, the app is drawing a straight line across the whole course.
+   */
+  checkpoints: {
+    /**
+     * From the course start, in the race direction.
+     */
+    mile: number;
+    /**
+     * e.g. “Aid 2 — Skyliner”.
+     */
+    label: string;
+    leadEta?: string | null;
+    sweepEta?: string | null;
+    /**
+     * Riders are pulled here. Times for this point are stated plainly instead of hedged, so only tick it when the time is enforced.
+     */
+    isCutoff?: boolean | null;
+    id?: string | null;
+  }[];
+  /**
+   * Only when the course differs from the trail’s own line. A GeoJSON LineString — leave blank to use the trail.
+   */
+  courseGpx?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  /**
+   * Takes the race off the map and out of the trail list. The row stays.
+   */
+  finished?: boolean | null;
+  city: 'chattanooga' | 'bend';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * Who can sign in and edit.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -512,6 +583,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'trail-conditions';
         value: number | TrailCondition;
+      } | null)
+    | ({
+        relationTo: 'race-events';
+        value: number | RaceEvent;
       } | null)
     | ({
         relationTo: 'trail-areas';
@@ -622,6 +697,33 @@ export interface TrailConditionsSelect<T extends boolean = true> {
   hidden?: T;
   city?: T;
   reporterHash?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "race-events_select".
+ */
+export interface RaceEventsSelect<T extends boolean = true> {
+  name?: T;
+  trail?: T;
+  startsAt?: T;
+  direction?: T;
+  originLabel?: T;
+  terminusLabel?: T;
+  checkpoints?:
+    | T
+    | {
+        mile?: T;
+        label?: T;
+        leadEta?: T;
+        sweepEta?: T;
+        isCutoff?: T;
+        id?: T;
+      };
+  courseGpx?: T;
+  finished?: T;
+  city?: T;
   updatedAt?: T;
   createdAt?: T;
 }
