@@ -69,3 +69,4 @@ scripts/.*_run.log
 
 # scratch / local-only files
 tmp/
+.env*
